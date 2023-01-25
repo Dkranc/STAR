@@ -40,7 +40,7 @@ export const getSoldiersById = (req, res) => {
   });
 };
 
-//add new department to table.
+//add new soldier to table.
 export const addSoldier = (req, res) => {
   const {
     serial_id,
@@ -53,7 +53,7 @@ export const addSoldier = (req, res) => {
     email,
   } = req.body;
   const sqlInsert =
-    "INSERT INTO Soldier(serial_id, full_name, department_id, company_id, battalion_id, position_id, is_reserve,email) VALUES(?,?,?,?,?,?,?,?)";
+    "INSERT INTO Soldier(serial_id, full_name, department_id, company_id, battalion_id, position_id, is_reserve,email,final_grade) VALUES(?,?,?,?,?,?,?,?,?)";
   db.query(
     sqlInsert,
     [
@@ -65,6 +65,7 @@ export const addSoldier = (req, res) => {
       position_id,
       is_reserve,
       email,
+      final_grade,
     ],
     (err, result) => {
       if (err) console.log(err);
@@ -72,7 +73,7 @@ export const addSoldier = (req, res) => {
   );
 };
 
-//update a department by its id
+//update a soldier by its id
 export const updateSoldierById = (req, res) => {
   const { sid } = req.params;
   const {
@@ -84,9 +85,10 @@ export const updateSoldierById = (req, res) => {
     position_id,
     is_reserve,
     email,
+    final_grade,
   } = req.body;
   const sqlUpdateTrans =
-    "UPDATE Soldier SET serial_id=?, full_name=?, department_id=?, company_id=?, battalion_id=?, position_id=?, is_reserve=? ,email=? WHERE id = ?";
+    "UPDATE Soldier SET serial_id=?, full_name=?, department_id=?, company_id=?, battalion_id=?, position_id=?, is_reserve=? ,email=?, final_grade WHERE id = ?";
   db.query(
     sqlUpdateTrans,
     [
@@ -98,6 +100,7 @@ export const updateSoldierById = (req, res) => {
       position_id,
       is_reserve,
       email,
+      final_grade,
       sid,
     ],
     (err, result) => {
