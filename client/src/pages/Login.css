@@ -1,0 +1,16 @@
+#login-page{
+
+        max-width:300px;
+        overflow-y: hidden;
+  
+}
+
+button {
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px;
+  background-color: rgb(112, 177, 61);
+  width: 90%;
+  border-radius: 20px;
+  border: 1px solid rgb(0, 0, 0);
+}

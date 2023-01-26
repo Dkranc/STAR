@@ -2,8 +2,9 @@ import React from "react";
 import Config from "../Config";
 import { PublicClientApplication } from "@azure/msal-browser";
 import jwtDecode from "jwt-decode";
+import "./Login.css";
 
-const Login = ({ user, setUser, isAuthenticated, setIsAuthenticated }) => {
+const Login = ({setIsAuthenticated }) => {
   const PubClientApp = new PublicClientApplication({
     auth: {
       clientId: Config.appId,
@@ -27,11 +28,18 @@ const Login = ({ user, setUser, isAuthenticated, setIsAuthenticated }) => {
       const identificationString = sessionStorage.getItem(
         "00000000-0000-0000-bbff-4e4f92dc8e7e.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-idtoken-4f6ef13e-6caf-4f1c-a896-52c4e641334a-0c60cfe1-4df2-45cf-96c5-f92c6e73288e---"
       );
-       var USER = JSON.parse(identificationString)
-       const token= USER.secret;
-       USER =  jwtDecode(token); // decode your token here
-       console.log(USER)
-       sessionStorage.setItem('role',USER.roles[0])
+      var roleInfoToken = JSON.parse(identificationString);
+      const token = roleInfoToken.secret;
+      roleInfoToken = jwtDecode(token); // decode your token here
+      sessionStorage.setItem("role", roleInfoToken.roles[0]);
+
+      const userInfo = sessionStorage.getItem(
+        "00000000-0000-0000-bbff-4e4f92dc8e7e.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-0c60cfe1-4df2-45cf-96c5-f92c6e73288e"
+      );
+      var userInfoJson = JSON.parse(userInfo);
+      console.log(userInfoJson)
+      sessionStorage.setItem("user", JSON.stringify(userInfoJson));
+
     } catch (err) {
       console.log(err);
     }
@@ -44,8 +52,9 @@ const Login = ({ user, setUser, isAuthenticated, setIsAuthenticated }) => {
 
   return (
     <div id="login-page">
-    {sessionStorage.getItem("role")!=null? setIsAuthenticated(true): null}
-      <button onClick={login}>Login</button>
+      {sessionStorage.getItem("role") != null ? setIsAuthenticated(true) : null}
+      <img id="star-logo" src="/star.jpg" alt="star Logo" />
+      <button onClick={login}>התחברות</button>
     </div>
   );
 };

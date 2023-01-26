@@ -6,26 +6,23 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 
 function App() {
-  const [user, setUser] = useState({});
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return (
     <div className="App">
       <BrowserRouter>
+        <img
+          className="demo-bg"
+          src=" http://1.bp.blogspot.com/-BInHLTLYcSY/U9CdS4qEBoI/AAAAAAAAAac/Rt3ynw8GBy4/s1600/4.jpg"
+          alt=""
+        />
         <Routes>
           {isAuthenticated ? (
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Home  setIsAuthenticated={setIsAuthenticated} />} />
           ) : (
             <Route
               path="/"
-              element={
-                <Login
-                  user={user}
-                  setUser={setUser}
-                  isAuthenticated={isAuthenticated}
-                  setIsAuthenticated={setIsAuthenticated}
-                />
-              }
+              element={<Login setIsAuthenticated={setIsAuthenticated} />}
             />
           )}
         </Routes>
