@@ -1,6 +1,7 @@
 import { React, useState } from "react";
 import "./Home.css";
 import Welcome from "../components/Welcome";
+import { useNavigate } from 'react-router-dom';
 
 const Home = ({setIsAuthenticated }) => {
   const [roles, setRoles] = useState([
@@ -11,8 +12,9 @@ const Home = ({setIsAuthenticated }) => {
     { name: "המתאמנים שלי", id: 5 },
   ]);
 
-  const userRole=sessionStorage.getItem('role');
+  const navigate = useNavigate();
 
+  const userRole=sessionStorage.getItem('role');
   return (
     <div dir="rtl">
       <div id="role-btns">
@@ -23,7 +25,7 @@ const Home = ({setIsAuthenticated }) => {
               return <button key={role.id}>{role.name}</button>;
             } 
           }
-           else return <button key={role.id}>{role.name}</button>;
+           else return <button onClick={()=>navigate(`/TestType/${role.id}`)} key={role.id}>{role.name}</button>;
         })}
       </div>
     </div>

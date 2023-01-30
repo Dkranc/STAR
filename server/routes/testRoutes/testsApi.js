@@ -1,5 +1,5 @@
 import express from "express";
-import { getTestTypes } from "../../controlers/testTypesControler.js";
+import { getTestTypesById } from "../../controlers/testTypesControler.js";
 import { getQuestionsByTestTypeId } from "../../controlers/questionControler.js";
 import { addFact, updateFact } from "../../controlers/factControler.js";
 
@@ -9,7 +9,7 @@ const router = express.Router();
 
 /** TEST_TYPE */
 //get all test types
-router.get("/test_types",  getTestTypes);
+router.get("/test_types/:rrid",  getTestTypesById);
 
 /** Question */
 //get all questions with specific test type id 

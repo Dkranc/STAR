@@ -4,6 +4,8 @@ import "./App.css";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Questionary from "./pages/Questionary";
+import TestType from "./pages/TestType";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -25,6 +27,14 @@ function App() {
               element={<Login setIsAuthenticated={setIsAuthenticated} />}
             />
           )}
+          <Route
+          path="/TestType/:rid/Questionary/:ttid"
+          element={<Questionary />}
+        /> 
+          <Route
+          path="TestType/:rid/"
+          element={<TestType />}
+        /> 
         </Routes>
       </BrowserRouter>
     </div>
