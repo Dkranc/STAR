@@ -6,6 +6,10 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Questionary from "./pages/Questionary";
 import TestType from "./pages/TestType";
+import SelectSoldiers from "./pages/SelectSoldiers";
+import ChooseRole from "./pages/ChooseRole";
+
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -28,14 +32,27 @@ function App() {
             />
           )}
           <Route
-          path="/TestType/:rid/Questionary/:ttid"
+          path="/SelectSoldiers/:rid/TestType/Questionary/:ttid"
           element={<Questionary />}
         /> 
           <Route
-          path="TestType/:rid/"
+          path="/SelectSoldiers/:rid/TestType"
           element={<TestType />}
         /> 
-        </Routes>
+        
+        <Route
+        path="/SelectSoldiers/:rid"
+        element={<SelectSoldiers />}
+      /> 
+      <Route
+      path="/MyTrainees"
+      element={<SelectSoldiers />}
+    /> 
+    <Route
+    path="/MyTrainees/ChooseRole"
+    element={<ChooseRole/>}
+  /> 
+      </Routes>
       </BrowserRouter>
     </div>
   );

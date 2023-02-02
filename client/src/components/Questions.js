@@ -7,15 +7,23 @@ const Questions = ({
   comments,
   setComments,
 }) => {
+
+
+
   useEffect(() => {
-    var dict = {};
+    var dict1 = {};
     questions.map((question) => {
       // this sets the initial answers object to empty strings
-      dict[question.name] = "";
+      dict1[question.name] = "undefined";
+    });
+    var dict2 = {};
+    questions.map((question) => {
+      // this sets the initial answers object to empty strings
+      dict2[question.name] = "";
     });
 
-    setAnswers(dict);
-    setComments(dict);
+    setAnswers(dict1);
+    setComments(dict2);
   }, [questions]);
 
   const handleFormChange = (event) => {
@@ -28,7 +36,6 @@ const Questions = ({
     let data = comments;
     data[event.target.name] = event.target.value;
     setComments(data);
-    console.log(comments);
   };
 
   return (
@@ -36,7 +43,7 @@ const Questions = ({
       {questions.map((question) => {
         return (
           <div className="question" key={question.id}>
-            <p style={{fontWeight:'bold'}}>{question.text}</p>
+            <p style={{ fontWeight: "bold" }}>{question.text}</p>
             {question.input_type === "boolean" ? (
               <div>
                 <div dir="rtl" className="bool_quest">
@@ -44,7 +51,7 @@ const Questions = ({
                     <input
                       type="radio"
                       name={question.name}
-                      value="true"
+                      value={true}
                       onChange={(e) => handleFormChange(e)}
                     />
                     <p>בוצע</p>{" "}
@@ -54,7 +61,7 @@ const Questions = ({
                     <input
                       type="radio"
                       name={question.name}
-                      value="false"
+                      value={false}
                       onChange={(e) => handleFormChange(e)}
                     />
                     <p>לא בוצע</p>
@@ -80,7 +87,9 @@ const Questions = ({
                   {[...Array(10)].map((e, i) => (
                     <button
                       key={"ans" + question.name + (i + 1).toString()}
-                      onClick={(e) => handleFormChange(e)}
+                      onClick={(e) => {
+                        handleFormChange(e);
+                      }}
                       className="btn-score"
                       value={i + 1}
                       name={question.name}
