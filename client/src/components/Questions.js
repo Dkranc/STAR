@@ -1,29 +1,33 @@
 import { React, useState, useEffect } from "react";
+import QuestionMap from "../components/QuestionMap";
+import "./Questions.css";
 
 const Questions = ({
   questions,
+  categories,
   answers,
   setAnswers,
   comments,
   setComments,
+  isMashadTest,
+  loaded,
 }) => {
-
-
+  const [openCategories, setOpenCategories] = useState({});
 
   useEffect(() => {
-    var dict1 = {};
-    questions.map((question) => {
-      // this sets the initial answers object to empty strings
-      dict1[question.name] = "undefined";
-    });
     var dict2 = {};
     questions.map((question) => {
       // this sets the initial answers object to empty strings
       dict2[question.name] = "";
     });
 
-    setAnswers(dict1);
+    var dict3 = {};
+    categories.map((cat) => {
+      dict3[cat.id] = false;
+    });
+
     setComments(dict2);
+    setOpenCategories(dict3);
   }, [questions]);
 
   const handleFormChange = (event) => {
@@ -38,110 +42,57 @@ const Questions = ({
     setComments(data);
   };
 
-  return (
-    <div dir="rtl" id="questions">
-      {questions.map((question) => {
-        return (
-          <div className="question" key={question.id}>
-            <p style={{ fontWeight: "bold" }}>{question.text}</p>
-            {question.input_type === "boolean" ? (
-              <div>
-                <div dir="rtl" className="bool_quest">
-                  <div className="bool-answer">
-                    <input
-                      type="radio"
-                      name={question.name}
-                      value={true}
-                      onChange={(e) => handleFormChange(e)}
-                    />
-                    <p>בוצע</p>{" "}
-                  </div>
-                  <div className="bool-answer">
-                    {" "}
-                    <input
-                      type="radio"
-                      name={question.name}
-                      value={false}
-                      onChange={(e) => handleFormChange(e)}
-                    />
-                    <p>לא בוצע</p>
-                  </div>
-                </div>
-                <div className="comment">
-                  <p>הערות</p>
-                  <input
-                    type="text"
-                    name={question.name}
-                    value={comments[0]}
-                    onChange={(e) => {
-                      handleCommentChange(e);
-                    }}
-                  />
-                </div>
+  return !loaded ? (
+    <h4>loading...</h4>
+  ) : (
+    <div id="main_questions">
+      {isMashadTest ? (
+        questions.map((question) => {
+          return (
+            <QuestionMap
+              question={question}
+              answers={answers}
+              comments={comments}
+              handleCommentChange={handleCommentChange}
+              handleFormChange={handleFormChange}
+              loaded={loaded}
+            />
+          );
+        })
+      ) : (
+        <div id="categories" dir="rtl">
+          {categories.map((category) => {
+            return (
+              <div dir="rtl" id="category" key={category.id}>
+                <h4
+                  onClick={() => {
+                    setOpenCategories({
+                      ...openCategories,
+                      [category.id]: !openCategories[category.id],
+                    });
+                  }}
+                >
+                  {category.text}
+                </h4>
+                {questions.map((question) => {
+                  if (openCategories[question.parent_id] && !isMashadTest) {
+                    return (
+                      <QuestionMap
+                        question={question}
+                        answers={answers}
+                        comments={comments}
+                        handleCommentChange={handleCommentChange}
+                        handleFormChange={handleFormChange}
+                        loaded={loaded}
+                      />
+                    );
+                  } else return null;
+                })}
               </div>
-            ) : null}
-
-            {question.input_type === "numeric" ? (
-              <div>
-                <div className="numeric" dir="rtl">
-                  {[...Array(10)].map((e, i) => (
-                    <button
-                      key={"ans" + question.name + (i + 1).toString()}
-                      onClick={(e) => {
-                        handleFormChange(e);
-                      }}
-                      className="btn-score"
-                      value={i + 1}
-                      name={question.name}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
-                </div>
-                <div className="comment">
-                  <p>הערות</p>
-                  <input
-                    type="text"
-                    name={question.name}
-                    value={comments[0]}
-                    onChange={(e) => {
-                      handleCommentChange(e);
-                    }}
-                  />
-                </div>
-              </div>
-            ) : null}
-
-            {question.input_type === "open-numeric" ? (
-              <div>
-                <div className="numeric" dir="rtl">
-                  <p>ציון מ1 עד 100</p>
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    step="any"
-                    name={question.name}
-                    value={answers[0]}
-                    onChange={(e) => handleFormChange(e)}
-                  />
-                </div>
-                <div className="comment">
-                  <p>הערות</p>
-                  <input
-                    type="text"
-                    name={question.name}
-                    value={comments[0]}
-                    onChange={(e) => {
-                      handleCommentChange(e);
-                    }}
-                  />
-                </div>
-              </div>
-            ) : null}
-          </div>
-        );
-      })}
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

@@ -20,13 +20,19 @@ var router = _express["default"].Router();
 //get all test types
 
 
-router.get("/test_types/:rrid", _testTypesControler.getTestTypesById);
-/** Question */
-//get all questions with specific test type id 
+router.get("/test_types/:rrid", _testTypesControler.getTestTypesById); //get all test types for mashad
 
-router.get("/question/:ttid", _questionControler.getQuestionsByTestTypeId);
+router.get("/test_types/mashad/:rrid", _testTypesControler.getMashadTestsById);
+/** Question */
+//get all questions with specific test type id
+
+router.get("/question/:ttid", _questionControler.getQuestionsByTestTypeId); //get all questions with specific parent id
+
+router.get("/question/:ttid", _questionControler.getQuestionsByParentId);
 /** Fact */
-//add a fact
+// get a fact by soldier serial id
+
+router.get("/fact/:ssid/:ttid", _factControler.getFact); //add a fact
 
 router.post("/fact", _factControler.addFact); //update fact by id
 

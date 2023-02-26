@@ -13,16 +13,30 @@ const ChooseRole = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mashadTests, setMashadTests] = useState([]);
+  const [roleId, setRoleId] = useState(0);
 
   useEffect(() => {
-    axios.post(); //need to get tests that match the mashad tests, and then only can we send the user to answer the questions with testtypeid
-    /*  navigate(
-    `/SelectSoldiers/${role.id}/TestType/Questionary/${test.id}`,
-    { state: { soldier: location.state.soldier } }
-  )*/
-  }, []);
+    if (roleId !== 0) {
+      navigate(`/SelectSoldiers/${roleId}/TestType`, {
+        state: {
+          isMashad: true,
+          mashadTests: mashadTests,
+          soldier: location.state.soldier,
+        },
+      });
+    }
+  }, [mashadTests]);
 
-  const handleRoleChosen = (e) => {};
+  const handleRoleChosen = (e) => {
+    axios
+      .get(
+        `http://localhost:8080/api/tests/test_types/mashad/${e.target.value}`
+      )
+      .then((response) => {
+        setMashadTests(response.data);
+      });
+    setRoleId(e.target.value);
+  };
 
   return (
     <div className="test-types">
@@ -32,7 +46,11 @@ const ChooseRole = () => {
       </h2>
       {roles.map((role) => {
         return (
-          <button onClick={(e) => handleRoleChosen(e)} key={role.id}>
+          <button
+            onClick={(e) => handleRoleChosen(e)}
+            key={role.id}
+            value={role.id}
+          >
             {role.name}
           </button>
         );

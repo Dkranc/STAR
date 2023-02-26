@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getQuestionsByTestTypeId = void 0;
+exports.getQuestionsByParentId = exports.getQuestionsByTestTypeId = void 0;
 
 var _connectDB = require("../connectDB.js");
 
@@ -20,6 +20,23 @@ var getQuestionsByTestTypeId = function getQuestionsByTestTypeId(req, res) {
 
     res.send(result.rows);
   });
-};
+}; //get specific rows from Question table using a parent id .
+
 
 exports.getQuestionsByTestTypeId = getQuestionsByTestTypeId;
+
+var getQuestionsByParentId = function getQuestionsByParentId(req, res) {
+  var pid = req.params.pid;
+  var sqlGet = "SELECT * FROM question WHERE parent_id=$1";
+
+  _connectDB.db.query(sqlGet, [pid], function (err, result) {
+    if (err) {
+      console.log(err);
+      return res.status(402).json(err);
+    }
+
+    res.send(result.rows);
+  });
+};
+
+exports.getQuestionsByParentId = getQuestionsByParentId;

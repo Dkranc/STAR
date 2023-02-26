@@ -16,21 +16,21 @@ const SelectSoldiers = () => {
   useEffect(() => {
     axios.get(`http://localhost:8080/api/general/soldier`).then((response) => {
       setSoldiers(Object.entries(response.data));
-      if (soldier!==0){
-        if (Object.keys(params).length>0){
-        navigate(`/SelectSoldiers/${params.rid}/TestType`, {
-          state: {
-            soldier: soldier,
-          },
-        });
-      }
-      else{//we are in the mashad selection------------need to first choose role!!!
-        navigate(`/MyTrainees/ChooseRole`, {
-          state: {
-            soldier: soldier,
-          },
-        });
-      }
+      if (soldier !== 0) {
+        if (Object.keys(params).length > 0) {
+          navigate(`/SelectSoldiers/${params.rid}/TestType`, {
+            state: {
+              soldier: soldier,
+            },
+          });
+        } else {
+          //we are in the mashad selection------------need to first choose role!!!
+          navigate(`/MyTrainees/ChooseRole`, {
+            state: {
+              soldier: soldier,
+            },
+          });
+        }
       }
     });
   }, [soldier]);
@@ -45,7 +45,7 @@ const SelectSoldiers = () => {
 
   return (
     <div className="soldier-select">
-    <NavBar/>
+      <NavBar />
       <h1>נא לבחור מתאמן</h1>
       <input
         dir="rtl"

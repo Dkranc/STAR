@@ -21,16 +21,14 @@ const Home = ({ setIsAuthenticated }) => {
     navigate("/MyTrainees");
   };
 
-  
-
   return (
     <div dir="rtl">
-    <NavBar/>
+      <NavBar />
       <div id="role-btns">
         <Welcome setIsAuthenticated={setIsAuthenticated} />
         {roles.map((role) => {
           if (role.id === 5) {
-            if (userRole === "User.Mashad") {
+            if (userRole === "User.Mashad" || userRole === "User.Admin") {
               return (
                 <button
                   key={role.id}

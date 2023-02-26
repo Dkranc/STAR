@@ -1,5 +1,19 @@
 import { db } from "../connectDB.js";
 
+//get specific rows from Question table using a test type id and the soldier sereial id that can be found in the params of the request. then send only those rows to the client
+export const getFact = (req, res) => {
+  const { ssid, ttid } = req.params;
+  const sqlGet =
+    "SELECT * FROM fact WHERE soldier_serial_id=$1 AND test_type_id=$2";
+  db.query(sqlGet, [ssid, ttid], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(402).json(err);
+    }
+    res.send(result.rows);
+  });
+};
+
 //add new fact to table.
 export const addFact = (req, res) => {
   const soldier_serial_id = req.body[0];
@@ -22,7 +36,7 @@ export const addFact = (req, res) => {
         role,
         date,
         questions[i].id,
-        typeof(scores[i]) == "string" ? (scores[i] ? 1 : 0 ) : scores[i], //if boolean then 1 for true, 0 for false, else just input the number
+        typeof scores[i] == "string" ? (scores[i] ? 1 : 0) : scores[i], //if boolean then 1 for true, 0 for false, else just input the number
         parent_external_id,
         comments[i],
       ],

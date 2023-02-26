@@ -3,11 +3,30 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateFact = exports.addFact = void 0;
+exports.updateFact = exports.addFact = exports.getFact = void 0;
 
 var _connectDB = require("../connectDB.js");
 
-//add new fact to table.
+//get specific rows from Question table using a test type id and the soldier sereial id that can be found in the params of the request. then send only those rows to the client
+var getFact = function getFact(req, res) {
+  var _req$params = req.params,
+      ssid = _req$params.ssid,
+      ttid = _req$params.ttid;
+  var sqlGet = "SELECT * FROM fact WHERE soldier_serial_id=$1 AND test_type_id=$2";
+
+  _connectDB.db.query(sqlGet, [ssid, ttid], function (err, result) {
+    if (err) {
+      console.log(err);
+      return res.status(402).json(err);
+    }
+
+    res.send(result.rows);
+  });
+}; //add new fact to table.
+
+
+exports.getFact = getFact;
+
 var addFact = function addFact(req, res) {
   var soldier_serial_id = req.body[0];
   var test_type_id = req.body[1];
