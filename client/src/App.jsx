@@ -8,94 +8,30 @@ import TestType from "./pages/TestType";
 import SelectSoldiers from "./pages/SelectSoldiers";
 import ChooseRole from "./pages/ChooseRole";
 import GeneralInput from "./pages/GeneralInput";
+import ToggleThemeButton from "./components/ToggleThemeButton";
 import Image from "./image/background.png"; // Import using relative path
 //import mui
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
-import IconButton from '@mui/material/IconButton';
-import Box from '@mui/material/Box';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 
-const themeLight = createTheme({
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        body: {
-          backgroundColor: "rgb(245,255,255)",
-          backgroundImage: `linear-gradient(71deg, rgba(245,255,255,1) 47%, rgba(173,225,229,1) 100%)`,
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center center",
-          backgroundSize: "cover",
-          backgroundAttachment: "fixed",
-          height: "100%",
-        },
-      },
-    },
-  },
-});
 
-const themeDark = createTheme(
-  {
-    components: {
-      MuiCssBaseline: {
-        styleOverrides: {
-          body: {
-            backgroundColor: "rgb(0,0,0)",
-            backgroundImage: `linear-gradient(71deg, rgba(0,0,0,1) 5%, rgba(33,48,125,1) 100%);`,
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center center",
-            backgroundSize: "cover",
-            backgroundAttachment: "fixed",
-            height: "100%",
-          },
-        },
-      },
-    },
-    palette: {
-      text: {
-        primary: "#ffffff",
-      },
-    },
-  }
-
-  //   palette: {
-  //     background: {
-  //       default: "#222222",
-  //     },
-  //     text: {
-  //       primary: "#ffffff",
-  //     },
-  //   },
-  // }
-);
+//theme
+import { themeLight, themeDark } from "./theme.js";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [light, setLight] = useState(true);
 
+  const changeState = () =>{
+    setLight((prev) => !prev)
+  }
+
   return (
     <ThemeProvider theme={light ? themeLight : themeDark}>
       <CssBaseline />
-      <Box
-      sx={{
-        display: 'flex',
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: 'text.primary',
-        borderRadius: 1,
-        p: 3,
-      }}
-    >
-      {light}
-      <IconButton sx={{ ml: 1 }} onClick={() => setLight((prev) => !prev)} color="inherit">
-        {light ? <Brightness7Icon /> : <Brightness4Icon />}
-      </IconButton>
-    </Box>
-      {/* <Button onClick={() => setLight((prev) => !prev)}>Toggle Theme</Button> */}
+      <ToggleThemeButton changeState={changeState} lightState={light}/>
       <div className="App">
         <BrowserRouter>
           {/* <img
@@ -112,7 +48,7 @@ function App() {
             ) : (
               <Route
                 path="/"
-                element={<Login setIsAuthenticated={setIsAuthenticated} />}
+                element={<Login setIsAuthenticated={setIsAuthenticated} lightState={light} />}
               />
             )}
             <Route
