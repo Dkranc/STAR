@@ -3,7 +3,6 @@ import Config from "../Config";
 import { PublicClientApplication } from "@azure/msal-browser";
 import jwtDecode from "jwt-decode";
 //import "./Login.css";
-
 //mui imports
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -102,7 +101,8 @@ const Login = ({ setIsAuthenticated, lightState }) => {
           {/* <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar> */}
-          <img src={lightModeLogo} alt="" />
+          <img src={lightState ? lightModeLogo : darkModeLogo} alt="" />
+
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
