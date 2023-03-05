@@ -2,7 +2,7 @@ import { React, useEffect, useState } from "react";
 import Config from "../Config";
 import { PublicClientApplication } from "@azure/msal-browser";
 import jwtDecode from "jwt-decode";
-import "./Login.css";
+//import "./Login.css";
 
 //mui imports
 import Avatar from "@mui/material/Avatar";
@@ -17,8 +17,9 @@ import { ThemeProvider } from "@mui/material/styles";
 
 //import Images
 import lightModeLogo from "../image/logoLightMode.png";
+import darkModeLogo from "../image/logoDarkMode.png";
 
-const Login = ({ setIsAuthenticated }) => {
+const Login = ({ setIsAuthenticated, lightState }) => {
   const [goodLogin, setGoodLogin] = useState(false);
   const PubClientApp = new PublicClientApplication({
     auth: {
@@ -27,7 +28,7 @@ const Login = ({ setIsAuthenticated }) => {
       authority: Config.authority,
     },
     cache: {
-      cacheLocation: "sessionStorage", //this is where the user info will be. in the applications torage.
+      cacheLocation: "sessionStorage", //this is where the user info will be. in the applications storage.
       storeAuthStateInCookie: true,
     },
   });
@@ -45,15 +46,20 @@ const Login = ({ setIsAuthenticated }) => {
       setGoodLogin(true);
 
       const identificationString = sessionStorage.getItem(
-        "00000000-0000-0000-bbff-4e4f92dc8e7e.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-idtoken-4f6ef13e-6caf-4f1c-a896-52c4e641334a-0c60cfe1-4df2-45cf-96c5-f92c6e73288e---"
+        "00000000-0000-0000-962e-7a155b2539a0.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-idtoken-4f6ef13e-6caf-4f1c-a896-52c4e641334a-0c60cfe1-4df2-45cf-96c5-f92c6e73288e---"
+        //"00000000-0000-0000-bbff-4e4f92dc8e7e.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-idtoken-4f6ef13e-6caf-4f1c-a896-52c4e641334a-0c60cfe1-4df2-45cf-96c5-f92c6e73288e---"
       );
       var roleInfoToken = JSON.parse(identificationString);
+
       const token = roleInfoToken.secret;
       roleInfoToken = jwtDecode(token); // decode your token here
+      console.log(roleInfoToken);
+
       sessionStorage.setItem("role", roleInfoToken.roles[0]);
 
       const userInfo = sessionStorage.getItem(
-        "00000000-0000-0000-bbff-4e4f92dc8e7e.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-0c60cfe1-4df2-45cf-96c5-f92c6e73288e"
+        "00000000-0000-0000-962e-7a155b2539a0.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-0c60cfe1-4df2-45cf-96c5-f92c6e73288e"
+        //"00000000-0000-0000-bbff-4e4f92dc8e7e.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-0c60cfe1-4df2-45cf-96c5-f92c6e73288e"
       );
       var userInfoJson = JSON.parse(userInfo);
       console.log(userInfoJson);
@@ -97,6 +103,9 @@ const Login = ({ setIsAuthenticated }) => {
             <LockOutlinedIcon />
           </Avatar> */}
           <img src={lightModeLogo} alt="" />
+          <Typography component="h1" variant="h5">
+            Sign in
+          </Typography>
           <Box
             component="form"
             // onSubmit={handleSubmit}
