@@ -34,8 +34,8 @@ router.get("/question/:ttid", _questionControler.getQuestionsByParentId);
 
 router.get("/fact/:ssid/:ttid", _factControler.getFact); //add a fact
 
-router.post("/fact", _factControler.addFact); //update fact by id
+router.post("/fact", _factControler.addFact); //update facts
 
-router.put("/fact/:fid", _factControler.updateFact);
+router.post("/fact/update", _factControler.updateFact);
 var _default = router;
 exports["default"] = _default;

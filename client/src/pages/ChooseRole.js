@@ -14,16 +14,26 @@ const ChooseRole = () => {
   const location = useLocation();
   const [mashadTests, setMashadTests] = useState([]);
   const [roleId, setRoleId] = useState(0);
+  const soldier = location.state.soldier;
 
   useEffect(() => {
     if (roleId !== 0) {
-      navigate(`/SelectSoldiers/${roleId}/TestType`, {
-        state: {
-          isMashad: true,
-          mashadTests: mashadTests,
-          soldier: location.state.soldier,
-        },
-      });
+      if (soldier !== undefined) {
+        navigate(`/SelectSoldiers/${roleId}/TestType`, {
+          state: {
+            isMashad: true,
+            mashadTests: mashadTests,
+            soldier: location.state.soldier,
+          },
+        });
+      } else {
+        navigate(`/GeneralInput/ChooseRole/${roleId}/TestType`, {
+          state: {
+            soldier: undefined,
+            mashadTests: mashadTests,
+          },
+        });
+      }
     }
   }, [mashadTests]);
 
@@ -42,7 +52,12 @@ const ChooseRole = () => {
     <div className="test-types">
       <NavBar />
       <h2>
-        בחר תפקיד עבור: <span>{location.state.soldier.full_name}</span>
+        בחר תפקיד עבור:{" "}
+        <span>
+          {soldier !== undefined
+            ? location.state.soldier.full_name
+            : "הזנה כללית"}
+        </span>
       </h2>
       {roles.map((role) => {
         return (

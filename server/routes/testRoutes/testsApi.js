@@ -33,7 +33,7 @@ router.get("/question/:ttid", getQuestionsByParentId);
 router.get("/fact/:ssid/:ttid", getFact);
 //add a fact
 router.post("/fact", addFact);
-//update fact by id
-router.put("/fact/:fid", updateFact);
+//update facts
+router.post("/fact/update", updateFact);
 
 export default router;

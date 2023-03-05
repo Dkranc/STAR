@@ -12,9 +12,15 @@ var getFact = function getFact(req, res) {
   var _req$params = req.params,
       ssid = _req$params.ssid,
       ttid = _req$params.ttid;
-  var sqlGet = "SELECT * FROM fact WHERE soldier_serial_id=$1 AND test_type_id=$2";
+  var firstDay = new Date();
+  firstDay.setDate(firstDay.getDate() + 5);
+  firstDay = firstDay.toISOString().slice(0, 10);
+  var lastDay = new Date();
+  lastDay.setDate(lastDay.getDate() - 5);
+  lastDay = lastDay.toISOString().slice(0, 10);
+  var sqlGet = "SELECT * FROM fact WHERE soldier_serial_id=$1 AND test_type_id=$2 AND  date BETWEEN $3 AND $4;";
 
-  _connectDB.db.query(sqlGet, [ssid, ttid], function (err, result) {
+  _connectDB.db.query(sqlGet, [ssid, ttid, lastDay, firstDay], function (err, result) {
     if (err) {
       console.log(err);
       return res.status(402).json(err);
@@ -58,21 +64,16 @@ var addFact = function addFact(req, res) {
 exports.addFact = addFact;
 
 var updateFact = function updateFact(req, res) {
-  var fid = req.params.fid;
-  var _req$body = req.body,
-      soldier_serial_id = _req$body.soldier_serial_id,
-      test_type_id = _req$body.test_type_id,
-      role = _req$body.role,
-      date = _req$body.date,
-      question_id = _req$body.question_id,
-      score = _req$body.score,
-      parent_external_id = _req$body.parent_external_id;
-  var sqlUpdateTrans = "UPDATE Fact SET soldier_serial_id=$1, test_type_id=$2, role=$3, date=$4, question_id=$5, score=$6, parent_external_id=$7 WHERE id = $8";
-
-  _connectDB.db.query(sqlUpdateTrans, [soldier_serial_id, test_type_id, role, date, question_id, score, parent_external_id, fid], function (err, result) {
-    if (err) console.log(err);
-    res.send(result);
+  var facts = req.body[0];
+  var comments = req.body[1];
+  var date = req.body[2];
+  var sqlUpdateTrans = "UPDATE Fact SET date=$1, score=$2, comment=$3 WHERE id = $4";
+  facts.map(function (fact, ind) {
+    _connectDB.db.query(sqlUpdateTrans, [date, fact.score, comments[ind], fact.id], function (err, result) {
+      if (err) console.log(err);
+    });
   });
+  res.sendStatus(200);
 };
 
 exports.updateFact = updateFact;

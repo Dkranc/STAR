@@ -10,15 +10,19 @@ const Home = ({ setIsAuthenticated }) => {
     { name: "תותחן", id: 2 },
     { name: "טען", id: 3 },
     { name: "נהג", id: 4 },
-    { name: "המתאמנים שלי", id: 5 },
+    { name: "הזנת הערכת משהד", id: 5 },
   ]);
 
   const navigate = useNavigate();
 
   const userRole = sessionStorage.getItem("role");
 
-  const handleMyTraineesClicked = (e) => {
-    navigate("/MyTrainees");
+  const handleMashadTestClicked = (e) => {
+    navigate("/MyTrainees", {
+      state: {
+        isMashad: true,
+      },
+    });
   };
 
   return (
@@ -32,7 +36,7 @@ const Home = ({ setIsAuthenticated }) => {
               return (
                 <button
                   key={role.id}
-                  onClick={(e) => handleMyTraineesClicked(e)}
+                  onClick={(e) => handleMashadTestClicked(e)}
                 >
                   {role.name}
                 </button>

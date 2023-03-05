@@ -1,7 +1,6 @@
 import { React, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import "./SelectSoldiers.css";
 import NavBar from "../components/NavBar";
 
@@ -9,6 +8,7 @@ const SelectSoldiers = () => {
   const [soldiers, setSoldiers] = useState([]);
   const [solName, setSolName] = useState("");
   const [soldier, setSoldier] = useState(0);
+  const location = useLocation();
 
   const navigate = useNavigate();
   const params = useParams();
@@ -43,6 +43,14 @@ const SelectSoldiers = () => {
     }
   };
 
+  const handleGeneralInput = (e) => {
+    navigate(`/GeneralInput/ChooseRole`, {
+      state: {
+        generalInput: true,
+      },
+    });
+  };
+
   return (
     <div className="soldier-select">
       <NavBar />
@@ -61,13 +69,26 @@ const SelectSoldiers = () => {
           })
           .map((sol) => {
             return (
-              <li key={sol[1].id} onClick={(e) => handleChoice(e)}>
-                {sol[1].full_name}
-                <CheckCircleIcon /> {/*רק אם ביצע*/}{" "}
+              <li
+                key={sol[1].id}
+                onClick={(e) => handleChoice(e)}
+                style={{ fontWeight: "bold" }}
+              >
+                <span>{sol[1].full_name}</span>
+                <span>{sol[1].serial_id}</span>
               </li>
             );
           })}
       </ul>
+      <div>
+        {params.rid === undefined ? (
+          <button onClick={(e) => handleGeneralInput(e)}>
+            הזנה כללית לפי תפקיד
+          </button>
+        ) : (
+          ""
+        )}
+      </div>
     </div>
   );
 };

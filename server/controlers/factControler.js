@@ -3,9 +3,15 @@ import { db } from "../connectDB.js";
 //get specific rows from Question table using a test type id and the soldier sereial id that can be found in the params of the request. then send only those rows to the client
 export const getFact = (req, res) => {
   const { ssid, ttid } = req.params;
+  var firstDay = new Date();
+  firstDay.setDate(firstDay.getDate() + 5);
+  firstDay = firstDay.toISOString().slice(0, 10);
+  var lastDay = new Date();
+  lastDay.setDate(lastDay.getDate() - 5);
+  lastDay = lastDay.toISOString().slice(0, 10);
   const sqlGet =
-    "SELECT * FROM fact WHERE soldier_serial_id=$1 AND test_type_id=$2";
-  db.query(sqlGet, [ssid, ttid], (err, result) => {
+    "SELECT * FROM fact WHERE soldier_serial_id=$1 AND test_type_id=$2 AND  date BETWEEN $3 AND $4;";
+  db.query(sqlGet, [ssid, ttid, lastDay, firstDay], (err, result) => {
     if (err) {
       console.log(err);
       return res.status(402).json(err);
@@ -52,33 +58,21 @@ export const addFact = (req, res) => {
 
 //update a fact by its id
 export const updateFact = (req, res) => {
-  const { fid } = req.params;
-  const {
-    soldier_serial_id,
-    test_type_id,
-    role,
-    date,
-    question_id,
-    score,
-    parent_external_id,
-  } = req.body;
+  const facts = req.body[0];
+  const comments = req.body[1];
+  const date = req.body[2];
+
   const sqlUpdateTrans =
-    "UPDATE Fact SET soldier_serial_id=$1, test_type_id=$2, role=$3, date=$4, question_id=$5, score=$6, parent_external_id=$7 WHERE id = $8";
-  db.query(
-    sqlUpdateTrans,
-    [
-      soldier_serial_id,
-      test_type_id,
-      role,
-      date,
-      question_id,
-      score,
-      parent_external_id,
-      fid,
-    ],
-    (err, result) => {
-      if (err) console.log(err);
-      res.send(result);
-    }
-  );
+    "UPDATE Fact SET date=$1, score=$2, comment=$3 WHERE id = $4";
+
+  facts.map((fact, ind) => {
+    db.query(
+      sqlUpdateTrans,
+      [date, fact.score, comments[ind], fact.id],
+      (err, result) => {
+        if (err) console.log(err);
+      }
+    );
+  });
+  res.sendStatus(200);
 };

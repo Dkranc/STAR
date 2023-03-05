@@ -8,9 +8,7 @@ const QuestionMap = ({
   handleFormChange,
   loaded,
 }) => {
-  useEffect(() => {
-    console.log(answers);
-  }, [loaded]);
+  useEffect(() => {}, [loaded, answers]);
 
   return (
     <div className="question" key={question.id}>
@@ -70,6 +68,10 @@ const QuestionMap = ({
                 key={"ans" + question.name + (i + 1).toString()}
                 onClick={(e) => {
                   handleFormChange(e);
+                }}
+                style={{
+                  backgroundColor:
+                    answers[question.name] === i + 1 ? "green" : "",
                 }}
                 className="btn-score"
                 value={i + 1}

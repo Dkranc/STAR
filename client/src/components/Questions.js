@@ -31,15 +31,19 @@ const Questions = ({
   }, [questions]);
 
   const handleFormChange = (event) => {
-    let data = answers;
-    data[event.target.name] = event.target.value;
-    setAnswers(data);
+    setAnswers({
+      ...answers,
+      [event.target.name]: isNaN(event.target.value)
+        ? event.target.value
+        : parseInt(event.target.value),
+    });
   };
 
   const handleCommentChange = (event) => {
-    let data = comments;
-    data[event.target.name] = event.target.value;
-    setComments(data);
+    setComments({
+      ...comments,
+      [event.target.name]: event.target.value,
+    });
   };
 
   return !loaded ? (
