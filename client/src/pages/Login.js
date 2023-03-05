@@ -101,8 +101,7 @@ const Login = ({ setIsAuthenticated, lightState }) => {
           </Avatar> */}
             <img src={lightState ? lightModeLogo : darkModeLogo} alt="" />
             <Box
-              // component="form"
-              // onSubmit={handleSubmit}
+
               noValidate
               sx={{ mt: 1 }}
             >
