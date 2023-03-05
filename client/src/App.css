@@ -1,13 +1,13 @@
-.App {
+/* .App {
   display: flex;
   flex-direction: column;
   align-items: center;
   align-content: center;
   font-family: arial;
   width: 400px;
-}
+} */
 
-.demo-bg {
+/* .demo-bg {
   opacity: 0.3;
   position: absolute;
   left: 0;
@@ -15,4 +15,4 @@
   width: 100%;
   height: 50%;
   z-index: -1;
-}
+} */
