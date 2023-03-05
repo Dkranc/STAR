@@ -2,9 +2,10 @@ import { React, useState, useEffect } from "react";
 import "./Home.css";
 import Welcome from "../components/Welcome";
 import NavBar from "../components/NavBar";
+import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const Home = ({ setIsAuthenticated }) => {
+const Home = ({ setIsAuthenticated , lightState}) => {
   const [roles, setRoles] = useState([
     { name: "מפקד", id: 1 },
     { name: "תותחן", id: 2 },
@@ -34,23 +35,33 @@ const Home = ({ setIsAuthenticated }) => {
           if (role.id === 5) {
             if (userRole === "User.Mashad" || userRole === "User.Admin") {
               return (
-                <button
+                <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2, borderRadius: 30 }}
+                color={lightState ? "success" : "info"}
                   key={role.id}
                   onClick={(e) => handleMashadTestClicked(e)}
                 >
                   {role.name}
-                </button>
+                </Button>
               );
             }
             return null;
           } else
             return (
-              <button
-                onClick={() => navigate(`/SelectSoldiers/${role.id}`)}
-                key={role.id}
+              <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2, borderRadius: 30 }}
+              color={lightState ? "success" : "info"}
+              onClick={() => navigate(`/SelectSoldiers/${role.id}`)}
+              key={role.id}
               >
                 {role.name}
-              </button>
+              </Button>
             );
         })}
       </div>

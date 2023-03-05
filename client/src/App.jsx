@@ -43,7 +43,7 @@ function App() {
             {isAuthenticated ? (
               <Route
                 path="/"
-                element={<Home setIsAuthenticated={setIsAuthenticated} />}
+                element={<Home setIsAuthenticated={setIsAuthenticated} lightState={light}/>}
               />
             ) : (
               <Route
