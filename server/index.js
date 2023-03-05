@@ -15,5 +15,5 @@ app.use("/api/tests", testRoutes);
 
 //start sever on port 8080
 app.listen(8080, () => {
-  console.log("server connected");
+  console.log("server started on port 8080");
 });

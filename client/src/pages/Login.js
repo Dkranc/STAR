@@ -1,10 +1,11 @@
-import React from "react";
+import { React, useEffect, useState } from "react";
 import Config from "../Config";
 import { PublicClientApplication } from "@azure/msal-browser";
 import jwtDecode from "jwt-decode";
 import "./Login.css";
 
-const Login = ({setIsAuthenticated }) => {
+const Login = ({ setIsAuthenticated }) => {
+  const [goodLogin, setGoodLogin] = useState(false);
   const PubClientApp = new PublicClientApplication({
     auth: {
       clientId: Config.appId,
@@ -12,10 +13,14 @@ const Login = ({setIsAuthenticated }) => {
       authority: Config.authority,
     },
     cache: {
-      cacheLocation: "sessionStorage", //this is where the user info will be. in the applications torage.
+      cacheLocation: "sessionStorage", //this is where the user info will be. in the applications storage.
       storeAuthStateInCookie: true,
     },
   });
+
+  useEffect(() => {
+    if (goodLogin) setIsAuthenticated(true);
+  }, [goodLogin]);
 
   const login = async () => {
     try {
@@ -23,23 +28,27 @@ const Login = ({setIsAuthenticated }) => {
         scopes: Config.scopes,
         prompt: "select_account",
       });
-      setIsAuthenticated(true);
+      setGoodLogin(true);
 
       const identificationString = sessionStorage.getItem(
-        "00000000-0000-0000-bbff-4e4f92dc8e7e.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-idtoken-4f6ef13e-6caf-4f1c-a896-52c4e641334a-0c60cfe1-4df2-45cf-96c5-f92c6e73288e---"
+        "00000000-0000-0000-962e-7a155b2539a0.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-idtoken-4f6ef13e-6caf-4f1c-a896-52c4e641334a-0c60cfe1-4df2-45cf-96c5-f92c6e73288e---"
+        //"00000000-0000-0000-bbff-4e4f92dc8e7e.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-idtoken-4f6ef13e-6caf-4f1c-a896-52c4e641334a-0c60cfe1-4df2-45cf-96c5-f92c6e73288e---"
       );
       var roleInfoToken = JSON.parse(identificationString);
+      
       const token = roleInfoToken.secret;
       roleInfoToken = jwtDecode(token); // decode your token here
+      console.log(roleInfoToken)
+
       sessionStorage.setItem("role", roleInfoToken.roles[0]);
 
       const userInfo = sessionStorage.getItem(
-        "00000000-0000-0000-bbff-4e4f92dc8e7e.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-0c60cfe1-4df2-45cf-96c5-f92c6e73288e"
+        "00000000-0000-0000-962e-7a155b2539a0.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-0c60cfe1-4df2-45cf-96c5-f92c6e73288e"
+        //"00000000-0000-0000-bbff-4e4f92dc8e7e.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-0c60cfe1-4df2-45cf-96c5-f92c6e73288e"
       );
       var userInfoJson = JSON.parse(userInfo);
-      console.log(userInfoJson)
+      console.log(userInfoJson);
       sessionStorage.setItem("user", JSON.stringify(userInfoJson));
-
     } catch (err) {
       console.log(err);
     }

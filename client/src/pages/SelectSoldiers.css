@@ -1,0 +1,19 @@
+ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  input{
+    width: 100%;
+  }
+li{
+    border: 1px solid grey;
+    margin: 2px 0 ;
+    border-radius: 5%;
+    display:flex;
+    justify-content:space-between;
+    padding: 2px;
+}
+ul:focus{
+    background-color: grey;
+    cursor:pointer;
+}

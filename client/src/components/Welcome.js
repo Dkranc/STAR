@@ -14,7 +14,6 @@ const Welcome = ({ isAuthenticated }) => {
   const userJson = sessionStorage.getItem("user");
   const user = JSON.parse(userJson)
   console.log(user)
-  console.log("hello")
   const logout = () => {
     isAuthenticated(false);
     //need to navigate to login page
@@ -26,7 +25,7 @@ const Welcome = ({ isAuthenticated }) => {
     <div>
       <div id="top-bar">
         <h4>שלום {user.name} </h4>
-        <BarChartIcon />
+        {userRole=='User.Mashad' ? <BarChartIcon /> : null}
         <MenuIcon
           onClick={() => {
             setOpenOptionTab(!openOptionTab);
@@ -34,7 +33,7 @@ const Welcome = ({ isAuthenticated }) => {
         />
         {openOptionTab ? (
           <div id="opion-tab">
-            <p onclick={logout}>התנתקות</p>
+            <p onClick={logout}>התנתקות</p>
           </div>
         ) : null}
       </div>
