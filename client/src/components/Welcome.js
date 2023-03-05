@@ -14,7 +14,7 @@ const Welcome = ({ isAuthenticated }) => {
   const userJson = sessionStorage.getItem("user");
   const user = JSON.parse(userJson)
   console.log(user)
-
+  console.log("hello")
   const logout = () => {
     isAuthenticated(false);
     //need to navigate to login page
