@@ -10,64 +10,13 @@ import SelectSoldiers from "./pages/SelectSoldiers";
 import ChooseRole from "./pages/ChooseRole";
 import GeneralInput from "./pages/GeneralInput";
 
-import Image from "./image/background.png"; // Import using relative path
 //import mui
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 
-const themeLight = createTheme({
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        body: {
-          backgroundColor: "rgb(245,255,255)",
-          backgroundImage: `linear-gradient(71deg, rgba(245,255,255,1) 47%, rgba(173,225,229,1) 100%)`,
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center center",
-          backgroundSize: "cover",
-          backgroundAttachment: "fixed",
-          height: "100%",
-        },
-      },
-    },
-  },
-});
-
-const themeDark = createTheme(
-  {
-    components: {
-      MuiCssBaseline: {
-        styleOverrides: {
-          body: {
-            backgroundColor: "rgb(0,0,0)",
-            backgroundImage: `linear-gradient(71deg, rgba(0,0,0,1) 5%, rgba(33,48,125,1) 100%);`,
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center center",
-            backgroundSize: "cover",
-            backgroundAttachment: "fixed",
-            height: "100%",
-          },
-        },
-      },
-    },
-    palette: {
-      text: {
-        primary: "#ffffff",
-      },
-    },
-  }
-
-  //   palette: {
-  //     background: {
-  //       default: "#222222",
-  //     },
-  //     text: {
-  //       primary: "#ffffff",
-  //     },
-  //   },
-  // }
-);
+//theme
+import { themeLight, themeDark } from "./theme.js";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
