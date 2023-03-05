@@ -1,7 +1,6 @@
 import { React, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Questionary from "./pages/Questionary";
@@ -9,12 +8,16 @@ import TestType from "./pages/TestType";
 import SelectSoldiers from "./pages/SelectSoldiers";
 import ChooseRole from "./pages/ChooseRole";
 import GeneralInput from "./pages/GeneralInput";
-
 import Image from "./image/background.png"; // Import using relative path
 //import mui
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
+import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+
 
 const themeLight = createTheme({
   components: {
@@ -76,8 +79,23 @@ function App() {
   return (
     <ThemeProvider theme={light ? themeLight : themeDark}>
       <CssBaseline />
-      <Button onClick={() => setLight((prev) => !prev)}>Toggle Theme</Button>
-
+      <Box
+      sx={{
+        display: 'flex',
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'text.primary',
+        borderRadius: 1,
+        p: 3,
+      }}
+    >
+      {light}
+      <IconButton sx={{ ml: 1 }} onClick={() => setLight((prev) => !prev)} color="inherit">
+        {light ? <Brightness7Icon /> : <Brightness4Icon />}
+      </IconButton>
+    </Box>
+      {/* <Button onClick={() => setLight((prev) => !prev)}>Toggle Theme</Button> */}
       <div className="App">
         <BrowserRouter>
           {/* <img
