@@ -2,7 +2,7 @@ import { React, useEffect, useState } from "react";
 import Config from "../Config";
 import { PublicClientApplication } from "@azure/msal-browser";
 import jwtDecode from "jwt-decode";
-//import "./Login.css";
+import "./Login.css";
 
 //mui imports
 import Avatar from "@mui/material/Avatar";
@@ -76,12 +76,7 @@ const Login = ({ setIsAuthenticated }) => {
         align="center"
         {...props}
       >
-        {"Copyright © "}
-        <Link color="inherit" href="https://mui.com/">
-          Your Website
-        </Link>{" "}
-        {new Date().getFullYear()}
-        {"."}
+        <Link color="inherit">{`פותח ע"י חט"ל - ב"ז`}</Link>{" "}
       </Typography>
     );
   }
@@ -102,9 +97,6 @@ const Login = ({ setIsAuthenticated }) => {
             <LockOutlinedIcon />
           </Avatar> */}
           <img src={lightModeLogo} alt="" />
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
           <Box
             component="form"
             // onSubmit={handleSubmit}
@@ -120,18 +112,6 @@ const Login = ({ setIsAuthenticated }) => {
             >
               התחברות
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  ?לחץ כאן
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  לכניסה ללא התחברות צה"ל{" "}
-                </Link>
-              </Grid>
-            </Grid>
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
