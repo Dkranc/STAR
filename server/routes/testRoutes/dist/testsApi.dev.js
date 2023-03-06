@@ -32,9 +32,13 @@ router.get("/question/:ttid", _questionControler.getQuestionsByParentId);
 /** Fact */
 // get a fact by soldier serial id
 
-router.get("/fact/:ssid/:ttid", _factControler.getFact); //add a fact
+router.get("/fact/:ssid/:ttid", _factControler.getFact); // get a facts by test type id
 
-router.post("/fact", _factControler.addFact); //update facts
+router.get("/fact/:ttid", _factControler.getFactsByTestId); //add a fact
+
+router.post("/fact", _factControler.addFact); //add a general input for mashad test
+
+router.post("/fact/generalInput", _factControler.addFactGen); //update facts
 
 router.post("/fact/update", _factControler.updateFact);
 var _default = router;
