@@ -107,7 +107,9 @@ const Questionary = ({ soldier }) => {
               // this sets the initial answers object to the previous answers
               var ans;
               response.data.map((fact) => {
-                if (fact.question_id === question.id) ans = fact.score;
+                if (fact.question_id === question.id) {
+                  ans = fact.score;
+                }
               });
 
               dict[question.name] = ans;

@@ -21,7 +21,22 @@ export const getFact = (req, res) => {
 };
 
 export const getFactsByTestId = (req, res) => {
-  //continue from here!!
+  const { ttid } = req.params;
+  var firstDay = new Date();
+  firstDay.setDate(firstDay.getDate() + 5);
+  firstDay = firstDay.toISOString().slice(0, 10);
+  var lastDay = new Date();
+  lastDay.setDate(lastDay.getDate() - 5);
+  lastDay = lastDay.toISOString().slice(0, 10);
+  const sqlGet =
+  "SELECT * FROM fact WHERE test_type_id=$1 AND  date BETWEEN $2 AND $3;";
+db.query(sqlGet, [ttid, lastDay, firstDay], (err, result) => {
+  if (err) {
+    console.log(err);
+    return res.status(402).json(err);
+  }
+  res.send(result.rows);
+});
 };
 
 //add new fact to table.
@@ -46,10 +61,15 @@ export const addFact = (req, res) => {
         role,
         date,
         questions[i].id,
-        typeof scores[i] == "string" ? (scores[i] ? 1 : 0) : scores[i], //if boolean then 1 for true, 0 for false, else just input the number
+        typeof scores[i] == "string"
+          ? scores[i] === "true"
+            ? 1
+            : 0
+          : scores[i], //if boolean then 1 for true, 0 for false, else just input the number
         parent_external_id,
         comments[i],
       ],
+
       (err, result) => {
         if (err) {
           console.log(err);
@@ -70,9 +90,19 @@ export const updateFact = (req, res) => {
     "UPDATE Fact SET date=$1, score=$2, comment=$3 WHERE id = $4";
 
   facts.map((fact, ind) => {
+    console.log(typeof fact.score);
     db.query(
       sqlUpdateTrans,
-      [date, fact.score, comments[ind], fact.id],
+      [
+        date,
+        typeof fact.score == "string"
+          ? fact.score === "true"
+            ? 1
+            : 0
+          : fact.score,
+        comments[ind],
+        fact.id,
+      ],
       (err, result) => {
         if (err) console.log(err);
       }

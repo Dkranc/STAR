@@ -33,9 +33,8 @@ router.get("/question/:ttid", getQuestionsByParentId);
 /** Fact */
 // get a fact by soldier serial id
 router.get("/fact/:ssid/:ttid", getFact);
-// get a facts by test type id
+// get facts by test type id
 router.get("/fact/:ttid", getFactsByTestId);
-
 //add a fact
 router.post("/fact", addFact);
 //add a general input for mashad test

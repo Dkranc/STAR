@@ -15,6 +15,8 @@ function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) ||
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 //get specific rows from Question table using a test type id and the soldier sereial id that can be found in the params of the request. then send only those rows to the client
 var getFact = function getFact(req, res) {
   var _req$params = req.params,
@@ -40,7 +42,24 @@ var getFact = function getFact(req, res) {
 
 exports.getFact = getFact;
 
-var getFactsByTestId = function getFactsByTestId(req, res) {//continue from here!!
+var getFactsByTestId = function getFactsByTestId(req, res) {
+  var ttid = req.params.ttid;
+  var firstDay = new Date();
+  firstDay.setDate(firstDay.getDate() + 5);
+  firstDay = firstDay.toISOString().slice(0, 10);
+  var lastDay = new Date();
+  lastDay.setDate(lastDay.getDate() - 5);
+  lastDay = lastDay.toISOString().slice(0, 10);
+  var sqlGet = "SELECT * FROM fact WHERE test_type_id=$1 AND  date BETWEEN $2 AND $3;";
+
+  _connectDB.db.query(sqlGet, [ttid, lastDay, firstDay], function (err, result) {
+    if (err) {
+      console.log(err);
+      return res.status(402).json(err);
+    }
+
+    res.send(result.rows);
+  });
 }; //add new fact to table.
 
 
@@ -62,7 +81,7 @@ var addFact = function addFact(req, res) {
   for (var i = 0; i < scores.length; i++) {
     var sqlInsert = "INSERT INTO fact(soldier_serial_id, test_type_id, role, date, question_id, score, parent_external_id, comment) VALUES($1,$2,$3,$4,$5,$6,$7,$8)";
 
-    _connectDB.db.query(sqlInsert, [soldier_serial_id, test_type_id, role, date, questions[i].id, typeof scores[i] == "string" ? scores[i] ? 1 : 0 : scores[i], //if boolean then 1 for true, 0 for false, else just input the number
+    _connectDB.db.query(sqlInsert, [soldier_serial_id, test_type_id, role, date, questions[i].id, typeof scores[i] == "string" ? scores[i] === "true" ? 1 : 0 : scores[i], //if boolean then 1 for true, 0 for false, else just input the number
     parent_external_id, comments[i]], function (err, result) {
       if (err) {
         console.log(err);
@@ -82,7 +101,9 @@ var updateFact = function updateFact(req, res) {
   var date = req.body[2];
   var sqlUpdateTrans = "UPDATE Fact SET date=$1, score=$2, comment=$3 WHERE id = $4";
   facts.map(function (fact, ind) {
-    _connectDB.db.query(sqlUpdateTrans, [date, fact.score, comments[ind], fact.id], function (err, result) {
+    console.log(_typeof(fact.score));
+
+    _connectDB.db.query(sqlUpdateTrans, [date, typeof fact.score == "string" ? fact.score === "true" ? 1 : 0 : fact.score, comments[ind], fact.id], function (err, result) {
       if (err) console.log(err);
     });
   });

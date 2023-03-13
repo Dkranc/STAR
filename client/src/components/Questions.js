@@ -82,6 +82,7 @@ const Questions = ({
                   if (openCategories[question.parent_id] && !isMashadTest) {
                     return (
                       <QuestionMap
+                        key={question.id}
                         question={question}
                         answers={answers}
                         comments={comments}
