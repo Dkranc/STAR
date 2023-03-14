@@ -8,7 +8,7 @@ import { Container } from "@mui/system";
 import Box from "@mui/material/Box";
 import { ThemeProvider } from "@mui/material/styles";
 
-const Welcome = ({ isAuthenticated }) => {
+const Welcome = ({ setIsAuthenticated }) => {
   const [openOptionTab, setOpenOptionTab] = useState(false);
 
   const userRole = sessionStorage.getItem("role");
@@ -20,8 +20,10 @@ const Welcome = ({ isAuthenticated }) => {
   const userJson = sessionStorage.getItem("user");
   const user = JSON.parse(userJson)
   console.log(user)
-  const logout = () => {
-    isAuthenticated(false);
+  const welcomeNameText=`שלום ${user.name}`
+  const welcomeMsgText=`את מי אנחנו מאמנים היום?`
+  const logout = () => { 
+    setIsAuthenticated(false);
     //need to navigate to login page
     //and logout of public client
     // and clear the storage
@@ -54,14 +56,17 @@ const Welcome = ({ isAuthenticated }) => {
               <CssBaseline />
               <Box
                 sx={{
-                  marginTop: 8,
+                  marginTop: 0,
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
                 }}
               >
+                <Typography fontFamily={"ExtraBold"}>
+                  {welcomeNameText}
+                </Typography>
                 <Typography>
-                שלום {user.name}
+                  {welcomeMsgText}
                 </Typography>
                 <Typography>
                 {userRole=='User.Mashad' ? <BarChartIcon /> : null}
@@ -69,7 +74,7 @@ const Welcome = ({ isAuthenticated }) => {
                 
                 </Box>
                 </Container>
-                <MenuIcon
+                {/* <MenuIcon
           onClick={() => {
             setOpenOptionTab(!openOptionTab);
           }}
@@ -78,7 +83,7 @@ const Welcome = ({ isAuthenticated }) => {
           <div id="opion-tab">
             <p onClick={logout}>התנתקות</p>
           </div>
-        ) : null}
+        ) : null} */}
     </div>
     </ThemeProvider>);
 };

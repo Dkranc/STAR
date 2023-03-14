@@ -102,12 +102,12 @@ const Login = ({ setIsAuthenticated, lightState }) => {
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2, borderRadius: 30 }}
+                sx={{ mt: 3, mb: 2, borderRadius: 30 ,fontFamily: "Bold",fontSize:'25px'}}
                 color={lightState ? "success" : "info"}
               >
                 התחברות
               </Button>
-              <Typography sx={{ mt: 8, mb: 4 }} variant="body1" align="center">
+              <Typography sx={{ mt: 8, mb: 4, fontFamily: "Light" }} variant="body1" align="center">
                 פותח ע"י חט"ל - ב"ז{" "}
               </Typography>
             </Box>

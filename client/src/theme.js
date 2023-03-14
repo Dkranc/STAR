@@ -1,6 +1,13 @@
 import { createTheme } from "@mui/material";
 
 export const themeLight = createTheme({
+   typography: {
+    "fontFamily":`"Assistant-Bold","Assistant-Regular", sans-serif`,
+    "fontSize": 14,
+    "fontWeightLight": 300,
+    "fontWeightRegular": 400,
+    "fontWeightMedium": 500
+   },
   components: {
     MuiCssBaseline: {
       styleOverrides: {

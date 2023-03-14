@@ -2,6 +2,9 @@ import { React, useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import NavBar from "../components/NavBar";
+//mui
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
 const ChooseRole = () => {
   const [roles, setRoles] = useState([
@@ -50,26 +53,44 @@ const ChooseRole = () => {
 
   return (
     <div className="test-types">
-      <NavBar />
-      <h2>
-        בחר תפקיד עבור:{" "}
-        <span>
-          {soldier !== undefined
+      <NavBar pageName={`בחר תפקיד עבור: ${soldier !== undefined
             ? location.state.soldier.full_name
-            : "הזנה כללית"}
-        </span>
-      </h2>
+            : "הזנה כללית"}`}/>
+          <Box sx={{
+            padding:'32px',
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}>
       {roles.map((role) => {
         return (
-          <button
-            onClick={(e) => handleRoleChosen(e)}
-            key={role.id}
-            value={role.id}
-          >
-            {role.name}
-          </button>
+
+
+
+                          <Button
+              
+                          type="submit"
+                          variant="contained"
+                          sx={{width:'100%', mt: 3, mb: 2, borderRadius: 30 ,fontFamily: "Bold"}}
+                          color={"success"}
+                          onClick={(e) => handleRoleChosen(e)}
+                          key={role.id}
+                          value={role.id}
+
+                          >
+                            {role.name}
+                          </Button>
+          // <button
+          //   onClick={(e) => handleRoleChosen(e)}
+          //   key={role.id}
+          //   value={role.id}
+          // >
+          //   {role.name}
+          // </button>
         );
       })}
+      </Box>
+
     </div>
   );
 };

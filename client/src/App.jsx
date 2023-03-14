@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
@@ -14,6 +14,10 @@ import Image from "./image/background.png"; // Import using relative path
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+//import images
+import lightModeLogo from "./image/logoLightMode.png";
+
 
 
 
@@ -22,6 +26,10 @@ import { themeLight, themeDark } from "./theme.js";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  //test - check isAuthenticated change value
+  useEffect(() => console.log("isAuthenticated value:",isAuthenticated), [isAuthenticated]);
+
+
   const [light, setLight] = useState(true);
 
   const changeState = () =>{
@@ -31,7 +39,7 @@ function App() {
   return (
     <ThemeProvider theme={light ? themeLight : themeDark}>
       <CssBaseline />
-      <ToggleThemeButton changeState={changeState} lightState={light}/>
+      {/* <ToggleThemeButton changeState={changeState} lightState={light}/> */}
       <div className="App">
         <BrowserRouter>
           {/* <img
@@ -75,6 +83,19 @@ function App() {
             />
           </Routes>
         </BrowserRouter>
+        {isAuthenticated ? (<Box  
+        display="flex"
+        justifyContent="center"
+        alignItems="center"><Box
+        component="img"
+        sx={{
+          height: 63,
+          width: 84,
+          maxWidth: { xs: 84, md: 84 },
+          maxHeight: { xs: 63, md: 63 },
+        }}
+        alt="The house from the offer."
+        src={lightModeLogo} /></Box>):<Box/>}
       </div>
     </ThemeProvider>
   );

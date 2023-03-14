@@ -4,12 +4,22 @@ import axios from "axios";
 import "./SelectSoldiers.css";
 import NavBar from "../components/NavBar";
 
+//mui import
+import Button from "@mui/material/Button";
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
+
+
 const SelectSoldiers = () => {
   const [soldiers, setSoldiers] = useState([]);
   const [solName, setSolName] = useState("");
   const [soldier, setSoldier] = useState(0);
   const location = useLocation();
-
+  const pageName="חיפוש מתאמן"
   const navigate = useNavigate();
   const params = useParams();
 
@@ -53,14 +63,37 @@ const SelectSoldiers = () => {
 
   return (
     <div className="soldier-select">
-      <NavBar />
-      <h1>נא לבחור מתאמן</h1>
-      <input
+      <NavBar pageName={pageName}/>
+      {/* <input
         dir="rtl"
         value={solName}
         onChange={(e) => setSolName(e.target.value)}
         type="text"
-      />
+      /> */}
+    <Box
+    
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            >
+    <TextField
+    sx={{radius:'30px'}}
+    dir="rtl"
+      label=""
+      value={solName}
+      onChange={(e) => setSolName(e.target.value)}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment>
+            <IconButton>
+              <SearchIcon />
+            </IconButton>
+          </InputAdornment>
+        )
+      }}
+    />
+    </Box>
+
       <ul dir="rtl">
         {soldiers
           .filter((sol) => {
@@ -82,9 +115,16 @@ const SelectSoldiers = () => {
       </ul>
       <div>
         {params.rid === undefined ? (
-          <button onClick={(e) => handleGeneralInput(e)}>
-            הזנה כללית לפי תפקיד
-          </button>
+            <Box
+             sx={{
+              padding:'16px',
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}>
+           <Button fontFamily={"Bold"} color={"success"}
+ variant="contained" type="submit" onClick={(e) => handleGeneralInput(e)}>הזנה כללית ע״פ תפקיד</Button>
+            </Box>
         ) : (
           ""
         )}
