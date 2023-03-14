@@ -76,7 +76,6 @@ const Questionary = ({ soldier }) => {
   };
 
   useEffect(() => {
-    console.log(params);
     axios
       .get(`http://localhost:8080/api/tests/question/${params.ttid}`)
       .then((response) => {

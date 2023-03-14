@@ -44,35 +44,27 @@ const Login = ({ setIsAuthenticated, lightState }) => {
       });
       setGoodLogin(true);
 
-      const identificationString = sessionStorage.getItem(
-        //Joel
-        "00000000-0000-0000-962e-7a155b2539a0.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-idtoken-4f6ef13e-6caf-4f1c-a896-52c4e641334a-0c60cfe1-4df2-45cf-96c5-f92c6e73288e---"
-        //David
-        //"00000000-0000-0000-bbff-4e4f92dc8e7e.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-idtoken-4f6ef13e-6caf-4f1c-a896-52c4e641334a-0c60cfe1-4df2-45cf-96c5-f92c6e73288e---"
-        //Idan
-        // "00000000-0000-0000-0be8-67920fa7c274.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-idtoken-4f6ef13e-6caf-4f1c-a896-52c4e641334a-0c60cfe1-4df2-45cf-96c5-f92c6e73288e---"
-      );
-      var roleInfoToken = JSON.parse(identificationString);
+      Object.values(sessionStorage).map((item) => {
+        var unset = true;
+        try {
+          var parsedItem = JSON.parse(item);
+          var secret = "";
+          var user = {};
+          if (parsedItem.secret != null && unset) {
+            secret = jwtDecode(parsedItem.secret);
+            console.log(secret.roles[0]);
+            sessionStorage.setItem("role", secret.roles[0]);
+            unset = false;
+          }
 
-      const token = roleInfoToken.secret;
-      roleInfoToken = jwtDecode(token); // decode your token here
-      console.log(roleInfoToken);
-
-      sessionStorage.setItem("role", roleInfoToken.roles[0]);
-      const userInfo = sessionStorage.getItem(
-        //Joel
-        "00000000-0000-0000-962e-7a155b2539a0.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-0c60cfe1-4df2-45cf-96c5-f92c6e73288e"
-        //David
-        // "00000000-0000-0000-bbff-4e4f92dc8e7e.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-0c60cfe1-4df2-45cf-96c5-f92c6e73288e"
-        //Idan
-        // "00000000-0000-0000-0be8-67920fa7c274.9188040d-6c67-4c5b-b112-36a304b66dad-login.windows.net-0c60cfe1-4df2-45cf-96c5-f92c6e73288e"
-      );
-      var userInfoJson = JSON.parse(userInfo);
-      console.log(userInfoJson);
-      sessionStorage.setItem("user", JSON.stringify(userInfoJson));
-    } catch (err) {
-      console.log(err);
-    }
+          if (parsedItem.name != null) {
+            user = parsedItem;
+            sessionStorage.setItem("user", JSON.stringify(user));
+            console.log(user);
+          }
+        } catch (err) {}
+      });
+    } catch (err) {}
   };
 
   const logout = () => {

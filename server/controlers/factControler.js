@@ -20,6 +20,10 @@ export const getFact = (req, res) => {
   });
 };
 
+export const getFactsByTestId = (req, res) => {
+  //continue from here!!
+};
+
 //add new fact to table.
 export const addFact = (req, res) => {
   const soldier_serial_id = req.body[0];
@@ -75,4 +79,37 @@ export const updateFact = (req, res) => {
     );
   });
   res.sendStatus(200);
+};
+
+//add facts to table from general mashad nput.
+export const addFactGen = (req, res) => {
+  const completedArray = req.body[0];
+  const ttid = req.body[1];
+  const rid = req.body[2];
+
+  const sqlInsert =
+    "INSERT INTO fact(soldier_serial_id, test_type_id, role, date, question_id, score, parent_external_id) VALUES($1,$2,$3,$4,$5,$6,$7)";
+
+  for (const [keyQuestion, valQuestion] of Object.entries(completedArray)) {
+    for (const [keySol, valueAns] of Object.entries(valQuestion)) {
+      db.query(
+        sqlInsert,
+        [
+          keySol,
+          ttid,
+          rid,
+          new Date().toISOString().slice(0, 10),
+          keyQuestion,
+          valueAns ? 1 : 0,
+          null,
+        ],
+        (err, result) => {
+          if (err) {
+            console.log(err);
+          }
+        }
+      );
+    }
+  }
+  res.status(200).send("wrote to table");
 };
