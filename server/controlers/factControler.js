@@ -29,14 +29,14 @@ export const getFactsByTestId = (req, res) => {
   lastDay.setDate(lastDay.getDate() - 5);
   lastDay = lastDay.toISOString().slice(0, 10);
   const sqlGet =
-  "SELECT * FROM fact WHERE test_type_id=$1 AND  date BETWEEN $2 AND $3;";
-db.query(sqlGet, [ttid, lastDay, firstDay], (err, result) => {
-  if (err) {
-    console.log(err);
-    return res.status(402).json(err);
-  }
-  res.send(result.rows);
-});
+    "SELECT * FROM fact WHERE test_type_id=$1 AND  date BETWEEN $2 AND $3;";
+  db.query(sqlGet, [ttid, lastDay, firstDay], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(402).json(err);
+    }
+    res.send(result.rows);
+  });
 };
 
 //add new fact to table.
@@ -117,25 +117,63 @@ export const addFactGen = (req, res) => {
   const ttid = req.body[1];
   const rid = req.body[2];
 
+  var firstDay = new Date();
+  firstDay.setDate(firstDay.getDate() + 5);
+  firstDay = firstDay.toISOString().slice(0, 10);
+  var lastDay = new Date();
+  lastDay.setDate(lastDay.getDate() - 5);
+  lastDay = lastDay.toISOString().slice(0, 10);
+
   const sqlInsert =
     "INSERT INTO fact(soldier_serial_id, test_type_id, role, date, question_id, score, parent_external_id) VALUES($1,$2,$3,$4,$5,$6,$7)";
+
+  const sqlGet =
+    "SELECT * FROM fact WHERE soldier_serial_id=$1 AND question_id=$2 AND  date BETWEEN $3 AND $4;";
+
+  const sqlUpdate = "UPDATE Fact SET date=$1, score=$2 WHERE id = $3";
 
   for (const [keyQuestion, valQuestion] of Object.entries(completedArray)) {
     for (const [keySol, valueAns] of Object.entries(valQuestion)) {
       db.query(
-        sqlInsert,
-        [
-          keySol,
-          ttid,
-          rid,
-          new Date().toISOString().slice(0, 10),
-          keyQuestion,
-          valueAns ? 1 : 0,
-          null,
-        ],
+        sqlGet,
+        [keySol.toString(), keyQuestion, lastDay, firstDay],
         (err, result) => {
-          if (err) {
-            console.log(err);
+          if (err) console.log(err);
+
+          if (result.rowCount === 0) {
+            console.log(keySol, "no prev");
+            db.query(
+              sqlInsert,
+              [
+                keySol,
+                ttid,
+                rid,
+                new Date().toISOString().slice(0, 10),
+                keyQuestion,
+                valueAns ? 1 : 0,
+                null,
+              ],
+              (err, result) => {
+                if (err) {
+                  console.log(err);
+                }
+              }
+            );
+          } else {
+            console.log(keySol, "hasprev");
+            db.query(
+              sqlUpdate,
+              [
+                new Date().toISOString().slice(0, 10),
+                valueAns ? 1 : 0,
+                result.rows[0].id,
+              ],
+              (err, result) => {
+                if (err) {
+                  console.log(err);
+                }
+              }
+            );
           }
         }
       );

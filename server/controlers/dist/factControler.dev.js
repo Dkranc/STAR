@@ -117,24 +117,56 @@ var addFactGen = function addFactGen(req, res) {
   var completedArray = req.body[0];
   var ttid = req.body[1];
   var rid = req.body[2];
+  var firstDay = new Date();
+  firstDay.setDate(firstDay.getDate() + 5);
+  firstDay = firstDay.toISOString().slice(0, 10);
+  var lastDay = new Date();
+  lastDay.setDate(lastDay.getDate() - 5);
+  lastDay = lastDay.toISOString().slice(0, 10);
   var sqlInsert = "INSERT INTO fact(soldier_serial_id, test_type_id, role, date, question_id, score, parent_external_id) VALUES($1,$2,$3,$4,$5,$6,$7)";
+  var sqlGet = "SELECT * FROM fact WHERE soldier_serial_id=$1 AND question_id=$2 AND  date BETWEEN $3 AND $4;";
+  var sqlUpdate = "UPDATE Fact SET date=$1, score=$2 WHERE id = $3";
 
-  for (var _i = 0, _Object$entries = Object.entries(completedArray); _i < _Object$entries.length; _i++) {
+  var _loop = function _loop() {
     var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
         keyQuestion = _Object$entries$_i[0],
         valQuestion = _Object$entries$_i[1];
 
-    for (var _i2 = 0, _Object$entries2 = Object.entries(valQuestion); _i2 < _Object$entries2.length; _i2++) {
+    var _loop2 = function _loop2() {
       var _Object$entries2$_i = _slicedToArray(_Object$entries2[_i2], 2),
           keySol = _Object$entries2$_i[0],
           valueAns = _Object$entries2$_i[1];
 
-      _connectDB.db.query(sqlInsert, [keySol, ttid, rid, new Date().toISOString().slice(0, 10), keyQuestion, valueAns ? 1 : 0, null], function (err, result) {
-        if (err) {
-          console.log(err);
+      _connectDB.db.query(sqlGet, [keySol.toString(), keyQuestion, lastDay, firstDay], function (err, result) {
+        if (err) console.log(err);
+
+        if (result.rowCount === 0) {
+          console.log(keySol, "no prev");
+
+          _connectDB.db.query(sqlInsert, [keySol, ttid, rid, new Date().toISOString().slice(0, 10), keyQuestion, valueAns ? 1 : 0, null], function (err, result) {
+            if (err) {
+              console.log(err);
+            }
+          });
+        } else {
+          console.log(keySol, "hasprev");
+
+          _connectDB.db.query(sqlUpdate, [new Date().toISOString().slice(0, 10), valueAns ? 1 : 0, result.rows[0].id], function (err, result) {
+            if (err) {
+              console.log(err);
+            }
+          });
         }
       });
+    };
+
+    for (var _i2 = 0, _Object$entries2 = Object.entries(valQuestion); _i2 < _Object$entries2.length; _i2++) {
+      _loop2();
     }
+  };
+
+  for (var _i = 0, _Object$entries = Object.entries(completedArray); _i < _Object$entries.length; _i++) {
+    _loop();
   }
 
   res.status(200).send("wrote to table");

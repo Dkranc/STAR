@@ -42,7 +42,6 @@ const GeneralInput = ({ questions, categories }) => {
             sol[1].serial_id.toString() === fact.soldier_serial_id &&
             question.id === fact.question_id
           ) {
-            console.log(fact.score === 1);
             dict2[sol[1].serial_id] = fact.score === 1 ? true : false;
           } else {
             dict2[sol[1].serial_id] = false;
@@ -54,7 +53,6 @@ const GeneralInput = ({ questions, categories }) => {
       dict3[question.id] = dict2;
     });
 
-    console.log(dict3);
     setCheckedArray(dict3);
     setLoaded(true);
   }, [loaded]);
@@ -66,6 +64,11 @@ const GeneralInput = ({ questions, categories }) => {
 
     questions.map((question) => {
       var dict2 = {};
+
+      soldiers.map((sol) => {
+        dict2[sol[1].serial_id] = false;
+      });
+
       soldiers.map((sol) => {
         // this sets the initial checkbox fileds
 
@@ -75,18 +78,14 @@ const GeneralInput = ({ questions, categories }) => {
             sol[1].serial_id.toString() === fact.soldier_serial_id &&
             question.id === fact.question_id
           ) {
-            dict2[sol[1].serial_id] = fact.score === 1 ? true : false;
-          } else {
-            dict2[sol[1].serial_id] = false;
+            dict2[sol[1].serial_id] = fact.score === 1;
           }
         });
       });
-
       // this sets the initial answers object to empty strings
       dict3[question.id] = dict2;
       dict2 = null;
     });
-    console.log(factsFromTestType);
     setCheckedArray(dict3);
     setLoaded(true);
   };
