@@ -8,10 +8,14 @@ import Questionary from "./pages/Questionary";
 import TestType from "./pages/TestType";
 import SelectSoldiers from "./pages/SelectSoldiers";
 import ChooseRole from "./pages/ChooseRole";
-import GeneralInput from "./pages/GeneralInput";
+import jwtDecode from "jwt-decode";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(
+    sessionStorage.getItem("token") !== null
+      ? jwtDecode(jwtDecode(sessionStorage.getItem("token")).secret)
+      : null
+  );
 
   return (
     <div className="App">
@@ -22,16 +26,10 @@ function App() {
           alt=""
         />
         <Routes>
-          {isAuthenticated ? (
-            <Route
-              path="/"
-              element={<Home setIsAuthenticated={setIsAuthenticated} />}
-            />
+          {user !== null ? (
+            <Route path="/" element={<Home setUser={setUser} user={user} />} />
           ) : (
-            <Route
-              path="/"
-              element={<Login setIsAuthenticated={setIsAuthenticated} />}
-            />
+            <Route path="/" element={<Login setUser={setUser} />} />
           )}
           <Route
             path="/SelectSoldiers/:rid/TestType/Questionary/:ttid"

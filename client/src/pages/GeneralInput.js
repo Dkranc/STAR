@@ -13,12 +13,18 @@ const GeneralInput = ({ questions, categories }) => {
   const params = useParams();
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/api/general/soldier`).then((response) => {
-      setSoldiers(Object.entries(response.data));
-    });
+    axios
+      .get(`http://localhost:8080/api/general/soldier`, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
+      .then((response) => {
+        setSoldiers(Object.entries(response.data));
+      });
 
     axios
-      .get(`http://localhost:8080/api/tests/fact/${params.ttid}`)
+      .get(`http://localhost:8080/api/tests/fact/${params.ttid}`, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
       .then((response) => {
         setFactFromTestType(response.data);
       });
@@ -92,11 +98,11 @@ const GeneralInput = ({ questions, categories }) => {
 
   const sendClicked = () => {
     axios
-      .post("http://localhost:8080/api/tests/fact/generalInput", [
-        checkedArray,
-        params.ttid,
-        params.rid,
-      ])
+      .post(
+        "http://localhost:8080/api/tests/fact/generalInput",
+        [checkedArray, params.ttid, params.rid],
+        { headers: { token: sessionStorage.getItem("token") } }
+      )
       .then((response) => {
         navigate(`/`);
       });

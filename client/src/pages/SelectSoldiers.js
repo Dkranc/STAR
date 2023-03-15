@@ -14,7 +14,7 @@ const SelectSoldiers = () => {
   const params = useParams();
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/api/general/soldier`).then((response) => {
+    axios.get(`http://localhost:8080/api/general/soldier`,{headers:{token:sessionStorage.getItem('token')}}).then((response) => {
       setSoldiers(Object.entries(response.data));
       if (soldier !== 0) {
         if (Object.keys(params).length > 0) {

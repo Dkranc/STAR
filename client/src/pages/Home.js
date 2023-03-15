@@ -1,21 +1,22 @@
-import { React, useState, useEffect } from "react";
+import { React } from "react";
 import "./Home.css";
 import Welcome from "../components/Welcome";
 import NavBar from "../components/NavBar";
 import { useNavigate } from "react-router-dom";
 
-const Home = ({ setIsAuthenticated }) => {
-  const [roles, setRoles] = useState([
+const Home = ({ setUser, user }) => {
+  const roles = [
     { name: "מפקד", id: 1 },
     { name: "תותחן", id: 2 },
     { name: "טען", id: 3 },
     { name: "נהג", id: 4 },
     { name: "הזנת הערכת משהד", id: 5 },
-  ]);
+  ];
 
   const navigate = useNavigate();
 
-  const userRole = sessionStorage.getItem("role");
+
+  const userRole = user.roles[0];
 
   const handleMashadTestClicked = (e) => {
     navigate("/MyTrainees", {
@@ -29,7 +30,7 @@ const Home = ({ setIsAuthenticated }) => {
     <div dir="rtl">
       <NavBar />
       <div id="role-btns">
-        <Welcome setIsAuthenticated={setIsAuthenticated} />
+        <Welcome setUser={setUser} user={user} />
         {roles.map((role) => {
           if (role.id === 5) {
             if (userRole === "User.Mashad" || userRole === "User.Admin") {

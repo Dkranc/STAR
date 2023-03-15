@@ -2,30 +2,26 @@ import { React, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import BarChartIcon from "@mui/icons-material/BarChart";
 
-const Welcome = ({ isAuthenticated }) => {
+const Welcome = ({ setUser, user }) => {
   const [openOptionTab, setOpenOptionTab] = useState(false);
 
-  const userRole = sessionStorage.getItem("role");
   var usrRoleInHebrew = "";
-  if (userRole === "User.Admin") usrRoleInHebrew = "מנהל";
-  if (userRole === "User.Instructor") usrRoleInHebrew = "מדריך/חונך/בוחן";
-  if (userRole === "User.Mashad") usrRoleInHebrew = "משהד";
 
-  const userJson = sessionStorage.getItem("user");
-  const user = JSON.parse(userJson)
+  if (user.roles[0] === "User.Admin") usrRoleInHebrew = "מנהל";
+  if (user.roles[0] === "User.Instructor") usrRoleInHebrew = "מדריך/חונך/בוחן";
+  if (user.roles[0] === "User.Mashad") usrRoleInHebrew = "משהד";
 
   const logout = () => {
-    isAuthenticated(false);
+    setUser(null);
+    sessionStorage.removeItem("user");
     //need to navigate to login page
-    //and logout of public client
-    // and clear the storage
   };
 
   return (
     <div>
       <div id="top-bar">
         <h4>שלום {user.name} </h4>
-        {userRole=='User.Mashad' ? <BarChartIcon /> : null}
+        {user.roles[0] == "User.Mashad" ? <BarChartIcon /> : null}
         <MenuIcon
           onClick={() => {
             setOpenOptionTab(!openOptionTab);

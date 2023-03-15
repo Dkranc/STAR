@@ -38,16 +38,20 @@ const Questionary = ({ soldier }) => {
       if (!previuoslySubmited) {
         //if this is the first submit for the soldier
         axios
-          .post(`http://localhost:8080/api/tests/fact`, [
-            soldier.serial_id,
-            params.ttid,
-            params.rid,
-            new Date().toISOString().slice(0, 10),
-            questions,
-            Object.values(answers),
-            null, //parent batalion id- need to change
-            Object.values(comments),
-          ])
+          .post(
+            `http://localhost:8080/api/tests/fact`,
+            [
+              soldier.serial_id,
+              params.ttid,
+              params.rid,
+              new Date().toISOString().slice(0, 10),
+              questions,
+              Object.values(answers),
+              null, //parent batalion id- need to change
+              Object.values(comments),
+            ],
+            { headers: { token: sessionStorage.getItem("token") } }
+          )
           .then((response) => {
             navigate(`/`);
           });
@@ -63,11 +67,15 @@ const Questionary = ({ soldier }) => {
         });
         setFacts(oldFacts);
         axios
-          .post(`http://localhost:8080/api/tests/fact/update`, [
-            facts,
-            Object.values(comments),
-            new Date().toISOString().slice(0, 10),
-          ])
+          .post(
+            `http://localhost:8080/api/tests/fact/update`,
+            [
+              facts,
+              Object.values(comments),
+              new Date().toISOString().slice(0, 10),
+            ],
+            { headers: { token: sessionStorage.getItem("token") } }
+          )
           .then((response) => {
             navigate(`/`);
           });
@@ -77,7 +85,9 @@ const Questionary = ({ soldier }) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/api/tests/question/${params.ttid}`)
+      .get(`http://localhost:8080/api/tests/question/${params.ttid}`, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
       .then((response) => {
         setCategories(
           response.data.filter((item) => {
@@ -95,7 +105,8 @@ const Questionary = ({ soldier }) => {
     if (sol !== undefined) {
       axios
         .get(
-          `http://localhost:8080/api/tests/fact/${sol.serial_id}/${params.ttid}`
+          `http://localhost:8080/api/tests/fact/${sol.serial_id}/${params.ttid}`,
+          { headers: { token: sessionStorage.getItem("token") } }
         )
         .then((response) => {
           if (response.data.length > 0) {
