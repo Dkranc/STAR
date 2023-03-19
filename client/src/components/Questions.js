@@ -18,6 +18,7 @@ const Questions = ({
     var dict2 = {};
     questions.map((question) => {
       // this sets the initial answers object to empty strings
+      console.log(categories);
       dict2[question.name] = "";
     });
 
