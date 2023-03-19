@@ -18,7 +18,9 @@ const TestType = () => {
       setLoaded(true);
     } else {
       axios
-        .get(`http://localhost:8080/api/tests/test_types/${params.rid}`)
+        .get(`http://localhost:8080/api/tests/test_types/${params.rid}`, {
+          headers: { token: sessionStorage.getItem("token") },
+        })
         .then((response) => {
           setTests(response.data);
           setLoaded(true);
@@ -28,21 +30,21 @@ const TestType = () => {
 
   const handleTestChosen = (testId) => {
     if (location.state.soldier !== undefined) {
+      navigate(`/SelectSoldiers/${params.rid}/TestType/Questionary/${testId}`, {
+        state: {
+          soldier: location.state.soldier,
+          isMashad: location.state.isMashad,
+        },
+      });
+    } else {
       navigate(
-        `/SelectSoldiers/${params.rid}/TestType/Questionary/${testId}`,
+        `/GeneralInput/ChooseRole/${params.rid}/TestType/Questionary/${testId}`,
         {
           state: {
-            soldier: location.state.soldier,
-            isMashad: location.state.isMashad,
+            soldier: undefined,
           },
         }
       );
-    } else {
-      navigate(`/GeneralInput/ChooseRole/${params.rid}/TestType/Questionary/${testId}`, {
-        state: {
-          soldier: undefined,
-        },
-      });
     }
   };
 

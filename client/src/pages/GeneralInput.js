@@ -8,13 +8,26 @@ const GeneralInput = ({ questions, categories }) => {
   const [showQuestions, setShowQuestions] = useState({});
   const [loaded, setLoaded] = useState(false);
   const [checkedArray, setCheckedArray] = useState(false);
+  const [factsFromTestType, setFactFromTestType] = useState([]);
   const navigate = useNavigate();
   const params = useParams();
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/api/general/soldier`).then((response) => {
-      setSoldiers(Object.entries(response.data));
-    });
+    axios
+      .get(`http://localhost:8080/api/general/soldier`, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
+      .then((response) => {
+        setSoldiers(Object.entries(response.data));
+      });
+
+    axios
+      .get(`http://localhost:8080/api/tests/fact/${params.ttid}`, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
+      .then((response) => {
+        setFactFromTestType(response.data);
+      });
 
     var dict = {};
     questions.map((question) => {
@@ -23,14 +36,25 @@ const GeneralInput = ({ questions, categories }) => {
     });
     setShowQuestions(dict);
 
-    var dict2 = {};
-    soldiers.map((sol) => {
-      // this sets the initial checkbox fileds to false
-      dict2[sol[1].serial_id] = false;
-    });
-
     var dict3 = {};
+
     questions.map((question) => {
+      var dict2 = {};
+      soldiers.map((sol) => {
+        // this sets the initial checkbox fileds
+
+        factsFromTestType.map((fact) => {
+          if (
+            sol[1].serial_id.toString() === fact.soldier_serial_id &&
+            question.id === fact.question_id
+          ) {
+            dict2[sol[1].serial_id] = fact.score === 1 ? true : false;
+          } else {
+            dict2[sol[1].serial_id] = false;
+          }
+        });
+      });
+
       // this sets the initial answers object to empty strings
       dict3[question.id] = dict2;
     });
@@ -41,29 +65,44 @@ const GeneralInput = ({ questions, categories }) => {
 
   const update = () => {
     setLoaded(false);
-    var dict2 = {};
-    soldiers.map((sol) => {
-      // this sets the initial checkbox fileds to false
-      dict2[sol[1].serial_id] = false;
-    });
 
     var dict3 = {};
+
     questions.map((question) => {
+      var dict2 = {};
+
+      soldiers.map((sol) => {
+        dict2[sol[1].serial_id] = false;
+      });
+
+      soldiers.map((sol) => {
+        // this sets the initial checkbox fileds
+
+        factsFromTestType.map((fact) => {
+          /// need to fix here so we can get questions with the answers in advance.
+          if (
+            sol[1].serial_id.toString() === fact.soldier_serial_id &&
+            question.id === fact.question_id
+          ) {
+            dict2[sol[1].serial_id] = fact.score === 1;
+          }
+        });
+      });
       // this sets the initial answers object to empty strings
       dict3[question.id] = dict2;
+      dict2 = null;
     });
-
     setCheckedArray(dict3);
     setLoaded(true);
   };
 
   const sendClicked = () => {
     axios
-      .post("http://localhost:8080/api/tests/fact/generalInput", [
-        checkedArray,
-        params.ttid,
-        params.rid,
-      ])
+      .post(
+        "http://localhost:8080/api/tests/fact/generalInput",
+        [checkedArray, params.ttid, params.rid],
+        { headers: { token: sessionStorage.getItem("token") } }
+      )
       .then((response) => {
         navigate(`/`);
       });
@@ -97,7 +136,6 @@ const GeneralInput = ({ questions, categories }) => {
   };
 
   const checkBoxChanged = (e) => {
-    console.log(checkedArray);
     var newSolCompleteList = {
       ...checkedArray[e.target.value[0]],
       [e.target.value.slice(2)]:

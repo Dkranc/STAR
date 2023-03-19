@@ -7,9 +7,10 @@ import Questionary from "./pages/Questionary";
 import TestType from "./pages/TestType";
 import SelectSoldiers from "./pages/SelectSoldiers";
 import ChooseRole from "./pages/ChooseRole";
-import GeneralInput from "./pages/GeneralInput";
+import jwtDecode from "jwt-decode";
 import ToggleThemeButton from "./components/ToggleThemeButton";
 import Image from "./image/background.png"; // Import using relative path
+import Charts from "./pages/Charts";
 //import mui
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -18,23 +19,22 @@ import Box from "@mui/material/Box";
 //import images
 import lightModeLogo from "./image/logoLightMode.png";
 
-
-
-
 //theme
 import { themeLight, themeDark } from "./theme.js";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(
+    sessionStorage.getItem("token") !== null
+      ? jwtDecode(jwtDecode(sessionStorage.getItem("token")).secret)
+      : null
+  );
   //test - check isAuthenticated change value
-  useEffect(() => console.log("isAuthenticated value:",isAuthenticated), [isAuthenticated]);
-
 
   const [light, setLight] = useState(true);
 
-  const changeState = () =>{
-    setLight((prev) => !prev)
-  }
+  const changeState = () => {
+    setLight((prev) => !prev);
+  };
 
   return (
     <ThemeProvider theme={light ? themeLight : themeDark}>
@@ -42,60 +42,117 @@ function App() {
       {/* <ToggleThemeButton changeState={changeState} lightState={light}/> */}
       <div className="App">
         <BrowserRouter>
-          {/* <img
-          className="demo-bg"
-          src=" http://1.bp.blogspot.com/-BInHLTLYcSY/U9CdS4qEBoI/AAAAAAAAAac/Rt3ynw8GBy4/s1600/4.jpg"
-          alt=""
-        /> */}
-          <Routes>
-            {isAuthenticated ? (
+          {user === null ? (
+            <Routes>
               <Route
                 path="/"
-                element={<Home setIsAuthenticated={setIsAuthenticated} lightState={light}/>}
+                element={<Login setUser={setUser} lightState={light} />}
               />
-            ) : (
+
+              <Route
+                path="/SelectSoldiers/:rid/TestType/Questionary/:ttid"
+                element={<Login setUser={setUser} lightState={light} />}
+              />
+              <Route
+                path="/GeneralInput/ChooseRole/:rid/TestType/Questionary/:ttid"
+                element={<Login setUser={setUser} lightState={light} />}
+              />
+
+              <Route
+                path="/SelectSoldiers/:rid/TestType"
+                element={<Login setUser={setUser} lightState={light} />}
+              />
+
+              <Route
+                path="/SelectSoldiers/:rid"
+                element={<Login setUser={setUser} lightState={light} />}
+              />
+              <Route
+                path="/MyTrainees"
+                element={<Login setUser={setUser} lightState={light} />}
+              />
+              <Route
+                path="/MyTrainees/ChooseRole"
+                element={<Login setUser={setUser} lightState={light} />}
+              />
+              <Route
+                path="/GeneralInput/ChooseRole"
+                element={<Login setUser={setUser} lightState={light} />}
+              />
+              <Route
+                path="/GeneralInput/ChooseRole/:rid/TestType"
+                element={<Login setUser={setUser} lightState={light} />}
+              />
+              <Route
+                path="/TestType/:ttid/Questionary/:qid"
+                element={<Login setUser={setUser} lightState={light} />}
+              />
+              <Route
+                path="/Charts"
+                element={<Login setUser={setUser} lightState={light} />}
+              />
+            </Routes>
+          ) : (
+            <Routes>
               <Route
                 path="/"
-                element={<Login setIsAuthenticated={setIsAuthenticated} lightState={light} />}
+                element={
+                  <Home setUser={setUser} user={user} lightState={light} />
+                }
               />
-            )}
-            <Route
-              path="/SelectSoldiers/:rid/TestType/Questionary/:ttid"
-              element={<Questionary />}
-            />
-            <Route
-              path="/GeneralInput/ChooseRole/:rid/TestType/Questionary/:ttid"
-              element={<Questionary />}
-            />
+              <Route
+                path="/SelectSoldiers/:rid/TestType/Questionary/:ttid"
+                element={<Questionary />}
+              />
+              <Route
+                path="/GeneralInput/ChooseRole/:rid/TestType/Questionary/:ttid"
+                element={<Questionary />}
+              />
 
-            <Route
-              path="/SelectSoldiers/:rid/TestType"
-              element={<TestType />}
-            />
+              <Route
+                path="/SelectSoldiers/:rid/TestType"
+                element={<TestType />}
+              />
 
-            <Route path="/SelectSoldiers/:rid" element={<SelectSoldiers />} />
-            <Route path="/MyTrainees" element={<SelectSoldiers />} />
-            <Route path="/MyTrainees/ChooseRole" element={<ChooseRole />} />
-            <Route path="/GeneralInput/ChooseRole" element={<ChooseRole />} />
-            <Route
-              path="/GeneralInput/ChooseRole/:rid/TestType"
-              element={<TestType />}
-            />
-          </Routes>
+              <Route path="/SelectSoldiers/:rid" element={<SelectSoldiers />} />
+              <Route path="/MyTrainees" element={<SelectSoldiers />} />
+              <Route
+                path="/MyTrainees/ChooseRole"
+                element={<ChooseRole user={user} />}
+              />
+              <Route
+                path="/GeneralInput/ChooseRole"
+                element={<ChooseRole user={user} />}
+              />
+              <Route
+                path="/GeneralInput/ChooseRole/:rid/TestType"
+                element={<TestType />}
+              />
+              <Route
+                path="/Charts/ChooseRole"
+                element={<ChooseRole user={user} />}
+              />
+              <Route path="/Charts/:rid/Graphs" element={<Charts />} />
+            </Routes>
+          )}
         </BrowserRouter>
-        {isAuthenticated ? (<Box  
-        display="flex"
-        justifyContent="center"
-        alignItems="center"><Box
-        component="img"
-        sx={{
-          height: 63,
-          width: 84,
-          maxWidth: { xs: 84, md: 84 },
-          maxHeight: { xs: 63, md: 63 },
-        }}
-        alt="The house from the offer."
-        src={lightModeLogo} /></Box>):<Box/>}
+        {user !== null ? (
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Box
+              component="img"
+              sx={{
+                height: 63,
+                width: 84,
+                maxWidth: { xs: 84, md: 84 },
+                maxHeight: { xs: 63, md: 63 },
+              }}
+              alt="The house from the offer."
+              src={lightModeLogo}
+            />
+          </Box>
+        ) : (
+          <Box />
+        )}
       </div>
     </ThemeProvider>
   );

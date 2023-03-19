@@ -1,8 +1,9 @@
-import { React, useEffect, useState } from "react";
+import { React, useState } from "react";
 import Config from "../Config";
 import { PublicClientApplication } from "@azure/msal-browser";
 import jwtDecode from "jwt-decode";
-//import "./Login.css";
+//import axios from "axios";
+import "./Login.css";
 //mui imports
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -14,11 +15,13 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { ThemeProvider } from "@mui/material/styles";
 
+import axios from "axios";
+
 //import Images
 import lightModeLogo from "../image/logoLightMode.png";
 import darkModeLogo from "../image/logoDarkMode.png";
 
-const Login = ({ setIsAuthenticated, lightState }) => {
+const Login = ({ setUser, lightState }) => {
   const [goodLogin, setGoodLogin] = useState(false);
   const PubClientApp = new PublicClientApplication({
     auth: {
@@ -32,52 +35,37 @@ const Login = ({ setIsAuthenticated, lightState }) => {
     },
   });
 
-  useEffect(() => {
-    if (goodLogin) setIsAuthenticated(true);
-  }, [goodLogin]);
-
   const login = async () => {
     try {
       await PubClientApp.loginPopup({
         scopes: Config.scopes,
         prompt: "select_account",
       });
-      setGoodLogin(true);
 
-      Object.values(sessionStorage).map((item) => {
-        var unset = true;
+      Object.entries(sessionStorage).forEach(([key, item]) => {
         try {
           var parsedItem = JSON.parse(item);
           var secret = "";
-          var user = {};
-          if (parsedItem.secret != null && unset) {
-            secret = jwtDecode(parsedItem.secret);
-            console.log(secret.roles[0]);
-            sessionStorage.setItem("role", secret.roles[0]);
-            unset = false;
-          }
 
-          if (parsedItem.name != null) {
-            user = parsedItem;
-            sessionStorage.setItem("user", JSON.stringify(user));
-            console.log(user);
+          if (key.includes("idtoken")) {
+            secret = parsedItem.secret;
+            //set the token for sending requests
+            axios
+              .post(`http://localhost:8080/api/general/login`, [secret])
+              .then((response) => {
+                console.log(response.data);
+                sessionStorage.setItem("token", response.data);
+                setUser(jwtDecode(jwtDecode(response.data).secret));
+              });
           }
         } catch (err) {}
       });
     } catch (err) {}
   };
 
-  const logout = () => {
-    PubClientApp.logout();
-    setIsAuthenticated(false);
-  };
-
   return (
     <ThemeProvider>
       <div id="login-page">
-        {sessionStorage.getItem("role") != null
-          ? setIsAuthenticated(true)
-          : null}
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Box
@@ -92,22 +80,28 @@ const Login = ({ setIsAuthenticated, lightState }) => {
             <LockOutlinedIcon />
           </Avatar> */}
             <img src={lightState ? lightModeLogo : darkModeLogo} alt="" />
-            <Box
-
-              noValidate
-              sx={{ mt: 1 }}
-            >
+            <Box noValidate sx={{ mt: 1 }}>
               <Button
                 onClick={login}
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2, borderRadius: 30 ,fontFamily: "Bold",fontSize:'25px'}}
+                sx={{
+                  mt: 3,
+                  mb: 2,
+                  borderRadius: 30,
+                  fontFamily: "Bold",
+                  fontSize: "25px",
+                }}
                 color={lightState ? "success" : "info"}
               >
                 התחברות
               </Button>
-              <Typography sx={{ mt: 8, mb: 4, fontFamily: "Light" }} variant="body1" align="center">
+              <Typography
+                sx={{ mt: 8, mb: 4, fontFamily: "Light" }}
+                variant="body1"
+                align="center"
+              >
                 פותח ע"י חט"ל - ב"ז{" "}
               </Typography>
             </Box>

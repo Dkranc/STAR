@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import { React, useState } from "react";
 import "./Home.css";
 import Welcome from "../components/Welcome";
 import NavBar from "../components/NavBar";
@@ -6,8 +6,8 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 
-const pageName="ראשי - מדריך" //presented page name
-const Home = ({ setIsAuthenticated , lightState}) => {
+const pageName = "ראשי - מדריך"; //presented page name
+const Home = ({ user, setUser, lightState }) => {
   const [roles, setRoles] = useState([
     { name: "מפקד", id: 1 },
     { name: "תותחן", id: 2 },
@@ -18,7 +18,7 @@ const Home = ({ setIsAuthenticated , lightState}) => {
 
   const navigate = useNavigate();
 
-  const userRole = sessionStorage.getItem("role");
+  const userRole = user.roles[0];
 
   const handleMashadTestClicked = (e) => {
     navigate("/MyTrainees", {
@@ -27,27 +27,35 @@ const Home = ({ setIsAuthenticated , lightState}) => {
       },
     });
   };
- 
+
   return (
     <div dir="rtl">
-      <NavBar pageName={pageName} setIsAuthenticated={setIsAuthenticated}/>
-      <Box sx={{
-            padding:'32px',
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}>
-        <Welcome setIsAuthenticated={setIsAuthenticated} />
+      <NavBar pageName={pageName} />
+      <Box
+        sx={{
+          padding: "32px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Welcome setUser={setUser} user={user} />
         {roles.map((role) => {
           if (role.id === 5) {
             if (userRole === "User.Mashad" || userRole === "User.Admin") {
               return (
                 <Button
-                fullWidth
-                type="submit"
-                variant="contained"
-                sx={{width:'100%',mt: 3, mb: 2, borderRadius: 30 , fontFamily: "Bold"}}
-                color={lightState ? "success" : "info"}
+                  fullWidth
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    width: "100%",
+                    mt: 3,
+                    mb: 2,
+                    borderRadius: 30,
+                    fontFamily: "Bold",
+                  }}
+                  color={lightState ? "success" : "info"}
                   key={role.id}
                   onClick={(e) => handleMashadTestClicked(e)}
                 >
@@ -59,13 +67,18 @@ const Home = ({ setIsAuthenticated , lightState}) => {
           } else
             return (
               <Button
-              
-              type="submit"
-              variant="contained"
-              sx={{width:'100%', mt: 3, mb: 2, borderRadius: 30 ,fontFamily: "Bold"}}
-              color={lightState ? "success" : "info"}
-              onClick={() => navigate(`/SelectSoldiers/${role.id}`)}
-              key={role.id}
+                type="submit"
+                variant="contained"
+                sx={{
+                  width: "100%",
+                  mt: 3,
+                  mb: 2,
+                  borderRadius: 30,
+                  fontFamily: "Bold",
+                }}
+                color={lightState ? "success" : "info"}
+                onClick={() => navigate(`/SelectSoldiers/${role.id}`)}
+                key={role.id}
               >
                 {role.name}
               </Button>

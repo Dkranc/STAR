@@ -1,18 +1,19 @@
 import { React, useEffect, useState } from "react";
 import axios from "axios";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import NavBar from "../components/NavBar";
 //mui
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
+
 const ChooseRole = () => {
-  const [roles, setRoles] = useState([
+  const roles = [
     { name: "מפקד", id: 1 },
     { name: "תותחן", id: 2 },
     { name: "טען", id: 3 },
     { name: "נהג", id: 4 },
-  ]);
+  ];
   const navigate = useNavigate();
   const location = useLocation();
   const [mashadTests, setMashadTests] = useState([]);
@@ -43,7 +44,8 @@ const ChooseRole = () => {
   const handleRoleChosen = (e) => {
     axios
       .get(
-        `http://localhost:8080/api/tests/test_types/mashad/${e.target.value}`
+        `http://localhost:8080/api/tests/test_types/mashad/${e.target.value}`,
+        { headers: { token: sessionStorage.getItem("token") } }
       )
       .then((response) => {
         setMashadTests(response.data);

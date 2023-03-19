@@ -32,7 +32,7 @@ router.get("/question/:ttid", _questionControler.getQuestionsByParentId);
 /** Fact */
 // get a fact by soldier serial id
 
-router.get("/fact/:ssid/:ttid", _factControler.getFact); // get a facts by test type id
+router.get("/fact/:ssid/:ttid", _factControler.getFact); // get facts by test type id
 
 router.get("/fact/:ttid", _factControler.getFactsByTestId); //add a fact
 
