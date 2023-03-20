@@ -17,3 +17,8 @@ ul:focus{
     background-color: grey;
     cursor:pointer;
 }
+
+.MuiOutlinedInput-notchedOutline {
+
+  border-radius: 30px !important;
+}

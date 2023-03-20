@@ -33,7 +33,8 @@ const Home = ({ user, setUser, lightState }) => {
       <NavBar pageName={pageName} />
       <Box
         sx={{
-          padding: "32px",
+          paddingY:"16px",
+          paddingX: "32px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -46,16 +47,19 @@ const Home = ({ user, setUser, lightState }) => {
               return (
                 <Button
                   fullWidth
-                  type="submit"
-                  variant="contained"
+                  variant="outlined"
                   sx={{
+                    fontSize:"25px",
+                    borderColor:"#2ED573",
+                    color:"rgb(0,0,0)",
+                    background:"white",
+                    boxShadow:"inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
                     width: "100%",
-                    mt: 3,
-                    mb: 2,
+                    mt:2,
                     borderRadius: 30,
                     fontFamily: "Bold",
                   }}
-                  color={lightState ? "success" : "info"}
+                  // color={lightState ? "success" : "info"}
                   key={role.id}
                   onClick={(e) => handleMashadTestClicked(e)}
                 >
@@ -67,16 +71,18 @@ const Home = ({ user, setUser, lightState }) => {
           } else
             return (
               <Button
-                type="submit"
-                variant="contained"
+                variant="outlined"
                 sx={{
+                  fontSize:"25px",
+                  borderColor:"#2ED573",
+                  color:"rgb(0,0,0)",
+                  background:"white",
+                  boxShadow:"inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
                   width: "100%",
-                  mt: 3,
-                  mb: 2,
+                  mt:2,
                   borderRadius: 30,
                   fontFamily: "Bold",
                 }}
-                color={lightState ? "success" : "info"}
                 onClick={() => navigate(`/SelectSoldiers/${role.id}`)}
                 key={role.id}
               >

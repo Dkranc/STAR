@@ -3,6 +3,11 @@ import axios from "axios";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import NavBar from "../components/NavBar";
 
+//mui
+import { Button } from "@mui/material";
+import { Box } from "@mui/system";
+import {CircularProgress} from "@mui/material";
+
 const TestType = () => {
   const navigate = useNavigate();
 
@@ -50,30 +55,41 @@ const TestType = () => {
 
   return (
     <div className="test-types">
-      <NavBar />
-      {location.state.soldier !== undefined ? (
-        <h2>
-          בחר מבחן עבור: <span>{location.state.soldier.full_name}</span>
-        </h2>
-      ) : (
-        <h2>בחר מבחן כללי לביצוע</h2>
-      )}
-
+      <NavBar pageName={`בחר מבחן עבור: ${location.state.soldier !== undefined ? location.state.soldier.full_name : "בחר מבחן כללי"}`}/>
       {loaded ? (
         tests.map((test) => {
           return (
-            <button
+            <Box sx={{display:"flex",justifyContent:"center"}}>
+            <Button
               onClick={() => handleTestChosen(test.id)}
-              className="test-type-btn"
+              // className="test-type-btn"
+              type="submit"
+              variant="outlined"
+              sx={{
+                marginX:"10%",
+                fontSize:"22px",
+                borderColor:"#2ED573",
+                color:"rgb(0,0,0)",
+                background:"white",
+                boxShadow:"inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+                width: "100%",
+                mt:2,
+                borderRadius: 30,
+                fontFamily: "Bold",
+              }}
+              color={"success"}
               key={test.id}
               value={test.name}
             >
               {test.name}
-            </button>
+            </Button>
+            </Box>
           );
         })
       ) : (
-        <p>loding...</p>
+        <Box sx={{display:"flex",justifyContent:"center"}}>
+        <CircularProgress color="success" />
+        </Box>
       )}
     </div>
   );

@@ -5,6 +5,9 @@ import axios from "axios";
 import Questions from "../components/Questions";
 import NavBar from "../components/NavBar";
 import GeneralInput from "./GeneralInput";
+//mui
+import { Button, Typography } from "@mui/material";
+import { Box } from "@mui/system";
 
 const Questionary = ({ soldier }) => {
   const params = useParams();
@@ -143,13 +146,19 @@ const Questionary = ({ soldier }) => {
 
   return (
     <div>
-      <NavBar />
+      <NavBar pageName={"תרחיש האימון"}/>
       {sol !== undefined ? (
-        <div>
-          {" "}
+        <Box dir="rtl" sx={{paddingX:"10%"}}>
+          <Typography fontFamily={"Regular"} fontSize={"22px"}>
+      {"תרחיש אימון עבור"}
+          </Typography>
+          <Typography fontFamily={"ExtraBold"} fontSize={"22px"}>
+            {sol.full_name}
+          </Typography>
+          {/* {" "}
           <div id="soldier-info">
             <h1 dir="rtl">{sol.full_name}</h1>
-          </div>
+          </div> */}
           <Questions
             questions={questions}
             categories={categories}
@@ -160,10 +169,18 @@ const Questionary = ({ soldier }) => {
             isMashadTest={isMashadTest}
             loaded={loaded}
           />
-          <button id="submit" onClick={(e) => handleSubmit(e)}>
-            שלח
-          </button>
-        </div>
+          <Box sx={{display:"flex",justifyContent:"center"}}>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{width:'50%', mt: 3, mb: 2, borderRadius: 30 ,fontFamily: "Bold"}}
+            color={"success"}
+            id="submit" onClick={(e) => handleSubmit(e)}>
+            שלח 
+          </Button>
+          </Box>
+
+          </Box>
       ) : (
         <GeneralInput questions={questions} categories={categories} />
       )}
