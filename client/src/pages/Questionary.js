@@ -155,10 +155,6 @@ const Questionary = ({ soldier }) => {
           <Typography fontFamily={"ExtraBold"} fontSize={"22px"}>
             {sol.full_name}
           </Typography>
-          {/* {" "}
-          <div id="soldier-info">
-            <h1 dir="rtl">{sol.full_name}</h1>
-          </div> */}
           <Questions
             questions={questions}
             categories={categories}

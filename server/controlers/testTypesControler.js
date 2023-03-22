@@ -1,7 +1,7 @@
 import { db } from "../connectDB.js";
 import jwt from "jsonwebtoken";
 
-//get  all the test types (only four- static)
+//get   test type by id
 export const getTestTypesById = (req, res) => {
   try {
     jwt.verify(req.headers.token, "9809502");
@@ -9,6 +9,21 @@ export const getTestTypesById = (req, res) => {
     const sqlGet =
       "SELECT * FROM test_type WHERE role_id= $1 AND is_mashad_test= false";
     db.query(sqlGet, [rrid], (err, result) => {
+      if (err) return res.status(402).json(err);
+      res.send(result.rows);
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+//get  all the test types 
+export const getTestTypes = (req, res) => {
+  try {
+    jwt.verify(req.headers.token, "9809502");
+    const sqlGet =
+      "SELECT * FROM test_type;";
+    db.query(sqlGet,  (err, result) => {
       if (err) return res.status(402).json(err);
       res.send(result.rows);
     });

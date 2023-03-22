@@ -26,6 +26,30 @@ export const getFact = (req, res) => {
   }
 };
 
+export const getFactsByRolesId = (req, res) => {
+  try {
+    jwt.verify(req.headers.token, "9809502");
+    const { rid } = req.params;
+    var firstDay = new Date();
+    firstDay.setDate(firstDay.getDate() + 5);
+    firstDay = firstDay.toISOString().slice(0, 10);
+    var lastDay = new Date();
+    lastDay.setDate(lastDay.getDate() - 5);
+    lastDay = lastDay.toISOString().slice(0, 10);
+    const sqlGet =
+      "SELECT * FROM fact WHERE role=$1 AND  date BETWEEN $2 AND $3;";
+    db.query(sqlGet, [rid, lastDay, firstDay], (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(402).json(err);
+      }
+      res.send(result.rows);
+    });
+  } catch {
+    console.log("bad token");
+  }
+};
+
 export const getFactsByTestId = (req, res) => {
   try {
     jwt.verify(req.headers.token, "9809502");
@@ -108,7 +132,6 @@ export const updateFact = (req, res) => {
       "UPDATE Fact SET date=$1, score=$2, comment=$3 WHERE id = $4";
 
     facts.map((fact, ind) => {
-
       db.query(
         sqlUpdateTrans,
         [

@@ -6,7 +6,6 @@ import NavBar from "../components/NavBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
-
 const ChooseRole = () => {
   const roles = [
     { name: "מפקד", id: 1 },
@@ -23,13 +22,20 @@ const ChooseRole = () => {
   useEffect(() => {
     if (roleId !== 0) {
       if (soldier !== undefined) {
-        navigate(`/SelectSoldiers/${roleId}/TestType`, {
-          state: {
-            isMashad: true,
-            mashadTests: mashadTests,
-            soldier: location.state.soldier,
-          },
-        });
+        if (soldier !== null) {
+          navigate(`/SelectSoldiers/${roleId}/TestType`, {
+            state: {
+              isMashad: true,
+              mashadTests: mashadTests,
+              soldier: location.state.soldier,
+            },
+          });
+        } else {
+          //in case of reports page
+          navigate(`/Charts/${roleId}/Graphs`, {
+            state: { soldier: location.state.user },
+          });
+        }
       } else {
         navigate(`/GeneralInput/ChooseRole/${roleId}/TestType`, {
           state: {
@@ -53,46 +59,68 @@ const ChooseRole = () => {
     setRoleId(e.target.value);
   };
 
+  const finishTrainingCicked = (e) => {};
+
   return (
     <div className="test-types">
-      <NavBar pageName={`בחר תפקיד עבור: ${soldier !== undefined
-            ? location.state.soldier.full_name
-            : "הזנה כללית"}`}/>
-          <Box sx={{
-            padding:'32px',
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}>
-      {roles.map((role) => {
-        return (
-
-
-
-                          <Button
-              
-                          type="submit"
-                          variant="contained"
-                          sx={{width:'100%', mt: 3, mb: 2, borderRadius: 30 ,fontFamily: "Bold"}}
-                          color={"success"}
-                          onClick={(e) => handleRoleChosen(e)}
-                          key={role.id}
-                          value={role.id}
-
-                          >
-                            {role.name}
-                          </Button>
-          // <button
-          //   onClick={(e) => handleRoleChosen(e)}
-          //   key={role.id}
-          //   value={role.id}
-          // >
-          //   {role.name}
-          // </button>
-        );
-      })}
+      <NavBar
+        pageName={`בחר תפקיד עבור: ${
+          soldier !== undefined
+            ? soldier == null
+              ? "דוחות"
+              : location.state.soldier.full_name
+            : "הזנה כללית"
+        }`}
+      />
+      <Box
+        sx={{
+          padding: "32px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        {roles.map((role) => {
+          return (
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                width: "100%",
+                mt: 3,
+                mb: 2,
+                borderRadius: 30,
+                fontFamily: "Bold",
+              }}
+              color={"success"}
+              onClick={(e) => handleRoleChosen(e)}
+              key={role.id}
+              value={role.id}
+            >
+              {role.name}
+            </Button>
+          );
+        })}
+        <div id="finish-training">
+          <h4>אפשרויות</h4>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{
+              width: "100%",
+              mt: 3,
+              mb: 2,
+              borderRadius: 30,
+              fontFamily: "Bold",
+            }}
+            color={"success"}
+            onClick={(e) => finishTrainingCicked(e)}
+            value={"finishTraining"}
+          >
+            {"סיום אימון,  שליחת סיכום וחישוב ציונים סופיים"}
+          </Button>
+        </div>
       </Box>
-
     </div>
   );
 };

@@ -164,7 +164,7 @@ const GeneralInput = ({ questions, categories }) => {
                   className="li-general-question"
                   dir="rtl"
                 >
-                  {question.text}
+                  {question.name}
                 </li>
 
                 {showQuestions[question.id] === true ? (

@@ -17,10 +17,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 
 var router = _express["default"].Router();
 /** TEST_TYPE */
-//get all test types
+//get  test type by id
 
 
-router.get("/test_types/:rrid", _testTypesControler.getTestTypesById); //get all test types for mashad
+router.get("/test_types/:rrid", _testTypesControler.getTestTypesById); //get all test types
+
+router.get("/test_types/", _testTypesControler.getTestTypes); //get all test types for mashad
 
 router.get("/test_types/mashad/:rrid", _testTypesControler.getMashadTestsById);
 /** Question */
@@ -30,9 +32,11 @@ router.get("/question/:ttid", _questionControler.getQuestionsByTestTypeId); //ge
 
 router.get("/question/:ttid", _questionControler.getQuestionsByParentId);
 /** Fact */
-// get a fact by soldier serial id
+// get a fact by soldier serial id  and test type id
 
-router.get("/fact/:ssid/:ttid", _factControler.getFact); // get facts by test type id
+router.get("/fact/:ssid/:ttid", _factControler.getFact); // get a facts by roleId
+
+router.get("/fact/rid/rid/:rid", _factControler.getFactsByRolesId); // get facts by test type id
 
 router.get("/fact/:ttid", _factControler.getFactsByTestId); //add a fact
 

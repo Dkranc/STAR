@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.addFactGen = exports.updateFact = exports.addFact = exports.getFactsByTestId = exports.getFact = void 0;
+exports.addFactGen = exports.updateFact = exports.addFact = exports.getFactsByTestId = exports.getFactsByRolesId = exports.getFact = void 0;
 
 var _connectDB = require("../connectDB.js");
 
@@ -50,6 +50,34 @@ var getFact = function getFact(req, res) {
 
 exports.getFact = getFact;
 
+var getFactsByRolesId = function getFactsByRolesId(req, res) {
+  try {
+    _jsonwebtoken["default"].verify(req.headers.token, "9809502");
+
+    var rid = req.params.rid;
+    var firstDay = new Date();
+    firstDay.setDate(firstDay.getDate() + 5);
+    firstDay = firstDay.toISOString().slice(0, 10);
+    var lastDay = new Date();
+    lastDay.setDate(lastDay.getDate() - 5);
+    lastDay = lastDay.toISOString().slice(0, 10);
+    var sqlGet = "SELECT * FROM fact WHERE role=$1 AND  date BETWEEN $2 AND $3;";
+
+    _connectDB.db.query(sqlGet, [rid, lastDay, firstDay], function (err, result) {
+      if (err) {
+        console.log(err);
+        return res.status(402).json(err);
+      }
+
+      res.send(result.rows);
+    });
+  } catch (_unused2) {
+    console.log("bad token");
+  }
+};
+
+exports.getFactsByRolesId = getFactsByRolesId;
+
 var getFactsByTestId = function getFactsByTestId(req, res) {
   try {
     _jsonwebtoken["default"].verify(req.headers.token, "9809502");
@@ -71,7 +99,7 @@ var getFactsByTestId = function getFactsByTestId(req, res) {
 
       res.send(result.rows);
     });
-  } catch (_unused2) {
+  } catch (_unused3) {
     console.log("bad token");
   }
 }; //add new fact to table.
@@ -107,7 +135,7 @@ var addFact = function addFact(req, res) {
     }
 
     res.status(200).send("wrote to table");
-  } catch (_unused3) {
+  } catch (_unused4) {
     console.log("bad token");
   }
 }; //update a fact by its id
@@ -129,7 +157,7 @@ var updateFact = function updateFact(req, res) {
       });
     });
     res.sendStatus(200);
-  } catch (_unused4) {
+  } catch (_unused5) {
     console.log("bad token");
   }
 }; //add facts to table from general mashad nput.
@@ -202,7 +230,7 @@ var addFactGen = function addFactGen(req, res) {
 
       res.status(200).send("wrote to table");
     })();
-  } catch (_unused5) {
+  } catch (_unused6) {
     console.log("bad token");
   }
 };
