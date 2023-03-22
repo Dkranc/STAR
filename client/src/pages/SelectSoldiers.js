@@ -5,6 +5,7 @@ import "./SelectSoldiers.css";
 import NavBar from "../components/NavBar";
 
 //mui import
+import { ListItemButton } from '@mui/material';
 import Button from "@mui/material/Button";
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -12,9 +13,13 @@ import Typography from '@mui/material/Typography';
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
+import { List } from "@mui/material";
+import {ListItem} from "@mui/material";
+import { CircularProgress } from "@mui/material";
 
 
 const SelectSoldiers = () => {
+  const [loaded, setLoaded] = useState(false);
   const [soldiers, setSoldiers] = useState([]);
   const [solName, setSolName] = useState("");
   const [soldier, setSoldier] = useState(0);
@@ -25,6 +30,7 @@ const SelectSoldiers = () => {
 
   useEffect(() => {
     axios.get(`http://localhost:8080/api/general/soldier`,{headers:{token:sessionStorage.getItem('token')}}).then((response) => {
+      setLoaded(true);
       setSoldiers(Object.entries(response.data));
       if (soldier !== 0) {
         if (Object.keys(params).length > 0) {
@@ -64,28 +70,23 @@ const SelectSoldiers = () => {
   return (
     <div className="soldier-select">
       <NavBar pageName={pageName}/>
-      {/* <input
-        dir="rtl"
-        value={solName}
-        onChange={(e) => setSolName(e.target.value)}
-        type="text"
-      /> */}
     <Box
-    
+           
             display="flex"
             justifyContent="center"
             alignItems="center"
             >
     <TextField
-    sx={{radius:'30px'}}
+    fo
+    sx={{width:'100%',paddingX:'10%'}}
     dir="rtl"
       label=""
       value={solName}
       onChange={(e) => setSolName(e.target.value)}
       InputProps={{
         endAdornment: (
-          <InputAdornment>
-            <IconButton>
+          <InputAdornment >
+            <IconButton >
               <SearchIcon />
             </IconButton>
           </InputAdornment>
@@ -93,8 +94,9 @@ const SelectSoldiers = () => {
       }}
     />
     </Box>
-
-      <ul dir="rtl">
+    {console.log(soldiers)}
+      {loaded ? (
+      <List sx={{width:'100%', paddingX:'10%'}} dir="rtl">
         {soldiers
           .filter((sol) => {
             //fiter acording to the name of soldier
@@ -102,17 +104,24 @@ const SelectSoldiers = () => {
           })
           .map((sol) => {
             return (
-              <li
+              <ListItemButton
+                sx={{backgroundColor:"white", marginY:"5%", radius:"15px",display:"flex",justifyContent:"space-between",display:"flex",border:"none",boxShadow:"0px 1px 2px rgba(0, 0, 0, 0.25)"}}
+               
                 key={sol[1].id}
                 onClick={(e) => handleChoice(e)}
-                style={{ fontWeight: "bold" }}
               >
-                <span>{sol[1].full_name}</span>
-                <span>{sol[1].serial_id}</span>
-              </li>
+
+                <Box><Typography fontFamily={"Regular"}  sx={{alignSelf:"end", width:"100%", fontSize:'20px',display:"inline-block"}}>{sol[1].full_name}</Typography></Box>
+                <Box><Typography fontFamily={"Regular"} sx={{width:"100%", fontSize:'20px'}}>{sol[1].serial_id}</Typography></Box>
+              </ListItemButton>
             );
           })}
-      </ul>
+      </List>):
+      (<Box sx={{display:"flex",justifyContent:"center",margin:"10%"}}>
+        <CircularProgress color="success" />
+        </Box>)}
+
+
       <div>
         {params.rid === undefined ? (
             <Box

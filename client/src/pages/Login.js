@@ -2,6 +2,7 @@ import { React, useState } from "react";
 import Config from "../Config";
 import { PublicClientApplication } from "@azure/msal-browser";
 import jwtDecode from "jwt-decode";
+import {themeLogin} from "../theme.js"
 //import axios from "axios";
 import "./Login.css";
 //mui imports
@@ -15,6 +16,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { ThemeProvider } from "@mui/material/styles";
 
+//axios
 import axios from "axios";
 
 //import Images
@@ -64,7 +66,7 @@ const Login = ({ setUser, lightState }) => {
   };
 
   return (
-    <ThemeProvider>
+    <ThemeProvider theme={themeLogin}>>
       <div id="login-page">
         <Container component="main" maxWidth="xs">
           <CssBaseline />

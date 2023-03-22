@@ -1,7 +1,8 @@
 import { React, useState, useEffect } from "react";
 import QuestionMap from "../components/QuestionMap";
 import "./Questions.css";
-
+//mui
+import { CircularProgress } from "@mui/material";
 const Questions = ({
   questions,
   categories,
@@ -48,7 +49,7 @@ const Questions = ({
   };
 
   return !loaded ? (
-    <h4>loading...</h4>
+    <CircularProgress color="success" />
   ) : (
     <div id="main_questions">
       {isMashadTest ? (

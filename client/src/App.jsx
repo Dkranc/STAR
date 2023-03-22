@@ -44,7 +44,7 @@ function App() {
         <BrowserRouter>
           {user === null ? (
             <Routes>
-              <Route
+              <Route 
                 path="/"
                 element={<Login setUser={setUser} lightState={light} />}
               />
