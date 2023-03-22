@@ -91,7 +91,7 @@ const Questionary = ({ soldier }) => {
       .then((response) => {
         setCategories(
           response.data.filter((item) => {
-            return item.input_type === null||item.parent_id===0;
+            return item.input_type === null;
           })
         );
         setQuestions(

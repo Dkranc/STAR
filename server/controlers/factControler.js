@@ -108,7 +108,7 @@ export const updateFact = (req, res) => {
       "UPDATE Fact SET date=$1, score=$2, comment=$3 WHERE id = $4";
 
     facts.map((fact, ind) => {
-      console.log(typeof fact.score);
+
       db.query(
         sqlUpdateTrans,
         [

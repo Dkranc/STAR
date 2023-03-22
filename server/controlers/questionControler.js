@@ -5,34 +5,36 @@ import jwt from "jsonwebtoken";
 export const getQuestionsByTestTypeId = (req, res) => {
   try {
     jwt.verify(req.headers.token, "9809502");
-  const { ttid } = req.params;
-  const sqlGet = "SELECT * FROM question WHERE test_type_id=$1";
-  db.query(sqlGet, [ttid], (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(402).json(err);
-    }
-    res.send(result.rows);
-  });
-} catch {
-  console.log("bad token");
-}
+    const { ttid } = req.params;
+
+    const sqlGet = "SELECT * FROM question WHERE test_type_id=$1";
+    db.query(sqlGet, [ttid], (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(402).json(err);
+      }
+      console.log(result.rows);
+      res.send(result.rows);
+    });
+  } catch {
+    console.log("bad token");
+  }
 };
 
 //get specific rows from Question table using a parent id .
 export const getQuestionsByParentId = (req, res) => {
   try {
     jwt.verify(req.headers.token, "9809502");
-  const { pid } = req.params;
-  const sqlGet = "SELECT * FROM question WHERE parent_id=$1";
-  db.query(sqlGet, [pid], (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(402).json(err);
-    }
-    res.send(result.rows);
-  });
-} catch {
-  console.log("bad token");
-}
+    const { pid } = req.params;
+    const sqlGet = "SELECT * FROM question WHERE parent_id=$1";
+    db.query(sqlGet, [pid], (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(402).json(err);
+      }
+      res.send(result.rows);
+    });
+  } catch {
+    console.log("bad token");
+  }
 };

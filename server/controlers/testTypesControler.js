@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 //get  all the test types (only four- static)
 export const getTestTypesById = (req, res) => {
   try {
-    console.log(req.headers.token);
     jwt.verify(req.headers.token, "9809502");
     const { rrid } = req.params;
     const sqlGet =

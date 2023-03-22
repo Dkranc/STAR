@@ -14,8 +14,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 //get  all the test types (only four- static)
 var getTestTypesById = function getTestTypesById(req, res) {
   try {
-    console.log(req.headers.token);
-
     _jsonwebtoken["default"].verify(req.headers.token, "9809502");
 
     var rrid = req.params.rrid;
