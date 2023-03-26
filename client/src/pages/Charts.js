@@ -2,6 +2,8 @@ import axios from "axios";
 import { React, useEffect, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import NavBar from "../components/NavBar";
+import { CircularProgress, Box } from "@mui/material";
+
 import {
   BarChart,
   CartesianGrid,
@@ -102,10 +104,11 @@ const Charts = () => {
 
   return (
     <div id="charts" style={{ width: "100%" }}>
-      <NavBar roleId={params.rid} />
-      <h3 dir="rtl">טבלת הספק</h3>
+      <NavBar pageName={"טבלת הספק"} roleId={params.rid} />
       {loading ? (
-        "loading..."
+        <Box sx={{padding:'20%',display:"flex",justifyContent:'center',alignItems:'center'}}>
+        <CircularProgress color="success" />
+        </Box>
       ) : noData ? (
         <h2>אין מידע להצגה</h2>
       ) : (

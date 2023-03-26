@@ -1,7 +1,7 @@
 .numeric {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
+  /* gap: 10px; */
   width: 100%;
   align-items: center;
 }

@@ -137,7 +137,7 @@ function App() {
           )}
         </BrowserRouter>
         {user !== null ? (
-          <Box display="flex" justifyContent="center" alignItems="center">
+          <Box display="center" justifyContent="center" alignItems="center" >
             <Box
               component="img"
               sx={{
@@ -146,7 +146,7 @@ function App() {
                 maxWidth: { xs: 84, md: 84 },
                 maxHeight: { xs: 63, md: 63 },
               }}
-              alt="The house from the offer."
+              alt="logo"
               src={lightModeLogo}
             />
           </Box>

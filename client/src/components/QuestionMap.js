@@ -1,5 +1,7 @@
 import { React, useEffect } from "react";
-
+import { TextField } from "@mui/material";
+import {Box} from "@mui/material";
+import {Button} from "@mui/material";
 const QuestionMap = ({
   question,
   answers,
@@ -14,7 +16,7 @@ const QuestionMap = ({
     <div>
       {answers[question.name] !== undefined ? (
         <div className="question" key={question.id}>
-          <p style={{ fontWeight: "bold" }}>{question.name}</p>
+          <p style={{ fontWeight: "bold", fontFamily:'bold' }}>{question.name}</p>
           {question.input_type === "boolean" ? (
             <div>
               <div dir="rtl" className="bool_quest">
@@ -54,38 +56,54 @@ const QuestionMap = ({
           ) : null}
 
           {question.input_type === "numeric" ? (
-            <div>
-              <div className="numeric" dir="rtl">
+            <Box sx={{width:'100%'}}>
+              <Box  sx={{display:'flex', width:'100%'}} className="numeric" dir="rtl">
                 {[...Array(10)].map((e, i) => (
-                  <button
+                  <Button
+                    sx={{minWidth:'0%',fontSize:'20px',backgroundColor:"#D9D9D9",color:'black'}}
                     key={"ans" + question.name + (i + 1).toString()}
                     onClick={(e) => {
                       handleFormChange(e);
                     }}
                     style={{
                       backgroundColor:
-                        answers[question.name] === i + 1 ? "green" : "",
+                        answers[question.name] === i + 1 ? "#2ED573" : "",
                     }}
                     className="btn-score"
                     value={i + 1}
                     name={question.name}
                   >
                     {i + 1}
-                  </button>
+                  </Button>
                 ))}
-              </div>
-              <div className="comment">
-                <p>הערות</p>
-                <input
+              </Box>
+              
+                {/* <p>הערות</p> */}
+                <Box  sx= {{display:'flex',justifyContent:'center',alignItems:'center'}}>
+                <TextField 
+                size="small"
+                placeholder="הערה"
+                dir="rtl"
+                sx={{fontFamily: "Light",width:"100%",marginY:'5%',borderRadius: 30,background: "white", boxShadow: "inset 2px 2px 4px rgba(0, 0, 0, 0.25)"}}
+                type="text"
+                name={question.name}
+                value={comments[0]}
+                onChange={(e) => {
+                  handleCommentChange(e);
+                }}
+                id="outlined-basic"  />
+                </Box>
+
+                {/* <input
                   type="text"
                   name={question.name}
                   value={comments[0]}
                   onChange={(e) => {
                     handleCommentChange(e);
                   }}
-                />
-              </div>
-            </div>
+                /> */}
+              
+            </Box>
           ) : null}
 
           {question.input_type === "open-numeric" ? (
@@ -104,6 +122,7 @@ const QuestionMap = ({
               </div>
               <div className="comment">
                 <p>הערות</p>
+
                 <input
                   type="text"
                   name={question.name}

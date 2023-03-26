@@ -47,11 +47,25 @@ export default function NavBar({ setIsAuthenticated, pageName }) {
 
   const logout = () => {
     console.log("logout pressed");
-    setIsAuthenticated(false);
+    for (var i = 0; i < sessionStorage.length; i++) {
+      var a = sessionStorage.key(i);
+      sessionStorage.removeItem(a);
+  }
+    navigate("/", {
+      state: {
+        goodLogin: false,
+        user:null
+      },
+    });
+    // setIsAuthenticated(false);
+
+
     handleCloseMenu();
     //need to navigate to login page
     //and logout of public client
     // and clear the storage
+    window.location.reload(false);
+
   };
   const [openOptionTab, setOpenOptionTab] = useState(false);
   //handle click on menu button in navbar

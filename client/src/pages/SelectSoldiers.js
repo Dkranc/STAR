@@ -77,8 +77,9 @@ const SelectSoldiers = () => {
             alignItems="center"
             >
     <TextField
+    size="small"
     fo
-    sx={{width:'100%',paddingX:'10%'}}
+    sx={{width:'100%',marginX:'10%',backgroundColor:"white",borderRadius:'30px',boxShadow: "inset 2px 2px 4px rgba(0, 0, 0, 0.25)" }}
     dir="rtl"
       label=""
       value={solName}

@@ -169,8 +169,7 @@ const Questionary = ({ soldier }) => {
           <Button
             type="submit"
             variant="contained"
-            sx={{width:'50%', mt: 3, mb: 2, borderRadius: 30 ,fontFamily: "Bold"}}
-            color={"success"}
+            sx={{color:'black' ,width:'50%', mt: 3, mb: 2, borderRadius: 30 ,fontFamily: "Bold",background:'linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)'}}
             id="submit" onClick={(e) => handleSubmit(e)}>
             שלח 
           </Button>

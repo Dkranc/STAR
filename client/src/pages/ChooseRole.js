@@ -83,27 +83,64 @@ const ChooseRole = () => {
         {roles.map((role) => {
           return (
             <Button
-              type="submit"
-              variant="contained"
-              sx={{
-                width: "100%",
-                mt: 3,
-                mb: 2,
-                borderRadius: 30,
-                fontFamily: "Bold",
-              }}
-              color={"success"}
-              onClick={(e) => handleRoleChosen(e)}
-              key={role.id}
-              value={role.id}
-            >
-              {role.name}
-            </Button>
+            variant="outlined"
+            sx={{
+              fontSize:"20px",
+              borderColor:"#2ED573",
+              color:"rgb(0,0,0)",
+              background:"white",
+              boxShadow:"inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+              width: "100%",
+              mt:2,
+              borderRadius: 30,
+              fontFamily: "Bold",
+            }}
+            onClick={(e) => handleRoleChosen(e)}
+            key={role.id}
+            value={role.id}
+          >
+            {role.name}
+          </Button>
+            // <Button
+            //   type="submit"
+            //   variant="contained"
+            //   sx={{
+            //     width: "100%",
+            //     mt: 3,
+            //     mb: 2,
+            //     borderRadius: 30,
+            //     fontFamily: "Bold",
+            //   }}
+            //   color={"success"}
+            //   onClick={(e) => handleRoleChosen(e)}
+            //   key={role.id}
+            //   value={role.id}
+            // >
+            //   {role.name}
+            // </Button>
           );
         })}
         <div id="finish-training">
           <h4>אפשרויות</h4>
           <Button
+            variant="outlined"
+            sx={{
+              // fontSize:"25px",
+              color:'black',
+              background:'linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)',
+              borderColor:"#2ED573",
+              boxShadow:"inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+              width: "100%",
+              mt:2,
+              borderRadius: 30,
+              fontFamily: "Bold",
+            }}
+            onClick={(e) => finishTrainingCicked(e)}
+            value={"finishTraining"}
+          >
+            {"סיום אימון,  שליחת סיכום וחישוב ציונים סופיים"}
+          </Button>
+          {/* <Button
             type="submit"
             variant="contained"
             sx={{
@@ -118,7 +155,8 @@ const ChooseRole = () => {
             value={"finishTraining"}
           >
             {"סיום אימון,  שליחת סיכום וחישוב ציונים סופיים"}
-          </Button>
+          </Button> */}
+
         </div>
       </Box>
     </div>
