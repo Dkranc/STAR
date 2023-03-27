@@ -4,6 +4,7 @@ import "./Questionary.css";
 import axios from "axios";
 import Questions from "../components/Questions";
 import NavBar from "../components/NavBar";
+import SolPopUp from "../components/SolPopUp";
 import GeneralInput from "./GeneralInput";
 //mui
 import { Button, Typography } from "@mui/material";
@@ -19,10 +20,74 @@ const Questionary = ({ soldier }) => {
   const [loaded, setLoaded] = useState(false);
   const [previuoslySubmited, setPreviuoslySubmited] = useState(false);
   const [facts, setFacts] = useState([]);
+  const rolesWithOutCommander = ["תותחן", "טען", "נהג"];
   const navigate = useNavigate();
   const location = useLocation();
   const sol = location.state.soldier;
+  const [chosenSoldiers, setChosenSoldiers] = useState({
+    מפקד: sol,
+  });
+
   const isMashadTest = location.state.isMashad;
+
+  const sendChosenSoldiers = () => {
+    console.log(chosenSoldiers);
+    for (const [key, sold] of Object.entries(chosenSoldiers)) {
+      console.log(sold);
+      axios
+        .get(
+          `http://localhost:8080/api/tests/fact/${sold.serial_id}/${params.ttid}`,
+          { headers: { token: sessionStorage.getItem("token") } }
+        )
+        .then((response) => {
+          if (response.data.length > 0) {
+            setFacts(response.data);
+            setPreviuoslySubmited(true);
+          }
+        });
+
+      if (!previuoslySubmited) {
+        //if this is the first submit for the soldier
+        console.log(sold);
+        axios.post(
+          `http://localhost:8080/api/tests/fact`,
+          [
+            sold.serial_id,
+            params.ttid,
+            key === "מפקד" ? 1 : key === "תותחן" ? 2 : key === "טען" ? 3 : 4,
+            new Date().toISOString().slice(0, 10),
+            questions,
+            Object.values(answers),
+            null, //parent batalion id- need to change
+            Object.values(comments),
+          ],
+          { headers: { token: sessionStorage.getItem("token") } }
+        );
+      } else {
+        //if the soldiers test is being updated
+        console.log(sold);
+        let oldFacts = facts;
+        facts.map((fact) => {
+          let ans = 0;
+          questions.map((question) => {
+            if (question.id === fact.question_id) ans = answers[question.name];
+          });
+          fact.score = ans;
+        });
+        setFacts(oldFacts);
+        axios.post(
+          `http://localhost:8080/api/tests/fact/update`,
+          [
+            facts,
+            Object.values(comments),
+            new Date().toISOString().slice(0, 10),
+          ],
+          { headers: { token: sessionStorage.getItem("token") } }
+        );
+      }
+    }
+    navigate(`/`);
+  };
 
   const handleSubmit = (e) => {
     var ansGood = true;
@@ -30,7 +95,8 @@ const Questionary = ({ soldier }) => {
       if (
         answers[ans] === "undefined" ||
         answers[ans] > 100 ||
-        answers[ans] < 0
+        answers[ans] < 0 ||
+        (params.ttid === "2" && Object.keys(chosenSoldiers).length !== 4)
       ) {
         setError(true); //bad answers
         ansGood = false;
@@ -38,7 +104,10 @@ const Questionary = ({ soldier }) => {
     }
     if (ansGood) {
       const soldier = location.state.soldier;
-      if (!previuoslySubmited) {
+      if (params.ttid === "2") {
+        console.log(chosenSoldiers);
+        sendChosenSoldiers();
+      } else if (!previuoslySubmited) {
         //if this is the first submit for the soldier
         axios
           .post(
@@ -146,15 +215,40 @@ const Questionary = ({ soldier }) => {
 
   return (
     <div>
-      <NavBar pageName={"תרחיש האימון"}/>
+      <NavBar pageName={"תרחיש האימון"} />
       {sol !== undefined ? (
-        <Box dir="rtl" sx={{paddingX:"10%"}}>
+        <Box dir="rtl" sx={{ paddingX: "10%" }}>
           <Typography fontFamily={"Regular"} fontSize={"22px"}>
-      {"תרחיש אימון עבור"}
+            {"תרחיש אימון עבור"}
           </Typography>
           <Typography fontFamily={"ExtraBold"} fontSize={"22px"}>
             {sol.full_name}
           </Typography>
+          {params.ttid === "2" ? (
+            <div>
+              {rolesWithOutCommander.map((role) => {
+                return (
+                  <div>
+                    <SolPopUp
+                      role={role}
+                      chosenSoldiers={chosenSoldiers}
+                      setChosenSoldiers={setChosenSoldiers}
+                    />
+                    {console.log(
+                      chosenSoldiers[role] !== undefined
+                        ? chosenSoldiers[role].full_name
+                        : undefined
+                    )}
+                    <h4>
+                      {chosenSoldiers[role] !== undefined
+                        ? chosenSoldiers[role].full_name
+                        : undefined}
+                    </h4>
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
           <Questions
             questions={questions}
             categories={categories}
@@ -165,17 +259,27 @@ const Questionary = ({ soldier }) => {
             isMashadTest={isMashadTest}
             loaded={loaded}
           />
-          <Box sx={{display:"flex",justifyContent:"center"}}>
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{color:'black' ,width:'50%', mt: 3, mb: 2, borderRadius: 30 ,fontFamily: "Bold",background:'linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)'}}
-            id="submit" onClick={(e) => handleSubmit(e)}>
-            שלח 
-          </Button>
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                color: "black",
+                width: "50%",
+                mt: 3,
+                mb: 2,
+                borderRadius: 30,
+                fontFamily: "Bold",
+                background:
+                  "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
+              }}
+              id="submit"
+              onClick={(e) => handleSubmit(e)}
+            >
+              שלח
+            </Button>
           </Box>
-
-          </Box>
+        </Box>
       ) : (
         <GeneralInput questions={questions} categories={categories} />
       )}

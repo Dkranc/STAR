@@ -13,7 +13,7 @@ export const getQuestionsByTestTypeId = (req, res) => {
         console.log(err);
         return res.status(402).json(err);
       }
-      console.log(result.rows);
+    
       res.send(result.rows);
     });
   } catch {

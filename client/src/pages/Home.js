@@ -83,7 +83,7 @@ const Home = ({ user, setUser, lightState }) => {
                   borderRadius: 30,
                   fontFamily: "Bold",
                 }}
-                onClick={() => navigate(`/SelectSoldiers/${role.id}`)}
+                onClick={() => navigate(`/SelectSoldiers/${role.id}`,{state:{chosenSoldiers:[]}})}
                 key={role.id}
               >
                 {role.name}

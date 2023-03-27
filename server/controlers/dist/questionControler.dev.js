@@ -25,7 +25,6 @@ var getQuestionsByTestTypeId = function getQuestionsByTestTypeId(req, res) {
         return res.status(402).json(err);
       }
 
-      console.log(result.rows);
       res.send(result.rows);
     });
   } catch (_unused) {

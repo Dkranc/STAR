@@ -86,6 +86,7 @@ export const addFact = (req, res) => {
     const scores = req.body[5]; //is array
     const parent_external_id = req.body[6]; //null for now- will be battalion number of soldier
     const comments = req.body[7]; //is array
+    //const chosenSoldiers=  req.body[8];//this will be an array of soldiers for a תרגיל צוות
 
     for (let i = 0; i < scores.length; i++) {
       const sqlInsert =
