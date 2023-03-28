@@ -7,6 +7,9 @@ import Questionary from "./pages/Questionary";
 import TestType from "./pages/TestType";
 import SelectSoldiers from "./pages/SelectSoldiers";
 import ChooseRole from "./pages/ChooseRole";
+import AddEditSoldiers from "./pages/AddEditSoldiers";
+import AddEditPage from "./pages/AddEditPage";
+
 import jwtDecode from "jwt-decode";
 import ToggleThemeButton from "./components/ToggleThemeButton";
 import Image from "./image/background.png"; // Import using relative path
@@ -44,7 +47,7 @@ function App() {
         <BrowserRouter>
           {user === null ? (
             <Routes>
-              <Route 
+              <Route
                 path="/"
                 element={<Login setUser={setUser} lightState={light} />}
               />
@@ -91,6 +94,14 @@ function App() {
                 path="/Charts"
                 element={<Login setUser={setUser} lightState={light} />}
               />
+              <Route
+                path="/AddEditSoldiers"
+                element={<Login setUser={setUser} lightState={light} />}
+              />
+              <Route
+                path="/AddEditSoldiers/AddEditPage"
+                element={<Login setUser={setUser} lightState={light} />}
+              />
             </Routes>
           ) : (
             <Routes>
@@ -133,11 +144,16 @@ function App() {
                 element={<ChooseRole user={user} />}
               />
               <Route path="/Charts/:rid/Graphs" element={<Charts />} />
+              <Route path="/AddEditSoldiers" element={<AddEditSoldiers />} />
+              <Route
+                path="/AddEditSoldiers/AddEditPage"
+                element={<AddEditPage />}
+              />
             </Routes>
           )}
         </BrowserRouter>
         {user !== null ? (
-          <Box display="center" justifyContent="center" alignItems="center" >
+          <Box display="center" justifyContent="center" alignItems="center">
             <Box
               component="img"
               sx={{

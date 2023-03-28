@@ -27,10 +27,13 @@ const SelectSoldiers = ({ setChosenSoldiers, chosenSoldiers, role }) => {
   const navigate = useNavigate();
   const params = useParams();
   const [teamTest, setTeamTest] = useState(false);
+  const [addEditPage, setAddEditPage] = useState(false);
   chosenSoldiers = chosenSoldiers || location.state.chosenSoldiers;
 
   useEffect(() => {
     if (window.location.pathname.includes("Questionary")) setTeamTest(true);
+    if (window.location.pathname.includes("AddEditSoldiers"))
+      setAddEditPage(true);
     axios
       .get(`http://localhost:8080/api/general/soldier`, {
         headers: { token: sessionStorage.getItem("token") },
@@ -41,7 +44,12 @@ const SelectSoldiers = ({ setChosenSoldiers, chosenSoldiers, role }) => {
         if (soldier !== 0) {
           if (teamTest) {
             setChosenSoldiers({ ...chosenSoldiers, [role]: soldier });
-            console.log(chosenSoldiers);
+          } else if (addEditPage) {
+            navigate(`/AddEditSoldiers/AddEditPage`, {
+              state: {
+                soldier: soldier,
+              },
+            });
           } else if (Object.keys(params).length > 0) {
             navigate(`/SelectSoldiers/${params.rid}/TestType`, {
               state: {
@@ -78,7 +86,31 @@ const SelectSoldiers = ({ setChosenSoldiers, chosenSoldiers, role }) => {
 
   return (
     <div className="soldier-select">
-      {!teamTest ? <NavBar pageName={pageName} /> : null}
+      {!teamTest && !addEditPage ? <NavBar pageName={pageName} /> : null}
+      <div>
+        {params.rid === undefined && !addEditPage ? (
+          <Box
+            sx={{
+              padding: "16px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              fontFamily={"Bold"}
+              color={"success"}
+              variant="contained"
+              type="submit"
+              onClick={(e) => handleGeneralInput(e)}
+            >
+              הזנה כללית ע״פ תפקיד
+            </Button>
+          </Box>
+        ) : (
+          ""
+        )}
+      </div>
       <Box display="flex" justifyContent="center" alignItems="center">
         <TextField
           size="small"
@@ -105,7 +137,6 @@ const SelectSoldiers = ({ setChosenSoldiers, chosenSoldiers, role }) => {
           }}
         />
       </Box>
-      {console.log(soldiers)}
       {loaded ? (
         <List sx={{ width: "100%", paddingX: "10%" }} dir="rtl">
           {soldiers
@@ -155,6 +186,19 @@ const SelectSoldiers = ({ setChosenSoldiers, chosenSoldiers, role }) => {
                     </Typography>
                   </Box>
                   <Box>
+                  <Typography
+                    fontFamily={"Regular"}
+                    sx={{
+                      alignSelf: "end",
+                      width: "100%",
+                      fontSize: "20px",
+                      display: "inline-block",
+                    }}
+                  >
+                    {sol[1].company}
+                  </Typography>
+                </Box>
+                  <Box>
                     <Typography
                       fontFamily={"Regular"}
                       sx={{ width: "100%", fontSize: "20px" }}
@@ -171,31 +215,6 @@ const SelectSoldiers = ({ setChosenSoldiers, chosenSoldiers, role }) => {
           <CircularProgress color="success" />
         </Box>
       )}
-
-      <div>
-        {params.rid === undefined ? (
-          <Box
-            sx={{
-              padding: "16px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Button
-              fontFamily={"Bold"}
-              color={"success"}
-              variant="contained"
-              type="submit"
-              onClick={(e) => handleGeneralInput(e)}
-            >
-              הזנה כללית ע״פ תפקיד
-            </Button>
-          </Box>
-        ) : (
-          ""
-        )}
-      </div>
     </div>
   );
 };

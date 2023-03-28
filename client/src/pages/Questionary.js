@@ -30,25 +30,25 @@ const Questionary = ({ soldier }) => {
 
   const isMashadTest = location.state.isMashad;
 
-  const sendChosenSoldiers = () => {
-    console.log(chosenSoldiers);
+  const sendChosenSoldiers = async () => {
     for (const [key, sold] of Object.entries(chosenSoldiers)) {
-      console.log(sold);
-      axios
+      let resLength = 0;
+      let factData = [];
+
+      await axios
         .get(
           `http://localhost:8080/api/tests/fact/${sold.serial_id}/${params.ttid}`,
           { headers: { token: sessionStorage.getItem("token") } }
         )
         .then((response) => {
           if (response.data.length > 0) {
-            setFacts(response.data);
-            setPreviuoslySubmited(true);
+            factData = response.data;
+            resLength = response.data.length;
           }
         });
 
-      if (!previuoslySubmited) {
+      if (resLength === 0) {
         //if this is the first submit for the soldier
-        console.log(sold);
         axios.post(
           `http://localhost:8080/api/tests/fact`,
           [
@@ -65,20 +65,21 @@ const Questionary = ({ soldier }) => {
         );
       } else {
         //if the soldiers test is being updated
-        console.log(sold);
-        let oldFacts = facts;
-        facts.map((fact) => {
+        console.log(sold.full_name, factData, 68);
+
+        factData.map((fact) => {
           let ans = 0;
           questions.map((question) => {
             if (question.id === fact.question_id) ans = answers[question.name];
           });
+          console.log(ans);
           fact.score = ans;
         });
-        setFacts(oldFacts);
+
         axios.post(
           `http://localhost:8080/api/tests/fact/update`,
           [
-            facts,
+            factData,
             Object.values(comments),
             new Date().toISOString().slice(0, 10),
           ],
@@ -86,6 +87,7 @@ const Questionary = ({ soldier }) => {
         );
       }
     }
+    console.log("enterd soldier");
     navigate(`/`);
   };
 
@@ -105,7 +107,7 @@ const Questionary = ({ soldier }) => {
     if (ansGood) {
       const soldier = location.state.soldier;
       if (params.ttid === "2") {
-        console.log(chosenSoldiers);
+        //if its the team test
         sendChosenSoldiers();
       } else if (!previuoslySubmited) {
         //if this is the first submit for the soldier
@@ -130,7 +132,7 @@ const Questionary = ({ soldier }) => {
       } else {
         //if the soldiers test is being updated
         let oldFacts = facts;
-        facts.map((fact) => {
+        oldFacts.map((fact) => {
           let ans = 0;
           questions.map((question) => {
             if (question.id === fact.question_id) ans = answers[question.name];
@@ -234,11 +236,6 @@ const Questionary = ({ soldier }) => {
                       chosenSoldiers={chosenSoldiers}
                       setChosenSoldiers={setChosenSoldiers}
                     />
-                    {console.log(
-                      chosenSoldiers[role] !== undefined
-                        ? chosenSoldiers[role].full_name
-                        : undefined
-                    )}
                     <h4>
                       {chosenSoldiers[role] !== undefined
                         ? chosenSoldiers[role].full_name

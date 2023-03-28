@@ -15,21 +15,14 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import AssessmentIcon from "@mui/icons-material/Assessment";
+import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import menuVector from "../image/menuVector.svg";
-// const NavBar = () => {
-//   const navigate = useNavigate();
 
-//   return (
-//     <div style={{marginTop:'20px'}} className='navbar' dir='ltr'><KeyboardBackspaceIcon onClick={()=>navigate(-1)}/></div>
-//   )
-// }
-
-// export default NavBar
-
-export default function NavBar({ setIsAuthenticated, pageName }) {
+export default function NavBar({ user, setIsAuthenticated, pageName }) {
   const logoutText = "התנתקות";
   const lightModeText = "מצב תאורה";
   const reportsText = "דוחות וסיום אימון";
+  const addEditSoldierText = "הוספת/עריכת נתוני חיילים";
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
@@ -45,27 +38,31 @@ export default function NavBar({ setIsAuthenticated, pageName }) {
     });
   };
 
+  const addEditClicked = () => {
+    navigate("/AddEditSoldiers", {
+      state: {},
+    });
+  };
+
   const logout = () => {
     console.log("logout pressed");
     for (var i = 0; i < sessionStorage.length; i++) {
       var a = sessionStorage.key(i);
       sessionStorage.removeItem(a);
-  }
+    }
     navigate("/", {
       state: {
         goodLogin: false,
-        user:null
+        user: null,
       },
     });
     // setIsAuthenticated(false);
-
 
     handleCloseMenu();
     //need to navigate to login page
     //and logout of public client
     // and clear the storage
     window.location.reload(false);
-
   };
   const [openOptionTab, setOpenOptionTab] = useState(false);
   //handle click on menu button in navbar
@@ -116,6 +113,16 @@ export default function NavBar({ setIsAuthenticated, pageName }) {
                 </ListItemIcon>
                 <Typography variant="inherit">{reportsText}</Typography>
               </MenuItem>
+              {/* user.roles[0] === "User.Admin" ? (
+                <MenuItem onClick={addEditClicked} dir="rtl">
+                  <ListItemIcon>
+                    <LibraryAddIcon fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="inherit">
+                    {addEditSoldierText}
+                  </Typography>
+                </MenuItem>
+              ) : null*/}
             </Menu>
           </IconButton>
           <Typography

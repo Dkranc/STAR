@@ -34,10 +34,17 @@ export const getSoldiersById = (req, res) => {
 export const addSoldier = (req, res) => {
   try {
     jwt.verify(req.headers.token, "9809502");
-    const { serial_id, full_name } = req.body;
-    const sqlInsert = "INSERT INTO Soldier(serial_id, full_name) VALUES($1,$2)";
-    db.query(sqlInsert, [serial_id, full_name], (err, result) => {
+    const serial_id = req.body[0];
+    const full_name = req.body[1];
+    const company = req.body[2];
+    console.log(req.body);
+    const sqlInsert =
+      "INSERT INTO Soldier(serial_id, full_name, company) VALUES($1,$2,$3)";
+    db.query(sqlInsert, [serial_id, full_name, company], (err, result) => {
       if (err) console.log(err);
+      else {
+        res.send(result);
+      }
     });
   } catch {
     console.log("bad token");
@@ -49,13 +56,19 @@ export const updateSoldierById = (req, res) => {
   try {
     jwt.verify(req.headers.token, "9809502");
     const { sid } = req.params;
-    const { serial_id, full_name } = req.body;
+    const serial_id = req.body[0];
+    const full_name = req.body[1];
+    const company = req.body[2];
     const sqlUpdateTrans =
-      "UPDATE Soldier SET serial_id=$1, full_name=$2 WHERE id = $3";
-    db.query(sqlUpdateTrans, [serial_id, full_name, sid], (err, result) => {
-      if (err) console.log(err);
-      res.send(result);
-    });
+      "UPDATE Soldier SET serial_id=$1, full_name=$2, company=$3 WHERE id = $4";
+    db.query(
+      sqlUpdateTrans,
+      [serial_id, full_name, company, sid],
+      (err, result) => {
+        if (err) console.log(err);
+        res.send(result);
+      }
+    );
   } catch {
     console.log("bad token");
   }
