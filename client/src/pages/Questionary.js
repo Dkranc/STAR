@@ -10,7 +10,7 @@ import GeneralInput from "./GeneralInput";
 import { Button, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 
-const Questionary = ({ soldier }) => {
+const Questionary = ({ soldier, user, setUser }) => {
   const params = useParams();
   const [questions, setQuestions] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -217,7 +217,7 @@ const Questionary = ({ soldier }) => {
 
   return (
     <div>
-      <NavBar pageName={"תרחיש האימון"} />
+      <NavBar setUser={setUser} user={user} pageName={"תרחיש האימון"} />
       {sol !== undefined ? (
         <Box dir="rtl" sx={{ paddingX: "10%" }}>
           <Typography fontFamily={"Regular"} fontSize={"22px"}>
@@ -232,6 +232,8 @@ const Questionary = ({ soldier }) => {
                 return (
                   <div>
                     <SolPopUp
+                     setUser={setUser}
+                      user={user}
                       role={role}
                       chosenSoldiers={chosenSoldiers}
                       setChosenSoldiers={setChosenSoldiers}

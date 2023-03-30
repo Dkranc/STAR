@@ -17,11 +17,11 @@ import {
 
 // import "./Charts.css";
 
-const Charts = () => {
+const Charts = ({ user, setUser }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
-  const user = location.state.user;
+  //const user = location.state.user;
   const [facts, setFacts] = useState([]);
   const [testTypes, setTestTypes] = useState([]);
   const [data, setData] = useState(0);
@@ -55,14 +55,12 @@ const Charts = () => {
           return {
             name: test.name.slice(0, 17),
             נבחנו: getNumOfTests(test.id),
-           // ממוצע: calcAvg(test.id) ? calcAvg(test.id) : 4,
+            // ממוצע: calcAvg(test.id) ? calcAvg(test.id) : 4,
           };
         })
       );
     if (data !== 0) setLoading(false);
   }, [testTypes]);
-
-
 
   const getNumOfTests = (testTypeId) => {
     //need to count test types not facts
@@ -79,7 +77,12 @@ const Charts = () => {
 
   return (
     <div id="charts" style={{ width: "100%" }}>
-      <NavBar pageName={"טבלת הספק"} roleId={params.rid} />
+      <NavBar
+        user={user}
+        setUser={setUser}
+        pageName={"טבלת הספק"}
+        roleId={params.rid}
+      />
       {loading ? (
         <Box
           sx={{

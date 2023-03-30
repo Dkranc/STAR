@@ -6,12 +6,12 @@ import Button from "@mui/material/Button";
 import EditCompanyPopUp from "../components/EditCompanyPopUp";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const AddEditSoldiers = () => {
+const AddEditSoldiers = ({ user, setUser }) => {
   const navigate = useNavigate();
 
   return (
     <div>
-      <NavBar pageName={"הוספת חיילים ועריכה"} />
+      <NavBar user={user} setUser={setUser} pageName={"הוספת חיילים ועריכה"} />
       <div
         style={{ display: "flex", justifyContent: "space-between" }}
         id="addEditNavButtons"
@@ -27,12 +27,20 @@ const AddEditSoldiers = () => {
         >
           <PersonAddAlt1Icon />
         </Button>
-
-        <EditCompanyPopUp/>
-
+        <Button
+          fontFamily={"Bold"}
+          color={"success"}
+          variant="contained"
+          style={{ margin: "20px 15px" }}
+          onClick={() => {
+            navigate("/CompanyChoice");
+          }}
+        >
+          הוספת פרטי פלוגה
+        </Button>
       </div>
 
-      <SelectSoldiers addEdit={true} />
+      <SelectSoldiers user={user} addEdit={true} />
     </div>
   );
 };

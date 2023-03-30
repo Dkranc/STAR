@@ -6,7 +6,7 @@ import NavBar from "../components/NavBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
-const ChooseRole = () => {
+const ChooseRole = ({ user, setUser }) => {
   const roles = [
     { name: "מפקד", id: 1 },
     { name: "תותחן", id: 2 },
@@ -64,6 +64,8 @@ const ChooseRole = () => {
   return (
     <div className="test-types">
       <NavBar
+        user={user}
+        setUser={setUser}
         pageName={`בחר תפקיד עבור: ${
           soldier !== undefined
             ? soldier == null
@@ -83,24 +85,24 @@ const ChooseRole = () => {
         {roles.map((role) => {
           return (
             <Button
-            variant="outlined"
-            sx={{
-              fontSize:"20px",
-              borderColor:"#2ED573",
-              color:"rgb(0,0,0)",
-              background:"white",
-              boxShadow:"inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
-              width: "100%",
-              mt:2,
-              borderRadius: 30,
-              fontFamily: "Bold",
-            }}
-            onClick={(e) => handleRoleChosen(e)}
-            key={role.id}
-            value={role.id}
-          >
-            {role.name}
-          </Button>
+              variant="outlined"
+              sx={{
+                fontSize: "20px",
+                borderColor: "#2ED573",
+                color: "rgb(0,0,0)",
+                background: "white",
+                boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+                width: "100%",
+                mt: 2,
+                borderRadius: 30,
+                fontFamily: "Bold",
+              }}
+              onClick={(e) => handleRoleChosen(e)}
+              key={role.id}
+              value={role.id}
+            >
+              {role.name}
+            </Button>
             // <Button
             //   type="submit"
             //   variant="contained"
@@ -126,12 +128,13 @@ const ChooseRole = () => {
             variant="outlined"
             sx={{
               // fontSize:"25px",
-              color:'black',
-              background:'linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)',
-              borderColor:"#2ED573",
-              boxShadow:"inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+              color: "black",
+              background:
+                "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
+              borderColor: "#2ED573",
+              boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
               width: "100%",
-              mt:2,
+              mt: 2,
               borderRadius: 30,
               fontFamily: "Bold",
             }}
@@ -156,7 +159,6 @@ const ChooseRole = () => {
           >
             {"סיום אימון,  שליחת סיכום וחישוב ציונים סופיים"}
           </Button> */}
-
         </div>
       </Box>
     </div>

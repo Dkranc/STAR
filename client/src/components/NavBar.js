@@ -1,7 +1,7 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-//mui
+import jwtDecode from "jwt-decode";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -18,7 +18,7 @@ import AssessmentIcon from "@mui/icons-material/Assessment";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import menuVector from "../image/menuVector.svg";
 
-export default function NavBar({ user, setIsAuthenticated, pageName }) {
+export default function NavBar({ user, setUser, pageName }) {
   const logoutText = "התנתקות";
   const lightModeText = "מצב תאורה";
   const reportsText = "דוחות וסיום אימון";
@@ -29,6 +29,17 @@ export default function NavBar({ user, setIsAuthenticated, pageName }) {
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
+
+  useEffect(() => {
+    console.log(jwtDecode(jwtDecode(sessionStorage.getItem("token")).secret));
+    // if (user) {
+    //   const decodedJwt = JSON.parse(atob(token.split('.')[1]));
+
+    //   if (decodedJwt.exp * 1000 < Date.now()) {
+    //     props.logOut();
+    //   }
+    // }
+  }, []);
 
   const reportsClicked = () => {
     navigate("/Charts/ChooseRole", {
@@ -46,10 +57,15 @@ export default function NavBar({ user, setIsAuthenticated, pageName }) {
 
   const logout = () => {
     console.log("logout pressed");
+    console.log(user);
+
     for (var i = 0; i < sessionStorage.length; i++) {
       var a = sessionStorage.key(i);
+      console.log(sessionStorage.key(i));
       sessionStorage.removeItem(a);
     }
+    console.log(sessionStorage);
+    setUser(null);
     navigate("/", {
       state: {
         goodLogin: false,
@@ -113,7 +129,7 @@ export default function NavBar({ user, setIsAuthenticated, pageName }) {
                 </ListItemIcon>
                 <Typography variant="inherit">{reportsText}</Typography>
               </MenuItem>
-              {/* user.roles[0] === "User.Admin" ? (
+              {user.roles[0] === "User.Admin" ? (
                 <MenuItem onClick={addEditClicked} dir="rtl">
                   <ListItemIcon>
                     <LibraryAddIcon fontSize="small" />
@@ -122,7 +138,7 @@ export default function NavBar({ user, setIsAuthenticated, pageName }) {
                     {addEditSoldierText}
                   </Typography>
                 </MenuItem>
-              ) : null*/}
+              ) : null}
             </Menu>
           </IconButton>
           <Typography

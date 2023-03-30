@@ -73,3 +73,39 @@ export const updateSoldierById = (req, res) => {
     console.log("bad token");
   }
 };
+
+//update a soldier by its id
+export const updateSoldiersCompanyInfo = (req, res) => {
+  try {
+    jwt.verify(req.headers.token, "9809502");
+
+    const soldiers = req.body[0];
+
+    const sqlUpdate = "UPDATE Soldier SET company=$1 WHERE serial_id = $2";
+    for (const [company, soldierList] of Object.entries(soldiers)) {
+      for (const [soldier_serial_id, soldierValue] of Object.entries(
+        soldierList
+      )) {
+        if (soldierValue) {
+          //only if the solider value is true. else we dont add.
+          db.query(
+            sqlUpdate,
+            [
+              company === "1" ? "א" : company === "2" ? "ב" : "ג",
+              soldier_serial_id,
+            ],
+            (err, result) => {
+              if (err) {
+                console.log(err);
+                res.status(500).send(err);
+              }
+            }
+          );
+        }
+      }
+    }
+    res.status(200).send("updated");
+  } catch {
+    console.log("bad token");
+  }
+};

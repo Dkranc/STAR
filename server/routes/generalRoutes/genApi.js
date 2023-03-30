@@ -4,6 +4,7 @@ import {
   getSoldiersById,
   addSoldier,
   updateSoldierById,
+  updateSoldiersCompanyInfo
 } from "../../controlers/soldiersControler.js";
 
 import { login } from "../../controlers/loginControler.js";
@@ -23,5 +24,7 @@ router.get("/soldier/:sid", getSoldiersById);
 router.post("/soldier", addSoldier);
 //update soldier by id
 router.put("/soldier/:sid", updateSoldierById);
+//update the company information for all soldiers
+router.post("/soldier/updateCompanyInfo", updateSoldiersCompanyInfo);
 
 export default router;

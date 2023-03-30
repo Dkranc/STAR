@@ -17,7 +17,13 @@ import { List } from "@mui/material";
 import { ListItem } from "@mui/material";
 import { CircularProgress } from "@mui/material";
 
-const SelectSoldiers = ({ setChosenSoldiers, chosenSoldiers, role }) => {
+const SelectSoldiers = ({
+  user,
+  setUser,
+  setChosenSoldiers,
+  chosenSoldiers,
+  role,
+}) => {
   const [loaded, setLoaded] = useState(false);
   const [soldiers, setSoldiers] = useState([]);
   const [solName, setSolName] = useState("");
@@ -86,7 +92,9 @@ const SelectSoldiers = ({ setChosenSoldiers, chosenSoldiers, role }) => {
 
   return (
     <div className="soldier-select">
-      {!teamTest && !addEditPage ? <NavBar pageName={pageName} /> : null}
+      {!teamTest && !addEditPage ? (
+        <NavBar setUser={setUser} user={user} pageName={pageName} />
+      ) : null}
       <div>
         {params.rid === undefined && !addEditPage ? (
           <Box
@@ -186,18 +194,18 @@ const SelectSoldiers = ({ setChosenSoldiers, chosenSoldiers, role }) => {
                     </Typography>
                   </Box>
                   <Box>
-                  <Typography
-                    fontFamily={"Regular"}
-                    sx={{
-                      alignSelf: "end",
-                      width: "100%",
-                      fontSize: "20px",
-                      display: "inline-block",
-                    }}
-                  >
-                    {sol[1].company}
-                  </Typography>
-                </Box>
+                    <Typography
+                      fontFamily={"Regular"}
+                      sx={{
+                        alignSelf: "end",
+                        width: "100%",
+                        fontSize: "20px",
+                        display: "inline-block",
+                      }}
+                    >
+                      {sol[1].company}
+                    </Typography>
+                  </Box>
                   <Box>
                     <Typography
                       fontFamily={"Regular"}

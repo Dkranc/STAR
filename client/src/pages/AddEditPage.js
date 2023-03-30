@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import axios from "axios";
 
-const AddEditPage = () => {
+const AddEditPage = ({ user, setUser }) => {
   const location = useLocation();
   /** set the soldiers value if were in edit stage , null if were adding a new one */
   const [soldier, setSoldier] = useState(
@@ -46,7 +46,11 @@ const AddEditPage = () => {
 
   return (
     <div>
-      <NavBar pageName={"הוספת/עריכת פרטי חייל"} />
+      <NavBar
+        setUser={setUser}
+        user={user}
+        pageName={"הוספת/עריכת פרטי חייל"}
+      />
 
       {Object.entries(soldier).map(([key, value]) => {
         if (key != "id")

@@ -8,7 +8,7 @@ import { Button } from "@mui/material";
 import { Box } from "@mui/system";
 import {CircularProgress} from "@mui/material";
 
-const TestType = () => {
+const TestType = ({user,setUser}) => {
   const navigate = useNavigate();
 
   const [tests, setTests] = useState([]);
@@ -55,7 +55,7 @@ const TestType = () => {
 
   return (
     <div className="test-types">
-      <NavBar pageName={`בחר מבחן עבור: ${location.state.soldier !== undefined ? location.state.soldier.full_name : "בחר מבחן כללי"}`}/>
+      <NavBar setUser={setUser} user={user} pageName={`בחר מבחן עבור: ${location.state.soldier !== undefined ? location.state.soldier.full_name : "בחר מבחן כללי"}`}/>
       {loaded ? (
         tests.map((test) => {
           return (

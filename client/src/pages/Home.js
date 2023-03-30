@@ -30,7 +30,7 @@ const Home = ({ user, setUser, lightState }) => {
 
   return (
     <div dir="rtl">
-      <NavBar user={user} pageName={pageName} />
+      <NavBar setUser={setUser} user={user} pageName={pageName} />
       <Box
         sx={{
           paddingY:"16px",

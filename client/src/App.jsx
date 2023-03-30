@@ -9,6 +9,7 @@ import SelectSoldiers from "./pages/SelectSoldiers";
 import ChooseRole from "./pages/ChooseRole";
 import AddEditSoldiers from "./pages/AddEditSoldiers";
 import AddEditPage from "./pages/AddEditPage";
+import CompanyChoice from "./pages/CompanyChoice";
 
 import jwtDecode from "jwt-decode";
 import ToggleThemeButton from "./components/ToggleThemeButton";
@@ -31,7 +32,10 @@ function App() {
       ? jwtDecode(jwtDecode(sessionStorage.getItem("token")).secret)
       : null
   );
-  //test - check isAuthenticated change value
+
+  // useEffect(() => {
+  //   user=user||location.state.user;
+  // }, []);
 
   const [light, setLight] = useState(true);
 
@@ -102,6 +106,10 @@ function App() {
                 path="/AddEditSoldiers/AddEditPage"
                 element={<Login setUser={setUser} lightState={light} />}
               />
+              <Route
+                path="/CompanyChoice"
+                element={<Login setUser={setUser} lightState={light} />}
+              />
             </Routes>
           ) : (
             <Routes>
@@ -113,41 +121,57 @@ function App() {
               />
               <Route
                 path="/SelectSoldiers/:rid/TestType/Questionary/:ttid"
-                element={<Questionary />}
+                element={<Questionary user={user} setUser={setUser} />}
               />
               <Route
                 path="/GeneralInput/ChooseRole/:rid/TestType/Questionary/:ttid"
-                element={<Questionary />}
+                element={<Questionary user={user} setUser={setUser} />}
               />
 
               <Route
                 path="/SelectSoldiers/:rid/TestType"
-                element={<TestType />}
+                element={<TestType user={user} setUser={setUser} />}
               />
 
-              <Route path="/SelectSoldiers/:rid" element={<SelectSoldiers />} />
-              <Route path="/MyTrainees" element={<SelectSoldiers />} />
+              <Route
+                path="/SelectSoldiers/:rid"
+                element={<SelectSoldiers setUser={setUser} user={user} />}
+              />
+              <Route
+                path="/MyTrainees"
+                element={<SelectSoldiers user={user} setUser={setUser} />}
+              />
               <Route
                 path="/MyTrainees/ChooseRole"
-                element={<ChooseRole user={user} />}
+                element={<ChooseRole user={user} setUser={setUser} />}
               />
               <Route
                 path="/GeneralInput/ChooseRole"
-                element={<ChooseRole user={user} />}
+                element={<ChooseRole user={user} setUser={setUser} />}
               />
               <Route
                 path="/GeneralInput/ChooseRole/:rid/TestType"
-                element={<TestType />}
+                element={<TestType TestType user={user} setUser={setUser} />}
               />
               <Route
                 path="/Charts/ChooseRole"
-                element={<ChooseRole user={user} />}
+                element={<ChooseRole user={user} setUser={setUser} />}
               />
-              <Route path="/Charts/:rid/Graphs" element={<Charts />} />
-              <Route path="/AddEditSoldiers" element={<AddEditSoldiers />} />
+              <Route
+                path="/Charts/:rid/Graphs"
+                element={<Charts user={user} setUser={setUser} />}
+              />
+              <Route
+                path="/AddEditSoldiers"
+                element={<AddEditSoldiers user={user} setUser={setUser} />}
+              />
               <Route
                 path="/AddEditSoldiers/AddEditPage"
-                element={<AddEditPage />}
+                element={<AddEditPage user={user} setUser={setUser} />}
+              />
+              <Route
+                path="/CompanyChoice"
+                element={<CompanyChoice user={user} setUser={setUser} />}
               />
             </Routes>
           )}

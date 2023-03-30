@@ -3,7 +3,13 @@ import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import SelectSoldiers from "../pages/SelectSoldiers";
 
-const SolPopUp = ({ role, chosenSoldiers, setChosenSoldiers }) => {
+const SolPopUp = ({
+  setUser,
+  user,
+  role,
+  chosenSoldiers,
+  setChosenSoldiers,
+}) => {
   return (
     <Popup
       trigger={<button> בחר חייל לתפקיד: {role} </button>}
@@ -12,6 +18,8 @@ const SolPopUp = ({ role, chosenSoldiers, setChosenSoldiers }) => {
     >
       <div>
         <SelectSoldiers
+          user={user}
+          setUser={setUser}
           setChosenSoldiers={setChosenSoldiers}
           chosenSoldiers={chosenSoldiers}
           role={role}
