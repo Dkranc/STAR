@@ -1,6 +1,8 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  CircularProgress,
+  Typography,
   Box,
   List,
   ListItem,
@@ -258,7 +260,9 @@ const GeneralInput = ({ questions, categories }) => {
       justifyContent="center"
       alignItems="center"
     >
-      <h2>הזנת ביצוע</h2>
+      <Typography sx={{ fontSize: "40px", fontFamily: "Bold" }}>
+        הזנת ביצוע
+      </Typography>
       <List
         id="general-input-questions"
         dense
@@ -437,7 +441,9 @@ const GeneralInput = ({ questions, categories }) => {
             );
           })
         ) : (
-          <h4>loading</h4>
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <CircularProgress color="success" />
+          </Box>
         )}
       </ul>
       <Button
