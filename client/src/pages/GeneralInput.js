@@ -1,6 +1,17 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { List,ListItem } from "@mui/material";
+import {
+  Box,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemButton,
+  Checkbox,
+  Collapse,
+  Button,
+} from "@mui/material";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 import axios from "axios";
 import "./GeneralInput.css";
 
@@ -164,6 +175,7 @@ const GeneralInput = ({ questions, categories }) => {
   };
 
   const selectAllClicked = (e) => {
+    console.log(e.target.value);
     var dict2 = {};
     soldiers.map((sol) => {
       // this sets the initial checkbox fileds to false
@@ -184,9 +196,10 @@ const GeneralInput = ({ questions, categories }) => {
   };
 
   const questionClicked = (e) => {
+    console.log(e.target.id);
     setShowQuestions({
       ...showQuestions,
-      [e.target.value]: !showQuestions[e.target.value],
+      [e.target.id]: !showQuestions[e.target.id],
     });
   };
 
@@ -236,8 +249,131 @@ const GeneralInput = ({ questions, categories }) => {
   };
 
   return (
-    <div dir="rtl" id="general-input">
+    <Box
+      display="flex"
+      dir="rtl"
+      id="general-input"
+      flexDirection="column"
+      width="100%"
+      justifyContent="center"
+      alignItems="center"
+    >
       <h2>הזנת ביצוע</h2>
+      <List
+        id="general-input-questions"
+        dense
+        dir={"rtl"}
+        sx={{
+          backgroundColor: "#F3F3F3",
+          width: "100%",
+          maxWidth: 360,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        {questions.map((question) => {
+          const labelId = `checkbox-list-label-${question.id}`;
+          return (
+            <Box
+              sx={{ marginY: "10px", width: "80%" }}
+              key={question.id}
+              value={question.id}
+            >
+              <ListItem
+                sx={{
+                  boxShadow: " 1px 1px 4px rgba(0, 0, 0, 0.25)",
+                  width: "100%",
+                  background: "white",
+                  borderRadius: "10px",
+                  border: "none",
+                  flexDirection: "column",
+                  direction: "flex",
+                }}
+                dir={"rtl"}
+                key={question.id}
+              >
+                <ListItemButton
+                  onClick={(e) => {
+                    questionClicked(e);
+                  }}
+                  id={question.id}
+                  value={question.id}
+                  sx={{ fontFamily: "Bold" }}
+                  dir="rtl"
+                >
+                  {question.name}
+                  {showQuestions[question.id] ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse
+                  orientation={"vertical"}
+                  in={showQuestions[question.id]}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  <List dir="rtl" display="flex" component="div" disablePadding>
+                    {showQuestions[question.id] === true ? (
+                      <Box>
+                        {!CompanyChoicePage ? (
+                          <Box className="btns-add-rmv">
+                            <Button
+                              id={question.id}
+                              value={question.id}
+                              onClick={(e) => {
+                                selectAllClicked(e);
+                              }}
+                            >
+                              סמן הכל
+                            </Button>
+                            <Button
+                              value={question.id}
+                              onClick={(e) => {
+                                removeAllClicked(e);
+                              }}
+                            >
+                              נקה הכל
+                            </Button>
+                          </Box>
+                        ) : null}
+
+                        {soldiers.map((sol) => {
+                          return (
+                            <ListItem
+                              sx={{ border: "none" }}
+                              alignItems="flex-end"
+                              dir={"rtl"}
+                              key={sol[1].serial_id}
+                              secondaryAction={
+                                <Checkbox
+                                  value={[question.id, sol[1].serial_id]}
+                                  edge="end"
+                                  onChange={(e) => checkBoxChanged(e)}
+                                  checked={
+                                    checkedArray[question.id][sol[1].serial_id]
+                                  }
+                                  inputProps={{ "aria-labelledby": labelId }}
+                                />
+                              }
+                            >
+                              <ListItemText
+                                sx={{ fontFamily: "Bold", textAlign: "right" }}
+                                dir={"rtl"}
+                                id={labelId}
+                                primary={sol[1].full_name}
+                              />
+                            </ListItem>
+                          );
+                        })}
+                      </Box>
+                    ) : null}
+                  </List>
+                </Collapse>
+              </ListItem>
+            </Box>
+          );
+        })}
+      </List>
+
       <ul id="general-input-questions">
         {loaded ? (
           questions.map((question) => {
@@ -304,9 +440,23 @@ const GeneralInput = ({ questions, categories }) => {
           <h4>loading</h4>
         )}
       </ul>
-      <button onClick={sendClicked}>שלח</button>
+      <Button
+        sx={{
+          background:
+            "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
+          boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+          color: "black",
+          fontFamily: "Bold",
+          fontSize: "20px",
+          paddingX: "20%",
+          borderRadius: "30px",
+        }}
+        onClick={sendClicked}
+      >
+        שלח
+      </Button>
       <h4 style={{ color: "red" }}>{error ? "שגיאה, ודא הזנה נכונה" : null}</h4>
-    </div>
+    </Box>
   );
 };
 

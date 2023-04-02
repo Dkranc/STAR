@@ -16,6 +16,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
+import HomeIcon from '@mui/icons-material/Home';
 import menuVector from "../image/menuVector.svg";
 
 export default function NavBar({ user, setUser, pageName }) {
@@ -23,6 +24,7 @@ export default function NavBar({ user, setUser, pageName }) {
   const lightModeText = "מצב תאורה";
   const reportsText = "דוחות וסיום אימון";
   const addEditSoldierText = "הוספת/עריכת נתוני חיילים";
+  const backHomeText = "חזור למסך הבית"
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
@@ -46,6 +48,12 @@ export default function NavBar({ user, setUser, pageName }) {
       state: {
         soldier: null,
       },
+    });
+  };
+
+  const homeClicked = () => {
+    navigate("/", {
+      state: {},
     });
   };
 
@@ -138,7 +146,17 @@ export default function NavBar({ user, setUser, pageName }) {
                     {addEditSoldierText}
                   </Typography>
                 </MenuItem>
+
               ) : null}
+
+            <MenuItem onClick={homeClicked} dir="rtl">
+                  <ListItemIcon>
+                    <HomeIcon fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="inherit">
+                    {backHomeText}
+                  </Typography>
+                </MenuItem>
             </Menu>
           </IconButton>
           <Typography

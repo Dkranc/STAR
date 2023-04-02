@@ -47,7 +47,7 @@ const AddEditPage = ({ user, setUser }) => {
   };
 
   return (
-    <Box fontFamily={'Bold'}>
+    <Box fontFamily={"Bold"}>
       <NavBar
         setUser={setUser}
         user={user}
@@ -57,36 +57,36 @@ const AddEditPage = ({ user, setUser }) => {
       {Object.entries(soldier).map(([key, value]) => {
         if (key != "id")
           return (
-            <Box display={'flex'}>
-            <TextField
-            sx={{
-              fontFamily:'Bold',
-              marginY:'5px',
-              marginX:'10%',
-              width:'100%',                        
-              marginX: "10%",
-              backgroundColor: "white",
-              borderRadius: "30px",
-              boxShadow: "inset 2px 2px 4px rgba(0, 0, 0, 0.25)",
-            }}
-              size="small"
-              dir="rtl"
-              value={value}
-              onChange={(e) =>
-                setSoldier({ ...soldier, [key]: e.target.value })
-              }
-              placeholder={
-                key === "serial_id"
-                  ? "מספר אישי"
-                  : key === "full_name"
-                  ? "שם מלא"
-                  : "פלוגה"
-              }
-              type="text"
-              name={key}
-              required
-            /> </Box>
-
+            <Box display={"flex"}>
+              <TextField
+                sx={{
+                  fontFamily: "Bold",
+                  marginY: "5px",
+                  marginX: "10%",
+                  width: "100%",
+                  marginX: "10%",
+                  backgroundColor: "white",
+                  borderRadius: "30px",
+                  boxShadow: "inset 2px 2px 4px rgba(0, 0, 0, 0.25)",
+                }}
+                size="small"
+                dir="rtl"
+                value={value}
+                onChange={(e) =>
+                  setSoldier({ ...soldier, [key]: e.target.value })
+                }
+                placeholder={
+                  key === "serial_id"
+                    ? "מספר אישי"
+                    : key === "full_name"
+                    ? "שם מלא"
+                    : "פלוגה"
+                }
+                type="text"
+                name={key}
+                required
+              />{" "}
+            </Box>
           );
       })}
 
@@ -94,29 +94,25 @@ const AddEditPage = ({ user, setUser }) => {
         {" "}
         {error ? "שגיאה, נא מלאו כל השדות כנדרש" : null}{" "}
       </p>
-      <Box display='flex'>
-
-      <Button
-                onClick={sendClicked}
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{
-                  marginX:'30%',
-                  color:'black',
-                  background:'linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)',
-                  borderRadius: 30,
-                  fontFamily: "Bold",
-                  fontSize: "15px",
-                }}
-              >
-                 {soldier.id != null ? "עדכן" : "הוסף"}
-              </Button>
-              </Box>
-
-      {/* <button onClick={sendClicked}>
-        {soldier.id != null ? "עדכן" : "הוסף"}
-      </button> */}
+      <Box display="flex">
+        <Button
+          onClick={sendClicked}
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{
+            marginX: "30%",
+            color: "black",
+            background:
+              "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
+            borderRadius: 30,
+            fontFamily: "Bold",
+            fontSize: "15px",
+          }}
+        >
+          {soldier.id != null ? "עדכן" : "הוסף"}
+        </Button>
+      </Box>
     </Box>
   );
 };

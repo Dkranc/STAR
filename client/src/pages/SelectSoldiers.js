@@ -5,7 +5,7 @@ import "./SelectSoldiers.css";
 import NavBar from "../components/NavBar";
 
 //mui import
-import { ListItemButton } from "@mui/material";
+import { ListItemButton, Fab } from "@mui/material";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -99,21 +99,32 @@ const SelectSoldiers = ({
         {params.rid === undefined && !addEditPage ? (
           <Box
             sx={{
+
               padding: "16px",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
             }}
           >
-            <Button
-              fontFamily={"Bold"}
-              color={"success"}
-              variant="contained"
-              type="submit"
-              onClick={(e) => handleGeneralInput(e)}
-            >
-              הזנה כללית ע״פ תפקיד
-            </Button>
+            <Fab
+            variant="extended"
+            onClick={(e) => handleGeneralInput(e)}
+            sx={{
+              position:'fixed', margin: '0px',
+              top: 'auto',
+              right: 'auto',
+              bottom: '20px',
+              left: '20px',
+              background:
+                "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
+              borderColor: "#2ED573",
+              boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",}} aria-label="edit">
+                <Typography fontFamily={'Regular'}>
+                   הזנה כללית ע״פ תפקיד
+                  </Typography>
+              
+</Fab>
+
           </Box>
         ) : (
           ""

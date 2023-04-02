@@ -89,8 +89,9 @@ const Login = ({ setUser, lightState }) => {
                 fullWidth
                 variant="contained"
                 sx={{
-                  color:'black',
-                  background:'linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)',
+                  color: "black",
+                  background:
+                    "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
                   mt: 3,
                   mb: 2,
                   borderRadius: 30,
