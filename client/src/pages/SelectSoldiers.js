@@ -122,8 +122,8 @@ const SelectSoldiers = ({
       <Box display="flex" justifyContent="center" alignItems="center">
         <TextField
           size="small"
-          fo
           sx={{
+            fontFamily:'Light',
             width: "100%",
             marginX: "10%",
             backgroundColor: "white",
