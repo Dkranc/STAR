@@ -1,9 +1,7 @@
 import React from "react";
 import NavBar from "../components/NavBar";
 import SelectSoldiers from "./SelectSoldiers";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import Button from "@mui/material/Button";
-import EditCompanyPopUp from "../components/EditCompanyPopUp";
+import EmojiFlagsIcon from '@mui/icons-material/EmojiFlags';
 import { useNavigate, useLocation } from "react-router-dom";
 import { Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -53,7 +51,7 @@ const AddEditSoldiers = ({ user, setUser }) => {
           }}
           aria-label="edit"
         >
-          <GroupAdd
+          <EmojiFlagsIcon
             onClick={() => {
               navigate("/CompanyChoice");
             }}

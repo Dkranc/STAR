@@ -160,61 +160,63 @@ const Questionary = ({ soldier, user, setUser }) => {
   };
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/api/tests/question/${params.ttid}`, {
-        headers: { token: sessionStorage.getItem("token") },
-      })
-      .then((response) => {
-        setCategories(
-          response.data.filter((item) => {
-            return item.input_type === null;
-          })
-        );
-        setQuestions(
-          response.data.filter((item) => {
-            return item.input_type != null;
-          })
-        );
-      });
-
-    //load old answers if previuosly filled out
-    if (sol !== undefined) {
-      axios
-        .get(
-          `http://localhost:8080/api/tests/fact/${sol.serial_id}/${params.ttid}`,
-          { headers: { token: sessionStorage.getItem("token") } }
-        )
+    (async () => {
+      await axios
+        .get(`http://localhost:8080/api/tests/question/${params.ttid}`, {
+          headers: { token: sessionStorage.getItem("token") },
+        })
         .then((response) => {
-          if (response.data.length > 0) {
-            setFacts(response.data);
+          setCategories(
+            response.data.filter((item) => {
+              return item.input_type === null;
+            })
+          );
+          setQuestions(
+            response.data.filter((item) => {
+              return item.input_type != null;
+            })
+          );
+        });
 
-            setPreviuoslySubmited(true);
-            var dict = {};
-            questions.map((question) => {
-              // this sets the initial answers object to the previous answers
-              var ans;
-              response.data.map((fact) => {
-                if (fact.question_id === question.id) {
-                  ans = fact.score;
-                }
+      //load old answers if previuosly filled out
+      if (sol !== undefined) {
+        await axios
+          .get(
+            `http://localhost:8080/api/tests/fact/${sol.serial_id}/${params.ttid}`,
+            { headers: { token: sessionStorage.getItem("token") } }
+          )
+          .then((response) => {
+            if (response.data.length > 0) {
+              setFacts(response.data);
+
+              setPreviuoslySubmited(true);
+              var dict = {};
+              questions.map((question) => {
+                // this sets the initial answers object to the previous answers
+                var ans;
+                response.data.map((fact) => {
+                  if (fact.question_id === question.id) {
+                    ans = fact.score;
+                  }
+                });
+
+                dict[question.name] = ans;
               });
 
-              dict[question.name] = ans;
-            });
-
-            setAnswers(dict);
-            setLoaded(true);
-          } else {
-            var dict1 = {};
-            questions.map((question) => {
-              // this sets the initial answers object to empty strings
-              dict1[question.name] = "undefined";
-            });
-            setAnswers(dict1);
-            setLoaded(true);
-          }
-        });
-    }
+              setAnswers(dict);
+              setLoaded(true);
+            } else {
+              var dict1 = {};
+              questions.map((question) => {
+                // this sets the initial answers object to empty strings
+                dict1[question.name] = "undefined";
+              });
+              setAnswers(dict1);
+              setLoaded(true);
+            }
+          });
+      }
+    })();
   }, [params.ttid, loaded]);
 
   return (

@@ -59,14 +59,18 @@ const GeneralInput = ({ questions, categories }) => {
 
       questions.map((question) => {
         var dict2 = {};
+        console.log(soldiers);
         soldiers.map((sol) => {
           // this sets the initial checkbox fileds
 
           if (CompanyChoicePage) {
+            
+
             const company =
               sol[1].company === "א" ? 1 : sol[1].company === "ב" ? 2 : 3;
             if (company === question.id) {
               dict2[sol[1].serial_id] = true;
+              console.log(sol[1]);
             }
           } else {
             factsFromTestType.map((fact) => {
@@ -107,6 +111,7 @@ const GeneralInput = ({ questions, categories }) => {
         // this sets the initial checkbox fileds
 
         if (CompanyChoicePage) {
+          console.log(sol[1]);
           const company =
             sol[1].company === "א" ? 1 : sol[1].company === "ב" ? 2 : 3;
           if (company === question.id) {
