@@ -4,6 +4,7 @@ import NavBar from "../components/NavBar";
 import axios from "axios";
 import { TextField, Button } from "@mui/material";
 import { Box } from "@mui/system";
+import toast from "react-hot-toast";
 
 const AddEditPage = ({ user, setUser }) => {
   const location = useLocation();
@@ -42,6 +43,7 @@ const AddEditPage = ({ user, setUser }) => {
           }
         );
       }
+      toast.success("הבקשה נשלחה בהצלחה");
       navigate("/");
     }
   };

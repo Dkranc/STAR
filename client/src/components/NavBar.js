@@ -16,15 +16,18 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
-import HomeIcon from '@mui/icons-material/Home';
+import HomeIcon from "@mui/icons-material/Home";
 import menuVector from "../image/menuVector.svg";
+import { useIdleTimer } from "react-idle-timer";
+import toast from "react-hot-toast";
 
 export default function NavBar({ user, setUser, pageName }) {
+  const [remaining, setRemaining] = useState(0);
   const logoutText = "התנתקות";
   const lightModeText = "מצב תאורה";
   const reportsText = "דוחות וסיום אימון";
   const addEditSoldierText = "הוספת/עריכת נתוני חיילים";
-  const backHomeText = "חזור למסך הבית"
+  const backHomeText = "חזור למסך הבית";
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
@@ -32,16 +35,25 @@ export default function NavBar({ user, setUser, pageName }) {
     setAnchorEl(null);
   };
 
-  useEffect(() => {
-    console.log(jwtDecode(jwtDecode(sessionStorage.getItem("token")).secret));
-    // if (user) {
-    //   const decodedJwt = JSON.parse(atob(token.split('.')[1]));
+  const onIdle = () => {
+    logout("timer");
+  };
 
-    //   if (decodedJwt.exp * 1000 < Date.now()) {
-    //     props.logOut();
-    //   }
-    // }
-  }, []);
+  const { getRemainingTime } = useIdleTimer({
+    onIdle,
+    timeout: 600000, //this logs out aftr 10 minutes of non use
+    throttle: 500,
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRemaining(Math.ceil(getRemainingTime() / 1000));
+    }, 500);
+
+    return () => {
+      clearInterval(interval);
+    };
+  });
 
   const reportsClicked = () => {
     navigate("/Charts/ChooseRole", {
@@ -63,9 +75,10 @@ export default function NavBar({ user, setUser, pageName }) {
     });
   };
 
-  const logout = () => {
-    console.log("logout pressed");
-    console.log(user);
+  const logout = (auto) => {
+    window.alert(
+      auto === "user" ? "התנתקות מוצלחת" : "המערכת מתנתקת עקב חוסר פעילות"
+    );
 
     for (var i = 0; i < sessionStorage.length; i++) {
       var a = sessionStorage.key(i);
@@ -73,19 +86,12 @@ export default function NavBar({ user, setUser, pageName }) {
       sessionStorage.removeItem(a);
     }
     console.log(sessionStorage);
+    sessionStorage.removeItem("token");
+    console.log(sessionStorage);
     setUser(null);
-    navigate("/", {
-      state: {
-        goodLogin: false,
-        user: null,
-      },
-    });
-    // setIsAuthenticated(false);
+    navigate("/");
 
     handleCloseMenu();
-    //need to navigate to login page
-    //and logout of public client
-    // and clear the storage
     window.location.reload(false);
   };
   const [openOptionTab, setOpenOptionTab] = useState(false);
@@ -119,7 +125,12 @@ export default function NavBar({ user, setUser, pageName }) {
                 "aria-labelledby": "basic-button",
               }}
             >
-              <MenuItem onClick={logout} dir="rtl">
+              <MenuItem
+                onClick={() => {
+                  logout("user");
+                }}
+                dir="rtl"
+              >
                 <ListItemIcon>
                   <LogoutIcon fontSize="small" />
                 </ListItemIcon>
@@ -146,17 +157,14 @@ export default function NavBar({ user, setUser, pageName }) {
                     {addEditSoldierText}
                   </Typography>
                 </MenuItem>
-
               ) : null}
 
-            <MenuItem onClick={homeClicked} dir="rtl">
-                  <ListItemIcon>
-                    <HomeIcon fontSize="small" />
-                  </ListItemIcon>
-                  <Typography variant="inherit">
-                    {backHomeText}
-                  </Typography>
-                </MenuItem>
+              <MenuItem onClick={homeClicked} dir="rtl">
+                <ListItemIcon>
+                  <HomeIcon fontSize="small" />
+                </ListItemIcon>
+                <Typography variant="inherit">{backHomeText}</Typography>
+              </MenuItem>
             </Menu>
           </IconButton>
           <Typography

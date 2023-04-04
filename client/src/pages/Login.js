@@ -1,6 +1,8 @@
 import { React, useState } from "react";
 import Config from "../Config";
+import { useNavigate } from "react-router-dom";
 import { PublicClientApplication } from "@azure/msal-browser";
+import toast from "react-hot-toast";
 import jwtDecode from "jwt-decode";
 import { themeLogin } from "../theme.js";
 //import axios from "axios";
@@ -24,7 +26,11 @@ import lightModeLogo from "../image/logoLightMode.png";
 import darkModeLogo from "../image/logoDarkMode.png";
 
 const Login = ({ setUser, lightState }) => {
-  const [goodLogin, setGoodLogin] = useState(false);
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
   const PubClientApp = new PublicClientApplication({
     auth: {
       clientId: Config.appId,
@@ -36,6 +42,29 @@ const Login = ({ setUser, lightState }) => {
       storeAuthStateInCookie: true,
     },
   });
+
+  const logout = (auto) => {
+    window.alert("המערכת מתנתקת");
+
+    for (var i = 0; i < sessionStorage.length; i++) {
+      var a = sessionStorage.key(i);
+      console.log(sessionStorage.key(i));
+      sessionStorage.removeItem(a);
+    }
+    console.log(sessionStorage);
+    sessionStorage.removeItem("token");
+    console.log(sessionStorage);
+    setUser(null);
+    navigate("/");
+
+    handleCloseMenu();
+    window.location.reload(false);
+  };
+  const [openOptionTab, setOpenOptionTab] = useState(false);
+  //handle click on menu button in navbar
+  const handleClickMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   const login = async () => {
     try {
@@ -55,10 +84,12 @@ const Login = ({ setUser, lightState }) => {
             axios
               .post(`http://localhost:8080/api/general/login`, [secret])
               .then((response) => {
-                console.log(response.data);
                 sessionStorage.setItem("token", response.data);
                 setUser(jwtDecode(jwtDecode(response.data).secret));
               });
+            setInterval(() => {
+              logout("timer");
+            }, 360000);
           }
         } catch (err) {}
       });

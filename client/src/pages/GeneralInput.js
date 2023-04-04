@@ -1,5 +1,6 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   CircularProgress,
   Typography,
@@ -159,7 +160,7 @@ const GeneralInput = ({ questions, categories }) => {
             { headers: { token: sessionStorage.getItem("token") } }
           )
           .then((response) => {
-            window.alert("העדכון נשלח בהצלחה");
+            toast.success("הבקשה נשלחה בהצלחה");
             navigate(`/`);
           });
       }
@@ -171,6 +172,7 @@ const GeneralInput = ({ questions, categories }) => {
           { headers: { token: sessionStorage.getItem("token") } }
         )
         .then((response) => {
+          toast.success("הבקשה נשלחה בהצלחה");
           navigate(`/`);
         });
     }

@@ -53,7 +53,7 @@ const Charts = ({ user, setUser }) => {
       setData(
         testTypes.map((test) => {
           return {
-            name: test.name.slice(0, 17),
+            name: test.name.includes('מאמן')? test.name.slice(17,30) :test.name.slice(0,17),
             נבחנו: getNumOfTests(test.id),
             // ממוצע: calcAvg(test.id) ? calcAvg(test.id) : 4,
           };
@@ -98,9 +98,9 @@ const Charts = ({ user, setUser }) => {
         <h2>אין מידע להצגה</h2>
       ) : (
         <ResponsiveContainer width="90%" height={400}>
-          <BarChart width={400} height={200} data={data}>
+          <BarChart width={400} height={200} data={data} >
             <CartesianGrid strokeDasharray="4 4" />
-            <XAxis dataKey="name" />
+            <XAxis dataKey="name" style={{fontSize:'6px'}}/>
             <YAxis />
             <Tooltip />
             <Legend />

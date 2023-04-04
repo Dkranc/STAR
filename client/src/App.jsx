@@ -1,4 +1,5 @@
 import { React, useState, useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
@@ -49,6 +50,7 @@ function App() {
       {/* <ToggleThemeButton changeState={changeState} lightState={light}/> */}
       <div className="App">
         <BrowserRouter>
+          <Toaster />
           {user === null ? (
             <Routes>
               <Route
