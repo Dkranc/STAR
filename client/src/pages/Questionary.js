@@ -6,7 +6,7 @@ import Questions from "../components/Questions";
 import NavBar from "../components/NavBar";
 import SolPopUp from "../components/SolPopUp";
 import GeneralInput from "./GeneralInput";
-//mui
+import toast from "react-hot-toast";
 import { Button, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 
@@ -87,7 +87,7 @@ const Questionary = ({ soldier, user, setUser }) => {
         );
       }
     }
-    console.log("enterd soldier");
+    toast.success("הבקשה נשלחה בהצלחה");
     navigate(`/`);
   };
 
@@ -127,6 +127,7 @@ const Questionary = ({ soldier, user, setUser }) => {
             { headers: { token: sessionStorage.getItem("token") } }
           )
           .then((response) => {
+            toast.success("הבקשה נשלחה בהצלחה");
             navigate(`/`);
           });
       } else {
@@ -151,6 +152,7 @@ const Questionary = ({ soldier, user, setUser }) => {
             { headers: { token: sessionStorage.getItem("token") } }
           )
           .then((response) => {
+            toast.success("הבקשה נשלחה בהצלחה");
             navigate(`/`);
           });
       }
@@ -232,7 +234,7 @@ const Questionary = ({ soldier, user, setUser }) => {
                 return (
                   <div>
                     <SolPopUp
-                     setUser={setUser}
+                      setUser={setUser}
                       user={user}
                       role={role}
                       chosenSoldiers={chosenSoldiers}
