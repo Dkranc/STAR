@@ -39,6 +39,7 @@ const Questions = ({
         ? event.target.value
         : parseInt(event.target.value),
     });
+    console.log(answers);
   };
 
   const handleCommentChange = (event) => {

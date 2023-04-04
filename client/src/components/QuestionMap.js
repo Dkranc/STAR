@@ -24,16 +24,14 @@ const QuestionMap = ({
           </p>
           {question.input_type === "boolean" ? (
             <Box>
-              <Box dir="rtl" className="bool_quest">
+              <Box dir="rtl" className="bool_quest" sx={{ marginBottom: "5%" }}>
                 <Box className="bool-answer">
                   <RadioGroup
                     row={true}
                     aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="controlled-radio-buttons-group"
+                    name={question.name}
                     value={answers[question.name]}
-                    onChange={() =>
-                      (answers[question.name] = !answers[question.name])
-                    }
+                    onChange={(e) => handleFormChange(e)}
                   >
                     <FormControlLabel
                       value={true}
@@ -46,7 +44,7 @@ const QuestionMap = ({
                       label="לא בוצע"
                     />
                   </RadioGroup>
-
+                  {/* 
                   <input
                     type="radio"
                     defaultChecked={answers[question.name] === 1}
@@ -64,7 +62,7 @@ const QuestionMap = ({
                     value={false}
                     onChange={(e) => handleFormChange(e)}
                   />
-                  <p>לא בוצע</p>
+                  <p>לא בוצע</p> */}
                 </Box>
               </Box>
               <Box className="comment">
