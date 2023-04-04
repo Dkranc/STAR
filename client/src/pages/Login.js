@@ -89,7 +89,7 @@ const Login = ({ setUser, lightState }) => {
               });
             setInterval(() => {
               logout("timer");
-            }, 360000);
+            }, 3600000);
           }
         } catch (err) {}
       });
