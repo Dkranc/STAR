@@ -1,7 +1,11 @@
-import React from "react";
+import { React, useEffect, useState } from "react";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import SelectSoldiers from "../pages/SelectSoldiers";
+import { Autocomplete, TextField, Collapse, Button } from "@mui/material";
+import { Box } from "@mui/system";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 
 const SolPopUp = ({
   setUser,
@@ -10,13 +14,40 @@ const SolPopUp = ({
   chosenSoldiers,
   setChosenSoldiers,
 }) => {
+  const [openSelected, setOpenSelected] = useState(true);
+
   return (
-    <Popup
-      trigger={<button> בחר חייל לתפקיד: {role} </button>}
-      position="left center"
-      closeOnDocumentClick
+    <Box
+      width="100%"
+      sx={{
+        backgroundColor: "white",
+        borderRadius: "30px",
+        border: "none",
+        boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.25)",
+      }}
     >
-      <div>
+      <Button
+        endIcon={openSelected ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+        style={{ fontFamily: "Regular" }}
+        sx={{
+          color: "black",
+          backgroundColor: "white",
+          marginY: "5%",
+          radius: "15px",
+          display: "flex",
+          justifyContent: "space-between",
+          display: "flex",
+        }}
+        onClick={() => setOpenSelected(!openSelected)}
+      >
+        בחר תפקיד עבור: {role}
+      </Button>
+      <Collapse
+        orientation={"vertical"}
+        in={openSelected}
+        timeout="auto"
+        unmountOnExit
+      >
         <SelectSoldiers
           user={user}
           setUser={setUser}
@@ -24,8 +55,8 @@ const SolPopUp = ({
           chosenSoldiers={chosenSoldiers}
           role={role}
         />
-      </div>
-    </Popup>
+      </Collapse>
+    </Box>
   );
 };
 
