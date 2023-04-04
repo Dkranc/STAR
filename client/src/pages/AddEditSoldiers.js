@@ -5,11 +5,11 @@ import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import Button from "@mui/material/Button";
 import EditCompanyPopUp from "../components/EditCompanyPopUp";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Fab,} from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
+import { Fab } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import { Box } from "@mui/system";
-import GroupAdd from '@mui/icons-material/GroupAddTwoTone';
-import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
+import GroupAdd from "@mui/icons-material/GroupAddTwoTone";
+import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 
 const AddEditSoldiers = ({ user, setUser }) => {
   const navigate = useNavigate();
@@ -18,27 +18,47 @@ const AddEditSoldiers = ({ user, setUser }) => {
     <div>
       <NavBar user={user} setUser={setUser} pageName={"הוספת חיילים ועריכה"} />
       <SelectSoldiers user={user} addEdit={true} />
-      <Box sx={{position:'fixed', margin: '0px',
-    top: 'auto',
-    right: 'auto',
-    bottom: '20px',
-    left: '20px',}}>
-      <Fab sx={{marginRight:'10px',background:
-                "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
-              borderColor: "#2ED573",
-              boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",}} aria-label="add">
-  <PersonAddAltOutlinedIcon onClick={() => {
-            navigate(`/AddEditSoldiers/AddEditPage`);
-          }}/>
-</Fab>
-<Fab  sx={{background:
-                "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
-              borderColor: "#2ED573",
-              boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",}} aria-label="edit">
-  <GroupAdd onClick={() => {
-            navigate("/CompanyChoice");
-          }}/>
-</Fab>
+      <Box
+        sx={{
+          position: "fixed",
+          margin: "0px",
+          top: "auto",
+          right: "auto",
+          bottom: "20px",
+          left: "20px",
+        }}
+      >
+        <Fab
+          sx={{
+            marginRight: "10px",
+            background:
+              "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
+            borderColor: "#2ED573",
+            boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+          }}
+          aria-label="add"
+        >
+          <PersonAddAltOutlinedIcon
+            onClick={() => {
+              navigate(`/AddEditSoldiers/AddEditPage`);
+            }}
+          />
+        </Fab>
+        <Fab
+          sx={{
+            background:
+              "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
+            borderColor: "#2ED573",
+            boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+          }}
+          aria-label="edit"
+        >
+          <GroupAdd
+            onClick={() => {
+              navigate("/CompanyChoice");
+            }}
+          />
+        </Fab>
       </Box>
     </div>
   );

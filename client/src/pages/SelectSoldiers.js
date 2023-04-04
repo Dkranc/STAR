@@ -74,9 +74,9 @@ const SelectSoldiers = ({
       });
   }, [soldier]);
 
-  const handleChoice = (e) => {
+  const handleChoice = (soldier_pressed) => {
     for (var sol in soldiers) {
-      if (soldiers[sol][1].full_name === e.target.textContent.trim()) {
+      if (soldiers[sol][1].id === soldier_pressed.id) {
         setSoldier(soldiers[sol][1]);
       }
     }
@@ -99,7 +99,6 @@ const SelectSoldiers = ({
         {params.rid === undefined && !addEditPage ? (
           <Box
             sx={{
-
               padding: "16px",
               display: "flex",
               flexDirection: "column",
@@ -107,24 +106,26 @@ const SelectSoldiers = ({
             }}
           >
             <Fab
-            variant="extended"
-            onClick={(e) => handleGeneralInput(e)}
-            sx={{
-              position:'fixed', margin: '0px',
-              top: 'auto',
-              right: 'auto',
-              bottom: '20px',
-              left: '20px',
-              background:
-                "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
-              borderColor: "#2ED573",
-              boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",}} aria-label="edit">
-                <Typography fontFamily={'Regular'}>
-                   הזנה כללית ע״פ תפקיד
-                  </Typography>
-              
-</Fab>
-
+              variant="extended"
+              onClick={(e) => handleGeneralInput(e)}
+              sx={{
+                position: "fixed",
+                margin: "0px",
+                top: "auto",
+                right: "auto",
+                bottom: "20px",
+                left: "20px",
+                background:
+                  "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
+                borderColor: "#2ED573",
+                boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+              }}
+              aria-label="edit"
+            >
+              <Typography fontFamily={"Regular"}>
+                 הזנה כללית ע״פ תפקיד
+              </Typography>
+            </Fab>
           </Box>
         ) : (
           ""
@@ -134,7 +135,7 @@ const SelectSoldiers = ({
         <TextField
           size="small"
           sx={{
-            fontFamily:'Light',
+            fontFamily: "Light",
             width: "100%",
             marginX: "10%",
             backgroundColor: "white",
@@ -189,7 +190,7 @@ const SelectSoldiers = ({
                     boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.25)",
                   }}
                   key={sol[1].id}
-                  onClick={(e) => handleChoice(e)}
+                  onClick={() => handleChoice(sol[1])}
                 >
                   <Box>
                     <Typography
