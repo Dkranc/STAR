@@ -279,6 +279,7 @@ const GeneralInput = ({ questions, categories }) => {
         }}
       >
         {questions.map((question) => {
+          if (checkedArray[question.id] === undefined) update();
           const labelId = `checkbox-list-label-${question.id}`;
           return (
             <Box
