@@ -1,8 +1,8 @@
 import { React, useEffect } from "react";
 import { Button, Box, TextField } from "@mui/material";
 import { TextareaAutosize } from "@mui/base";
-import { Radio, RadioGroup, FormControlLabel } from "@mui/material";
 
+import { Radio, RadioGroup, FormControlLabel } from "@mui/material";
 
 const QuestionMap = ({
   question,
@@ -23,10 +23,11 @@ const QuestionMap = ({
             {console.log(question.name, answers[question.name])}
           </p>
           {question.input_type === "boolean" ? (
-            <Box>
+            <Box style={{ fontFamily: "Regular" }}>
               <Box dir="rtl" className="bool_quest" sx={{ marginBottom: "5%" }}>
-                <Box className="bool-answer">
+                <Box className="bool-answer" style={{ fontFamily: "Regular" }}>
                   <RadioGroup
+                    style={{ fontFamily: "Regular" }}
                     row={true}
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name={question.name}
@@ -36,12 +37,20 @@ const QuestionMap = ({
                     <FormControlLabel
                       value={true}
                       control={<Radio />}
-                      label="בוצע"
+                      label={
+                        <Typography style={{ fontFamily: "Regular" }}>
+                          בוצע
+                        </Typography>
+                      }
                     />
                     <FormControlLabel
                       value={false}
                       control={<Radio />}
-                      label="לא בוצע"
+                      label={
+                        <Typography style={{ fontFamily: "Regular" }}>
+                          לא בוצע
+                        </Typography>
+                      }
                     />
                   </RadioGroup>
                   {/* 
