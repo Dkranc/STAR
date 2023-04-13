@@ -1,7 +1,7 @@
 import { React, useEffect } from "react";
-import { Button, Box, TextField } from "@mui/material";
+import { Button, Box, TextField, Typography } from "@mui/material";
 import { TextareaAutosize } from "@mui/base";
-
+import { textAlign } from "@mui/system";
 import { Radio, RadioGroup, FormControlLabel } from "@mui/material";
 
 const QuestionMap = ({
