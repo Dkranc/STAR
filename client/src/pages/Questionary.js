@@ -65,7 +65,6 @@ const Questionary = ({ soldier, user, setUser }) => {
         );
       } else {
         //if the soldiers test is being updated
-        console.log(sold.full_name, factData, 68);
 
         factData.map((fact) => {
           let ans = 0;

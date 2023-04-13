@@ -197,7 +197,7 @@ export const addFactGen = (req, res) => {
                   rid,
                   new Date().toISOString().slice(0, 10),
                   keyQuestion,
-                  valueAns ? 1 : 0,
+                  typeof valueAns == "boolean" ? (valueAns ? 1 : 0) : valueAns,
                   null,
                 ],
                 (err, result) => {
@@ -212,7 +212,7 @@ export const addFactGen = (req, res) => {
                 sqlUpdate,
                 [
                   new Date().toISOString().slice(0, 10),
-                  valueAns ? 1 : 0,
+                  typeof valueAns == "boolean" ? (valueAns ? 1 : 0) : valueAns,
                   result.rows[0].id,
                 ],
                 (err, result) => {
@@ -228,6 +228,44 @@ export const addFactGen = (req, res) => {
     }
     res.status(200).send("wrote to table");
   } catch {
+    console.log("bad token");
+  }
+};
+
+//calculate the final grade for the training
+export const calcFinalFactGrade = (req, res) => {
+  try {
+    jwt.verify(req.body.headers.token, "9809502");
+    // const facts = req.body[0];
+    // const comments = req.body[1];
+    // const date = req.body[2];
+    console.log("cool");
+
+    const sqlUpdateTrans = "UPDATE Fact SET final_grade=$1 WHERE id = $2";
+
+    /**continue from here- need to update woth final grades!! */
+
+    //facts.map((fact, ind) => {
+    // db.query(
+    //   sqlUpdateTrans,
+    //   [
+    //     date,
+    //     typeof fact.score == "string"
+    //       ? fact.score === "true"
+    //         ? 1
+    //         : 0
+    //       : fact.score,
+    //     comments[ind],
+    //     fact.id,
+    //   ],
+    //   (err, result) => {
+    //     if (err) console.log(err);
+    //   }
+    // );
+    //  });
+    res.sendStatus(200);
+  } catch (e) {
+    console.log(e);
     console.log("bad token");
   }
 };

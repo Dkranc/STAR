@@ -1,12 +1,10 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import jwtDecode from "jwt-decode";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Menu from "@mui/material/Menu";
@@ -17,9 +15,7 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import HomeIcon from "@mui/icons-material/Home";
-import menuVector from "../image/menuVector.svg";
 import { useIdleTimer } from "react-idle-timer";
-import toast from "react-hot-toast";
 
 export default function NavBar({ user, setUser, pageName }) {
   const [remaining, setRemaining] = useState(0);
@@ -85,15 +81,13 @@ export default function NavBar({ user, setUser, pageName }) {
       console.log(sessionStorage.key(i));
       sessionStorage.removeItem(a);
     }
-    console.log(sessionStorage);
     sessionStorage.removeItem("token");
-    console.log(sessionStorage);
     setUser(null);
     navigate("/");
-
     handleCloseMenu();
     window.location.reload(false);
   };
+
   const [openOptionTab, setOpenOptionTab] = useState(false);
   //handle click on menu button in navbar
   const handleClickMenu = (event) => {
@@ -142,21 +136,23 @@ export default function NavBar({ user, setUser, pageName }) {
                 </ListItemIcon>
                 <Typography variant="inherit">{lightModeText}</Typography>
               </MenuItem>
-              <MenuItem onClick={reportsClicked} dir="rtl">
-                <ListItemIcon>
-                  <AssessmentIcon fontSize="small" />
-                </ListItemIcon>
-                <Typography variant="inherit">{reportsText}</Typography>
-              </MenuItem>
               {user.roles[0] === "User.Admin" ? (
-                <MenuItem onClick={addEditClicked} dir="rtl">
-                  <ListItemIcon>
-                    <LibraryAddIcon fontSize="small" />
-                  </ListItemIcon>
-                  <Typography variant="inherit">
-                    {addEditSoldierText}
-                  </Typography>
-                </MenuItem>
+                <div>
+                  <MenuItem onClick={reportsClicked} dir="rtl">
+                    <ListItemIcon>
+                      <AssessmentIcon fontSize="small" />
+                    </ListItemIcon>
+                    <Typography variant="inherit">{reportsText}</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={addEditClicked} dir="rtl">
+                    <ListItemIcon>
+                      <LibraryAddIcon fontSize="small" />
+                    </ListItemIcon>
+                    <Typography variant="inherit">
+                      {addEditSoldierText}
+                    </Typography>
+                  </MenuItem>
+                </div>
               ) : null}
 
               <MenuItem onClick={homeClicked} dir="rtl">

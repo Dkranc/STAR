@@ -12,7 +12,9 @@ const QuestionMap = ({
   handleFormChange,
   loaded,
 }) => {
-  useEffect(() => {}, [loaded, answers]);
+  useEffect(() => {
+    console.log(answers);
+  }, [loaded, answers]);
 
   return (
     <Box>
@@ -20,7 +22,6 @@ const QuestionMap = ({
         <Box className="question" key={question.id}>
           <p style={{ fontWeight: "bold", fontFamily: "bold" }}>
             {question.name}
-            {console.log(question.name, answers[question.name])}
           </p>
           {question.input_type === "boolean" ? (
             <Box style={{ fontFamily: "Regular" }}>
@@ -31,7 +32,13 @@ const QuestionMap = ({
                     row={true}
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name={question.name}
-                    value={answers[question.name]}
+                    value={
+                      answers[question.name] === 1
+                        ? true
+                        : answers[question.name] === 0
+                        ? false
+                        : answers[question.name]
+                    }
                     onChange={(e) => handleFormChange(e)}
                   >
                     <FormControlLabel
@@ -53,25 +60,6 @@ const QuestionMap = ({
                       }
                     />
                   </RadioGroup>
-                  {/* 
-                  <input
-                    type="radio"
-                    defaultChecked={answers[question.name] === 1}
-                    name={question.name}
-                    value={false}
-                    onChange={(e) => handleFormChange(e)}
-                  />
-                  <p>בוצע</p>
-                </Box>
-                <Box className="bool-answer">
-                  <input
-                    type="radio"
-                    defaultChecked={answers[question.name] === 0}
-                    name={question.name}
-                    value={false}
-                    onChange={(e) => handleFormChange(e)}
-                  />
-                  <p>לא בוצע</p> */}
                 </Box>
               </Box>
               <Box className="comment">

@@ -15,6 +15,7 @@ import {
   getFact,
   getFactsByTestId,
   getFactsByRolesId,
+  calcFinalFactGrade
 } from "../../controlers/factControler.js";
 
 const router = express.Router();
@@ -47,5 +48,7 @@ router.post("/fact", addFact);
 router.post("/fact/generalInput", addFactGen);
 //update facts
 router.post("/fact/update", updateFact);
+//calculate grade for all facts
+router.put("/fact/calcFinalGrade", calcFinalFactGrade);
 
 export default router;

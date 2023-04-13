@@ -33,6 +33,7 @@ const Questions = ({
   }, [questions]);
 
   const handleFormChange = (event) => {
+    console.log(event.target)
     setAnswers({
       ...answers,
       [event.target.name]: isNaN(event.target.value)

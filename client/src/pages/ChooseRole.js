@@ -59,7 +59,15 @@ const ChooseRole = ({ user, setUser }) => {
     setRoleId(e.target.value);
   };
 
-  const finishTrainingCicked = (e) => {};
+  const finishTrainingCicked = (e) => {
+    axios
+      .put(`http://localhost:8080/api/tests/fact/calcFinalGrade`, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
+      .then((response) => {
+        console.log("calculated");
+      });
+  };
 
   return (
     <div className="test-types">
@@ -103,63 +111,45 @@ const ChooseRole = ({ user, setUser }) => {
             >
               {role.name}
             </Button>
-            // <Button
-            //   type="submit"
-            //   variant="contained"
-            //   sx={{
-            //     width: "100%",
-            //     mt: 3,
-            //     mb: 2,
-            //     borderRadius: 30,
-            //     fontFamily: "Bold",
-            //   }}
-            //   color={"success"}
-            //   onClick={(e) => handleRoleChosen(e)}
-            //   key={role.id}
-            //   value={role.id}
-            // >
-            //   {role.name}
-            // </Button>
           );
         })}
-        <div id="finish-training">
-          <h4>אפשרויות</h4>
-          <Button
-            variant="outlined"
-            sx={{
-              // fontSize:"25px",
-              color: "black",
-              background:
-                "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
-              borderColor: "#2ED573",
-              boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
-              width: "100%",
-              mt: 2,
-              borderRadius: 30,
-              fontFamily: "Bold",
-            }}
-            onClick={(e) => finishTrainingCicked(e)}
-            value={"finishTraining"}
-          >
-            {"סיום אימון,  שליחת סיכום וחישוב ציונים סופיים"}
-          </Button>
-          {/* <Button
-            type="submit"
-            variant="contained"
-            sx={{
-              width: "100%",
-              mt: 3,
-              mb: 2,
-              borderRadius: 30,
-              fontFamily: "Bold",
-            }}
-            color={"success"}
-            onClick={(e) => finishTrainingCicked(e)}
-            value={"finishTraining"}
-          >
-            {"סיום אימון,  שליחת סיכום וחישוב ציונים סופיים"}
-          </Button> */}
-        </div>
+
+        {soldier !== undefined ? (
+          soldier == null ? (
+            <div
+              style={{ fontSize: "20px", fontFamily: "Bold" }}
+              id="finish-training"
+            >
+              <center>
+                <h4 style={{ backgroundColor: "transparent" }}>:סיום האימון</h4>
+                <p style={{ fontSize: "18px" }}>
+                  בלחיצה על כפתור סיום אימון, יחושבו הציונים הסופיים של האימון
+                  וישלחו לחיילים מיילים עם ציוניהם הסופיים
+                </p>
+              </center>
+              <Button
+                variant="outlined"
+                sx={{
+                  fontSize: "20px",
+                  borderColor: "#2ED573",
+                  color: "rgb(0,0,0)",
+                  background:
+                    "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
+                  boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+                  width: "100%",
+                  mt: 2,
+                  borderRadius: 30,
+                  fontFamily: "Bold",
+                }}
+                onClick={(e) => finishTrainingCicked(e)}
+              >
+                {"סיום אימון"}
+              </Button>
+            </div>
+          ) : (
+           ""
+          )
+        ) : null}
       </Box>
     </div>
   );

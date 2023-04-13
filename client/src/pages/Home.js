@@ -6,7 +6,6 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 
-const pageName = "ראשי - מדריך"; //presented page name
 const Home = ({ user, setUser, lightState }) => {
   const [roles, setRoles] = useState([
     { name: "מפקד", id: 1 },
@@ -15,6 +14,12 @@ const Home = ({ user, setUser, lightState }) => {
     { name: "נהג", id: 4 },
     { name: "הזנת הערכת משהד", id: 5 },
   ]);
+
+  const main = "ראשי - ";
+  const pageName = main.concat(
+    " ",
+    user.roles[0] === "User.Admin" ? "מנהל" : "מדריך"
+  ); //presented page name
 
   const navigate = useNavigate();
 
@@ -33,7 +38,7 @@ const Home = ({ user, setUser, lightState }) => {
       <NavBar setUser={setUser} user={user} pageName={pageName} />
       <Box
         sx={{
-          paddingY:"16px",
+          paddingY: "16px",
           paddingX: "32px",
           display: "flex",
           flexDirection: "column",
@@ -49,13 +54,13 @@ const Home = ({ user, setUser, lightState }) => {
                   fullWidth
                   variant="outlined"
                   sx={{
-                    fontSize:"25px",
-                    borderColor:"#2ED573",
-                    color:"rgb(0,0,0)",
-                    background:"white",
-                    boxShadow:"inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+                    fontSize: "25px",
+                    borderColor: "#2ED573",
+                    color: "rgb(0,0,0)",
+                    background: "white",
+                    boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
                     width: "100%",
-                    mt:2,
+                    mt: 2,
                     borderRadius: 30,
                     fontFamily: "Bold",
                   }}
@@ -73,17 +78,21 @@ const Home = ({ user, setUser, lightState }) => {
               <Button
                 variant="outlined"
                 sx={{
-                  fontSize:"25px",
-                  borderColor:"#2ED573",
-                  color:"rgb(0,0,0)",
-                  background:"white",
-                  boxShadow:"inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+                  fontSize: "25px",
+                  borderColor: "#2ED573",
+                  color: "rgb(0,0,0)",
+                  background: "white",
+                  boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
                   width: "100%",
-                  mt:2,
+                  mt: 2,
                   borderRadius: 30,
                   fontFamily: "Bold",
                 }}
-                onClick={() => navigate(`/SelectSoldiers/${role.id}`,{state:{chosenSoldiers:[]}})}
+                onClick={() =>
+                  navigate(`/SelectSoldiers/${role.id}`, {
+                    state: { chosenSoldiers: [] },
+                  })
+                }
                 key={role.id}
               >
                 {role.name}
