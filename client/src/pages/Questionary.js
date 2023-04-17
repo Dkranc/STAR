@@ -241,11 +241,18 @@ const Questionary = ({ soldier, user, setUser }) => {
                       chosenSoldiers={chosenSoldiers}
                       setChosenSoldiers={setChosenSoldiers}
                     />
-                    <h4>
+                    <Typography
+                      fontFamily={"Regular"}
+                      align="Right"
+                      color="#000000"
+                      variant="h6"
+                      component="div"
+                      sx={{ flexGrow: 1 }}
+                    >
                       {chosenSoldiers[role] !== undefined
                         ? chosenSoldiers[role].full_name
                         : undefined}
-                    </h4>
+                    </Typography>
                   </div>
                 );
               })}

@@ -23,7 +23,7 @@ import axios from "axios";
 
 //import Images
 import lightModeLogo from "../image/logoLightMode.png";
-import darkModeLogo from "../image/logoDarkMode.png";
+import darkModeLogo from "../image/logoLightMode.png";
 
 const Login = ({ setUser, lightState }) => {
   const navigate = useNavigate();

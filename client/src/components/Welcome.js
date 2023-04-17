@@ -8,7 +8,7 @@ import { Container } from "@mui/system";
 import Box from "@mui/material/Box";
 import { ThemeProvider } from "@mui/material/styles";
 
-const Welcome = ({ setUser, user }) => {
+const Welcome = ({ setUser, user, lightMode, setLightMode }) => {
   const [openOptionTab, setOpenOptionTab] = useState(false);
 
   var usrRoleInHebrew = "";
@@ -53,7 +53,7 @@ const Welcome = ({ setUser, user }) => {
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Box
-          dir="rtl"
+            dir="rtl"
             sx={{
               marginTop: 0,
               display: "flex",
@@ -61,7 +61,9 @@ const Welcome = ({ setUser, user }) => {
               alignItems: "flex-start",
             }}
           >
-            <Typography fontSize={"20px"} fontFamily={"ExtraBold"}>{welcomeNameText}</Typography>
+            <Typography fontSize={"20px"} fontFamily={"ExtraBold"}>
+              {welcomeNameText}
+            </Typography>
             <Typography fontSize={"20px"}>{welcomeMsgText}</Typography>
             <Typography fontSize={"20px"}>
               {user.roles[0] == "User.Mashad" ? <BarChartIcon /> : null}

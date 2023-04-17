@@ -5,8 +5,9 @@ import NavBar from "../components/NavBar";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
+import { ThemeProvider } from "@mui/material/styles";
 
-const Home = ({ user, setUser, lightState }) => {
+const Home = ({ user, setUser, lightMode, setLightMode }) => {
   const [roles, setRoles] = useState([
     { name: "מפקד", id: 1 },
     { name: "תותחן", id: 2 },
@@ -34,8 +35,13 @@ const Home = ({ user, setUser, lightState }) => {
   };
 
   return (
-    <div dir="rtl">
-      <NavBar setUser={setUser} user={user} pageName={pageName} />
+    <Box dir="rtl">
+      <NavBar
+        setUser={setUser}
+        user={user}
+        pageName={pageName}
+        lightMode={lightMode}
+      />
       <Box
         sx={{
           paddingY: "16px",
@@ -100,7 +106,7 @@ const Home = ({ user, setUser, lightState }) => {
             );
         })}
       </Box>
-    </div>
+    </Box>
   );
 };
 

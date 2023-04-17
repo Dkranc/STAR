@@ -16,8 +16,16 @@ import AssessmentIcon from "@mui/icons-material/Assessment";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import HomeIcon from "@mui/icons-material/Home";
 import { useIdleTimer } from "react-idle-timer";
+import { ThemeProvider } from "@mui/material/styles";
+import { themeLight, themeDark } from "../theme.js";
 
-export default function NavBar({ user, setUser, pageName }) {
+export default function NavBar({
+  user,
+  setUser,
+  pageName,
+  lightMode,
+  setLightMode,
+}) {
   const [remaining, setRemaining] = useState(0);
   const logoutText = "התנתקות";
   const lightModeText = "מצב תאורה";
@@ -70,7 +78,10 @@ export default function NavBar({ user, setUser, pageName }) {
       state: {},
     });
   };
-
+  const lightModeClicked = () => {
+    console.log(lightMode);
+    // setLightMode(!lightMode);
+  };
   const logout = (auto) => {
     window.alert(
       auto === "user" ? "התנתקות מוצלחת" : "המערכת מתנתקת עקב חוסר פעילות"

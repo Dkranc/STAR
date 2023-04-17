@@ -47,70 +47,70 @@ function App() {
   return (
     <ThemeProvider theme={light ? themeLight : themeDark}>
       <CssBaseline />
-      {/* <ToggleThemeButton changeState={changeState} lightState={light}/> */}
-      <div className="App">
+      {/* <ToggleThemeButton changeState={changeState} lightMode={light} /> */}
+      <Box paddingBottom={"70px"} className="App">
         <BrowserRouter>
           <Toaster />
           {user === null ? (
             <Routes>
               <Route
                 path="/"
-                element={<Login setUser={setUser} lightState={light} />}
+                element={<Login setUser={setUser} lightMode={light} />}
               />
 
               <Route
                 path="/SelectSoldiers/:rid/TestType/Questionary/:ttid"
-                element={<Login setUser={setUser} lightState={light} />}
+                element={<Login setUser={setUser} lightMode={light} />}
               />
               <Route
                 path="/GeneralInput/ChooseRole/:rid/TestType/Questionary/:ttid"
-                element={<Login setUser={setUser} lightState={light} />}
+                element={<Login setUser={setUser} lightMode={light} />}
               />
 
               <Route
                 path="/SelectSoldiers/:rid/TestType"
-                element={<Login setUser={setUser} lightState={light} />}
+                element={<Login setUser={setUser} lightMode={light} />}
               />
 
               <Route
                 path="/SelectSoldiers/:rid"
-                element={<Login setUser={setUser} lightState={light} />}
+                element={<Login setUser={setUser} lightMode={light} />}
               />
               <Route
                 path="/MyTrainees"
-                element={<Login setUser={setUser} lightState={light} />}
+                element={<Login setUser={setUser} lightMode={light} />}
               />
               <Route
                 path="/MyTrainees/ChooseRole"
-                element={<Login setUser={setUser} lightState={light} />}
+                element={<Login setUser={setUser} lightMode={light} />}
               />
               <Route
                 path="/GeneralInput/ChooseRole"
-                element={<Login setUser={setUser} lightState={light} />}
+                element={<Login setUser={setUser} lightMode={light} />}
               />
               <Route
                 path="/GeneralInput/ChooseRole/:rid/TestType"
-                element={<Login setUser={setUser} lightState={light} />}
+                element={<Login setUser={setUser} lightMode={light} />}
               />
               <Route
                 path="/TestType/:ttid/Questionary/:qid"
-                element={<Login setUser={setUser} lightState={light} />}
+                element={<Login setUser={setUser} lightMode={light} />}
               />
               <Route
                 path="/Charts"
-                element={<Login setUser={setUser} lightState={light} />}
+                element={<Login setUser={setUser} lightMode={light} />}
               />
               <Route
                 path="/AddEditSoldiers"
-                element={<Login setUser={setUser} lightState={light} />}
+                element={<Login setUser={setUser} lightMode={light} />}
               />
               <Route
                 path="/AddEditSoldiers/AddEditPage"
-                element={<Login setUser={setUser} lightState={light} />}
+                element={<Login setUser={setUser} lightMode={light} />}
               />
               <Route
                 path="/CompanyChoice"
-                element={<Login setUser={setUser} lightState={light} />}
+                element={<Login setUser={setUser} lightMode={light} />}
               />
             </Routes>
           ) : (
@@ -118,7 +118,7 @@ function App() {
               <Route
                 path="/"
                 element={
-                  <Home setUser={setUser} user={user} lightState={light} />
+                  <Home setUser={setUser} user={user} lightMode={light} />
                 }
               />
               <Route
@@ -179,10 +179,22 @@ function App() {
           )}
         </BrowserRouter>
         {user !== null ? (
-          <Box display="center" justifyContent="center" alignItems="center">
+          <Box
+            sx={{
+              backgroundColor: "#F3F3F3",
+              position: "fixed",
+              bottom: 0,
+              width: "100%",
+              overflow: "hidden",
+            }}
+            display="center"
+            justifyContent="center"
+            alignItems="center"
+          >
             <Box
               component="img"
               sx={{
+                bottom: 0,
                 height: 63,
                 width: 84,
                 maxWidth: { xs: 84, md: 84 },
@@ -195,7 +207,7 @@ function App() {
         ) : (
           <Box />
         )}
-      </div>
+      </Box>
     </ThemeProvider>
   );
 }

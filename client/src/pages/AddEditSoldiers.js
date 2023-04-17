@@ -23,7 +23,7 @@ const AddEditSoldiers = ({ user, setUser }) => {
             margin: "0px",
             top: "auto",
             right: "auto",
-            bottom: "20px",
+            bottom: "75px",
             left: "20px",
           }}
         >

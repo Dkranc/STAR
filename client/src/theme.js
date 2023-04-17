@@ -37,6 +37,7 @@ export const themeLight = createTheme({
     fontWeightLight: 300,
     fontWeightRegular: 400,
     fontWeightMedium: 500,
+    color: "#000000",
   },
   components: {
     overrides: {
@@ -62,17 +63,21 @@ export const themeLight = createTheme({
 });
 
 export const themeDark = createTheme({
+  MuiButton: {
+    root: {
+      color: "white",
+      backgroundColor: "black",
+    },
+    style: {
+      color: "white",
+      backgroundColor: "black",
+    },
+  },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
         body: {
           backgroundColor: "rgb(0,0,0)",
-          backgroundImage: `linear-gradient(71deg, rgba(0,0,0,1) 5%, rgba(33,48,125,1) 100%);`,
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center center",
-          backgroundSize: "cover",
-          backgroundAttachment: "fixed",
-          height: "100%",
         },
       },
     },

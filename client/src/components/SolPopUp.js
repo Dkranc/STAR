@@ -14,7 +14,7 @@ const SolPopUp = ({
   chosenSoldiers,
   setChosenSoldiers,
 }) => {
-  const [openSelected, setOpenSelected] = useState(true);
+  const [openSelected, setOpenSelected] = useState(false);
 
   return (
     <Box
@@ -30,6 +30,7 @@ const SolPopUp = ({
         endIcon={openSelected ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
         style={{ fontFamily: "Regular" }}
         sx={{
+          fontSize: "20px",
           color: "black",
           backgroundColor: "white",
           marginY: "5%",
@@ -54,7 +55,9 @@ const SolPopUp = ({
           setChosenSoldiers={setChosenSoldiers}
           chosenSoldiers={chosenSoldiers}
           role={role}
+          setCollapse={setOpenSelected}
         />
+        {console.log(chosenSoldiers)}
       </Collapse>
     </Box>
   );

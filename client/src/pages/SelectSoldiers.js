@@ -23,6 +23,7 @@ const SelectSoldiers = ({
   setChosenSoldiers,
   chosenSoldiers,
   role,
+  setCollapse, //Collapse in SolPopUp
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [soldiers, setSoldiers] = useState([]);
@@ -75,6 +76,9 @@ const SelectSoldiers = ({
   }, [soldier]);
 
   const handleChoice = (soldier_pressed) => {
+    if (setCollapse != undefined) {
+      setCollapse(false);
+    } //value to collapse is SolPopUp comp
     for (var sol in soldiers) {
       if (soldiers[sol][1].id === soldier_pressed.id) {
         setSoldier(soldiers[sol][1]);
@@ -113,7 +117,7 @@ const SelectSoldiers = ({
                 margin: "0px",
                 top: "auto",
                 right: "auto",
-                bottom: "20px",
+                bottom: "55px",
                 left: "20px",
                 background:
                   "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
@@ -158,7 +162,10 @@ const SelectSoldiers = ({
         />
       </Box>
       {loaded ? (
-        <List sx={{ width: "100%", paddingX: "10%" }} dir="rtl">
+        <List
+          sx={{ width: "100%", paddingX: "10%", paddingBottom: "80px" }}
+          dir="rtl"
+        >
           {soldiers
             .filter((sol) => {
               //fiter acording to the name of soldier
