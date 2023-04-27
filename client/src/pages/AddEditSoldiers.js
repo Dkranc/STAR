@@ -7,6 +7,7 @@ import { Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { Box } from "@mui/system";
 import GroupAdd from "@mui/icons-material/GroupAddTwoTone";
+import { Button } from "@mui/material";
 import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 
 const AddEditSoldiers = ({ user, setUser }) => {
@@ -19,6 +20,11 @@ const AddEditSoldiers = ({ user, setUser }) => {
       {user.roles[0] === "User.Admin" ? (
         <Box
           sx={{
+            alignContent: "center",
+
+            width: "90%",
+            display: "flex",
+            justifyContent: "space-between",
             position: "fixed",
             margin: "0px",
             top: "auto",
@@ -43,21 +49,24 @@ const AddEditSoldiers = ({ user, setUser }) => {
               }}
             />
           </Fab>
-          <Fab
-            sx={{
-              background:
-                "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
-              borderColor: "#2ED573",
-              boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
-            }}
-            aria-label="edit"
-          >
-            <EmojiFlagsIcon
+
+          <div>
+            <Button
               onClick={() => {
                 navigate("/CompanyChoice");
               }}
-            />
-          </Fab>
+              style={{
+                fontWeight:"bold",
+                height: "50px",
+                borderRadius: "30px",
+                background:
+                  "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
+                color: "black",
+              }}
+            >
+              <p>הזנת שיוך פלוגתי</p>
+            </Button>
+          </div>
         </Box>
       ) : null}
     </div>

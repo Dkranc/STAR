@@ -17,15 +17,32 @@ const AddEditPage = ({ user, setUser }) => {
   const [error, setError] = useState(false);
   const navigate = useNavigate();
 
+  const abc = "אבגדהוזחטיכלמנסעפצקרשת";
+
   const sendClicked = () => {
-    if (
+    console.log(
+      soldier.serial_id === null,
+      soldier.full_name === null,
+      soldier.company === null,
+      soldier.serial_id.length < 9 && soldier.serial_id.length < 6,
+      soldier.company.length !== 1,
+      !abc.includes(soldier.company)
+    );
+
+    let inputError =
       soldier.serial_id === null ||
       soldier.full_name === null ||
-      soldier.company === null
-    )
+      soldier.company === null ||
+      soldier.serial_id.length < 7 ||
+      soldier.serial_id.length > 8 ||
+      soldier.company.length !== 1 ||
+      !abc.includes(soldier.company);
+
+    if (inputError) {
       setError(true);
-    else setError(false);
-    if (!error) {
+    } else setError(false);
+
+    if (!inputError) {
       if (soldier.id === null) {
         axios.post(
           `http://localhost:8080/api/general/soldier`,
@@ -82,7 +99,7 @@ const AddEditPage = ({ user, setUser }) => {
                     ? "מספר אישי"
                     : key === "full_name"
                     ? "שם מלא"
-                    : "פלוגה"
+                    : "פלוגה (א-ת)  "
                 }
                 type="text"
                 name={key}

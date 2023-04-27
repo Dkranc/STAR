@@ -5,9 +5,9 @@ import { Box } from "@mui/system";
 
 const CompanyChoice = ({ user, setUser }) => {
   const questions = [
-    { name: "פלוגה א", id: 1 },
-    { name: "פלוגה ב", id: 2 },
-    { name: "פלוגה ג", id: 3 },
+    { name: "פלוגה 1", id: 1 },
+    { name: "פלוגה 2", id: 2 },
+    { name: "פלוגה 3", id: 3 },
   ];
   const categories = [];
   return (

@@ -13,7 +13,11 @@ import {
   Collapse,
   Button,
 } from "@mui/material";
-
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormHelperText from "@mui/material/FormHelperText";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import axios from "axios";
@@ -231,20 +235,17 @@ const GeneralInput = ({ questions, categories }) => {
   };
 
   const checkBoxChanged = async (e) => {
+    const vals = e.target.value.split(",");
+    console.log(vals);
     var finalCheckedBoxesList = checkedArray;
     var fixedList = {};
     if (CompanyChoicePage) {
-      let filledBox =
-        checkedArray[e.target.value[0]][[e.target.value.slice(2)]];
+      let filledBox = checkedArray[vals[0]][[vals[1]]];
       //if it was empty we need to check no one else has this soldier in their list.
       if (!filledBox) {
         for (const [companyId, conmpanyBoxes] of Object.entries(checkedArray)) {
           for (const [soldier, soldierValue] of Object.entries(conmpanyBoxes)) {
-            if (
-              soldier === e.target.value.slice(2) &&
-              soldierValue &&
-              companyId !== e.target.value[0]
-            ) {
+            if (soldier === vals[1] && soldierValue && companyId !== vals[0]) {
               fixedList = {
                 ...checkedArray[companyId],
                 [soldier]: !soldierValue,
@@ -262,19 +263,27 @@ const GeneralInput = ({ questions, categories }) => {
     }
 
     var newSolCompleteList = {
-      ...checkedArray[e.target.value[0]],
-      [e.target.value.slice(2)]:
-        !checkedArray[e.target.value[0]][[e.target.value.slice(2)]],
+      ...checkedArray[vals[0]],
+      [vals[1]]: !checkedArray[vals[0]][[vals[1]]],
     };
 
     finalCheckedBoxesList = {
       ...finalCheckedBoxesList,
-      [e.target.value[0]]: newSolCompleteList,
+      [vals[0]]: newSolCompleteList,
     };
 
     setCheckedArray(finalCheckedBoxesList);
     console.log(finalCheckedBoxesList);
   };
+
+  const handleCompanySelected = (e, companyNum) => {
+    console.log(companyNames);
+    let comps = companyNames;
+    comps[companyNum - 1] = e.target.value;
+
+    setCompanyNames(comps);
+  };
+  const [companyNames, setCompanyNames] = useState(["", "", ""]);
 
   return (
     <Box
@@ -379,6 +388,29 @@ const GeneralInput = ({ questions, categories }) => {
                               </Button>
                             </Box>
                           ) : null}
+
+                          {/*CompanyChoicePage ? (
+                            <div>
+                            <TextField
+                                      sx={{
+                                        fontFamily: "Light",
+                                        width: "140px",
+                                        
+                                        borderRadius: 30,
+                                        background: "white",
+                                        boxShadow:
+                                          "inset 2px 2px 4px rgba(0, 0, 0, 0.25)",
+                                      }}
+                                      placeholder="בחר אות לפלוגה"
+                                      size="small"
+                                      type="text"
+                                      name={question.name}
+                                      value={companyNames[question.id]}
+                                      onChange={(e) => handleCompanySelected(e,question.id)
+                                      }
+                                    />
+                            </div>
+                                    ) : null*/}
 
                           {soldiers.map((sol) => {
                             return (
