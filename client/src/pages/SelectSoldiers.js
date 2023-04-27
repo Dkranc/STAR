@@ -201,7 +201,7 @@ const SelectSoldiers = ({
                 >
                   <Box>
                     <Typography
-                      fontFamily={"Regular"}
+                      fontFamily={"Bold"}
                       sx={{
                         alignSelf: "end",
                         width: "100%",
@@ -214,7 +214,7 @@ const SelectSoldiers = ({
                   </Box>
                   <Box>
                     <Typography
-                      fontFamily={"Regular"}
+                      fontFamily={"Bold"}
                       sx={{
                         alignSelf: "end",
                         width: "100%",
@@ -222,12 +222,12 @@ const SelectSoldiers = ({
                         display: "inline-block",
                       }}
                     >
-                      {sol[1].company}
+                      {/* {sol[1].company} plooga name */}
                     </Typography>
                   </Box>
                   <Box>
                     <Typography
-                      fontFamily={"Regular"}
+                      fontFamily={"Bold"}
                       sx={{ width: "100%", fontSize: "20px" }}
                     >
                       {sol[1].serial_id}

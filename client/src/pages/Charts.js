@@ -3,7 +3,7 @@ import { React, useEffect, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import { CircularProgress, Box } from "@mui/material";
-
+import NoGraphToShow from "../components/NoGraphToShow";
 import {
   BarChart,
   CartesianGrid,
@@ -53,7 +53,9 @@ const Charts = ({ user, setUser }) => {
       setData(
         testTypes.map((test) => {
           return {
-            name: test.name.includes('מאמן')? test.name.slice(17,30) :test.name.slice(0,17),
+            name: test.name.includes("מאמן")
+              ? test.name.slice(17, 30)
+              : test.name.slice(0, 17),
             נבחנו: getNumOfTests(test.id),
             // ממוצע: calcAvg(test.id) ? calcAvg(test.id) : 4,
           };
@@ -95,12 +97,13 @@ const Charts = ({ user, setUser }) => {
           <CircularProgress color="success" />
         </Box>
       ) : noData ? (
-        <h2>אין מידע להצגה</h2>
+        <NoGraphToShow />
       ) : (
+        // <h2>אין מידע להצגה</h2>
         <ResponsiveContainer width="90%" height={400}>
-          <BarChart width={400} height={200} data={data} >
+          <BarChart width={400} height={200} data={data}>
             <CartesianGrid strokeDasharray="4 4" />
-            <XAxis dataKey="name" style={{fontSize:'6px'}}/>
+            <XAxis dataKey="name" style={{ fontSize: "6px" }} />
             <YAxis />
             <Tooltip />
             <Legend />
