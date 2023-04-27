@@ -36,6 +36,10 @@ const GeneralPopUp = ({
 }) => {
   const [openSelected, setOpenSelected] = useState(true);
   const [textColor, setTextColor] = useState("black");
+  const [answersLength, setAnswersLength] = useState(
+    Object.keys(answers).length
+  );
+  const [answersCheckedLength, setAnswersCheckedLength] = useState(0);
 
   return (
     <Box id="main_questions">
