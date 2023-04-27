@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import DropDownCompany from "../components/DropDownCompany";
 import {
   CircularProgress,
   Typography,
@@ -323,6 +324,27 @@ const GeneralInput = ({ questions, categories }) => {
                 key={question.id}
                 value={question.id}
               >
+                <Box display="flex" flexDirection="row">
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: "20px",
+                      }}
+                      fontFamily="Bold"
+                    >
+                      {" "}
+                      בחר שם לפלוגה: {question.id}
+                    </Typography>
+                  </Box>
+                  <Box width="10px">
+                    <DropDownCompany />
+                  </Box>
+                </Box>
+
                 <ListItem
                   sx={{
                     boxShadow: " 1px 1px 4px rgba(0, 0, 0, 0.25)",
@@ -342,7 +364,11 @@ const GeneralInput = ({ questions, categories }) => {
                     }}
                     id={question.id}
                     value={question.id}
-                    sx={{ fontFamily: "Bold" }}
+                    sx={{
+                      width: "100%",
+                      fontFamily: "Bold",
+                      justifyContent: "space-between",
+                    }}
                     dir="rtl"
                   >
                     {question.name}
