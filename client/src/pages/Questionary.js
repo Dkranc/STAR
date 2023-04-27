@@ -8,7 +8,9 @@ import SolPopUp from "../components/SolPopUp";
 import GeneralInput from "./GeneralInput";
 import toast from "react-hot-toast";
 import { Button, Typography } from "@mui/material";
+import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import { Box } from "@mui/system";
+import { Fab } from "@mui/material";
 
 const Questionary = ({ soldier, user, setUser }) => {
   const params = useParams();
@@ -226,9 +228,34 @@ const Questionary = ({ soldier, user, setUser }) => {
           <Typography fontFamily={"Regular"} fontSize={"22px"}>
             {"תרחיש אימון עבור"}
           </Typography>
-          <Typography fontFamily={"ExtraBold"} fontSize={"22px"}>
-            {sol.full_name}
-          </Typography>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography fontFamily={"ExtraBold"} fontSize={"22px"}>
+              {sol.full_name}
+            </Typography>
+            <div>
+              <Button
+                onClick={() => {
+                  navigate(-2);
+                }}
+                style={{
+                  height: "20px",
+                  borderRadius: "10px",
+                  background:
+                    "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
+                  color: "black",
+                }}
+              >
+                <p>החלף מתאמן</p>
+              </Button>
+            </div>
+          </div>
+
           {params.ttid === "2" ? (
             <div>
               {rolesWithOutCommander.map((role) => {

@@ -67,6 +67,7 @@ const Login = ({ setUser, lightState }) => {
   };
 
   const login = async () => {
+    console.log("hello");
     try {
       await PubClientApp.loginPopup({
         scopes: Config.scopes,
@@ -91,9 +92,13 @@ const Login = ({ setUser, lightState }) => {
               logout("timer");
             }, 3600000);
           }
-        } catch (err) {}
+        } catch (err) {
+          console.log(err);
+        }
       });
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

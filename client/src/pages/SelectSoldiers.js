@@ -169,7 +169,10 @@ const SelectSoldiers = ({
           {soldiers
             .filter((sol) => {
               //fiter acording to the name of soldier
-              return solName === "" ? sol : sol[1].full_name.includes(solName);
+              return solName === ""
+                ? sol
+                : sol[1].full_name.includes(solName) ||
+                    sol[1].serial_id.toString().includes(solName);
             })
             .filter((sol) => {
               //filter for the team test after choosing soldiers

@@ -18,7 +18,6 @@ const GeneralPopUp = ({
   openCategories,
   setOpenCategories,
 }) => {
-  const [openSelected, setOpenSelected] = useState(true);
   return (
     <Box id="main_questions">
       {isMashadTest ? (
@@ -86,7 +85,12 @@ const GeneralPopUp = ({
                   unmountOnExit
                 >
                   {questions.map((question) => {
-                    if (openCategories[question.parent_id] && !isMashadTest) {
+                    console.log(question);
+                    if (
+                      category.id === question.parent_id &&
+                      openCategories[question.parent_id] &&
+                      !isMashadTest
+                    ) {
                       return (
                         <QuestionMap
                           key={question.id}
