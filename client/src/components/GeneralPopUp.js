@@ -1,11 +1,27 @@
 import { React, useEffect, useState } from "react";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
-import { Autocomplete, TextField, Collapse, Button, Box } from "@mui/material";
+import {
+  Autocomplete,
+  TextField,
+  Collapse,
+  Button,
+  Box,
+  Typography,
+} from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import QuestionMap from "../components/QuestionMap";
 
+const get_ans_count = (item) => {
+  var ans_count = 0;
+  for (const [key, value] of Object.entries(item)) {
+    if (value != "undefined") {
+      ans_count++;
+    }
+  }
+  return ans_count;
+};
 const GeneralPopUp = ({
   isMashadTest,
   questions,
@@ -18,6 +34,9 @@ const GeneralPopUp = ({
   openCategories,
   setOpenCategories,
 }) => {
+  const [openSelected, setOpenSelected] = useState(true);
+  const [textColor, setTextColor] = useState("black");
+
   return (
     <Box id="main_questions">
       {isMashadTest ? (
@@ -38,34 +57,49 @@ const GeneralPopUp = ({
         <Box
           width="100%"
           sx={{
-            backgroundColor: "white",
             borderRadius: "30px",
             border: "none",
-            boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.25)",
           }}
           id="categories"
           dir="rtl"
         >
           {categories.map((category) => {
             return (
-              <Box marginTop={"5%"} dir="rtl" id="category" key={category.id}>
+              <Box
+                marginTop={"5%"}
+                dir="rtl"
+                id="category"
+                key={category.id}
+                sx={{
+                  border: "none",
+                  backgroundColor: "white",
+                  borderRadius: "30px",
+                  boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.25)",
+                }}
+              >
                 <Button
+                  edge="start"
                   style={{ fontFamily: "Regular" }}
                   sx={{
-                    fontSize: "20px",
-
-                    color: "black",
-                    backgroundColor: "white",
-                    radius: "15px",
-                    display: "flex",
                     justifyContent: "space-between",
+                    fontSize: "20px",
+                    width: "100%",
+                    color: textColor,
+                    backgroundColor: "white",
+                    borderRadius: "30px",
                     display: "flex",
                   }}
                   endIcon={
                     openCategories[category.id] ? (
-                      <ArrowDropUpIcon />
+                      <Box>
+                        {get_ans_count(answers)}/{Object.keys(answers).length}
+                        <ArrowDropUpIcon />
+                      </Box>
                     ) : (
-                      <ArrowDropDownIcon />
+                      <Box>
+                        {get_ans_count(answers)}/{Object.keys(answers).length}
+                        <ArrowDropDownIcon />
+                      </Box>
                     )
                   }
                   onClick={() => {
@@ -76,7 +110,14 @@ const GeneralPopUp = ({
                   }}
                 >
                   {category.name}
+                  {/* <Typography visibility={"hidden"}>invisble</Typography>
+                  <Typography visibility={"hidden"}>invisble</Typography>
+                  <Typography visibility={"hidden"}>invisble</Typography> */}
+                  {/* <Typography fontWeight={"Regular"}>
+                    {get_ans_count(answers)}/{Object.keys(answers).length}
+                  </Typography> */}
                 </Button>
+
                 <Collapse
                   sx={{ padding: "5%" }}
                   orientation={"vertical"}

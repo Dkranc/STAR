@@ -20,9 +20,9 @@ const SolPopUp = ({
     <Box
       width="100%"
       sx={{
+        border: "none",
         backgroundColor: "white",
         borderRadius: "30px",
-        border: "none",
         boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.25)",
       }}
     >
@@ -30,11 +30,12 @@ const SolPopUp = ({
         endIcon={openSelected ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
         style={{ fontFamily: "Regular" }}
         sx={{
+          width: "100%",
           fontSize: "20px",
           color: "black",
           backgroundColor: "white",
           marginY: "5%",
-          radius: "15px",
+          borderRadius: "30px",
           display: "flex",
           justifyContent: "space-between",
           display: "flex",

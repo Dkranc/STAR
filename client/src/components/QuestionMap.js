@@ -94,8 +94,11 @@ const QuestionMap = ({
                 {[...Array(10)].map((e, i) => (
                   <Button
                     sx={{
+                      borderRadius: "10px",
+                      paddingY: "14px",
+                      paddingX: "12px",
                       minWidth: "0%",
-                      fontSize: "20px",
+                      fontSize: "18px",
                       backgroundColor: "#D9D9D9",
                       color: "black",
                     }}
