@@ -13,14 +13,39 @@ const MenuProps = {
   PaperProps: {
     style: {
       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
+      //   width: 30,
+      m: 1,
     },
   },
 };
 
-const companies = ["א", "ב", "ג", "ד", "ה"];
+const companies = [
+  "א",
+  "ב",
+  "ג",
+  "ד",
+  "ה",
+  "ו",
+  "ז",
+  "ח",
+  "ט",
+  "י",
+  "כ",
+  "ל",
+  "מ",
+  "נ",
+  "ס",
+  "ע",
+  "פ",
+  "צ",
+  "ק",
+  "ר",
+  "ש",
+  "ת",
+];
 
-export default function DropDownCompany() {
+const DropDownCompany = ({ question, questions, handleQuestionChange }) => {
+  console.log(questions);
   const theme = useTheme();
   const [companyName, setCompanyName] = useState("");
   const [open, setOpen] = useState(false);
@@ -40,12 +65,16 @@ export default function DropDownCompany() {
       // On autofill we get a stringified value.
       event.target.value
     );
+    const newQuestions = questions.slice(); //copy the array
+    newQuestions[question.id - 1].plooga_name = event.target.value; //execute the manipulations
+    handleQuestionChange(newQuestions); //set the new state
   };
 
   return (
     <Box dir="rtl">
-      <FormControl dir="ltr" sx={{ m: 1 }}>
+      <FormControl dir="rtl" sx={{ m: 1 }}>
         <Select
+          MenuProps={MenuProps}
           multiple={false}
           labelId="demo-multiple-name-label"
           id="demo-multiple-name"
@@ -77,4 +106,5 @@ export default function DropDownCompany() {
       </FormControl>
     </Box>
   );
-}
+};
+export default DropDownCompany;

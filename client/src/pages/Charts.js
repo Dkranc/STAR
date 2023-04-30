@@ -99,16 +99,30 @@ const Charts = ({ user, setUser }) => {
       ) : noData ? (
         <NoGraphToShow />
       ) : (
-        <ResponsiveContainer width="90%" height={400}>
-          <BarChart width={400} height={200} data={data}>
-            <CartesianGrid strokeDasharray="4 4" />
-            <XAxis dataKey="name" style={{ fontSize: "6px" }} />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="נבחנו" fill="#8884d8" />
-          </BarChart>
-        </ResponsiveContainer>
+  
+        <Box sx={{ paddingRight: "20px" }}>
+          <ResponsiveContainer width="100%" minHeight={400}>
+            <BarChart
+              minWidth={400}
+              minHeight={200}
+              data={data}
+              layout="vertical"
+            >
+              <CartesianGrid strokeDasharray="4 4" />
+              <XAxis type="number" orientation="bottom" />
+              <YAxis
+                type="category"
+                dataKey="name"
+                axisLine={true}
+                dx={0}
+                tickLine={true}
+              />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="נבחנו" fill="#8884d8" />
+            </BarChart>
+          </ResponsiveContainer>
+        </Box>
       )}
     </div>
   );
