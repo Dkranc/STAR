@@ -31,7 +31,7 @@ export default function DropDownCompany() {
   const handleOpen = () => {
     setOpen(true);
   };
-  const handleChange = (event: SelectChangeEvent<typeof companyName>) => {
+  const handleChange = (event) => {
     const {
       target: { value },
     } = event;

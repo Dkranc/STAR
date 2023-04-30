@@ -236,36 +236,96 @@ export const addFactGen = (req, res) => {
 export const calcFinalFactGrade = (req, res) => {
   try {
     jwt.verify(req.body.headers.token, "9809502");
-    // const facts = req.body[0];
-    // const comments = req.body[1];
-    // const date = req.body[2];
-    console.log("cool");
 
-    const sqlUpdateTrans = "UPDATE Fact SET final_grade=$1 WHERE id = $2";
+    var firstDay = new Date();
+    firstDay.setDate(firstDay.getDate() - 5);
+    firstDay = firstDay.toISOString().slice(0, 10);
+    var lastDay = new Date();
+    lastDay.setDate(lastDay.getDate() + 5);
+    lastDay = lastDay.toISOString().slice(0, 10);
 
-    /**continue from here- need to update woth final grades!! */
+    const sqlGet = "SELECT * FROM fact WHERE date BETWEEN $1 AND $2;";
+    var soldierArray = [];
 
-    //facts.map((fact, ind) => {
-    // db.query(
-    //   sqlUpdateTrans,
-    //   [
-    //     date,
-    //     typeof fact.score == "string"
-    //       ? fact.score === "true"
-    //         ? 1
-    //         : 0
-    //       : fact.score,
-    //     comments[ind],
-    //     fact.id,
-    //   ],
-    //   (err, result) => {
-    //     if (err) console.log(err);
-    //   }
-    // );
-    //  });
+    db.query(sqlGet, [firstDay, lastDay], (err, result) => {
+      result.rows.map((fact) => {
+        if (!soldierArray.includes(fact.soldier_serial_id)) {
+          soldierArray.push(fact.soldier_serial_id);
+        }
+      });
+
+      //get facts for each sodier
+      var soldiersFacts = {};
+      soldierArray.map((soldierId) => {
+        soldiersFacts[soldierId] = result.rows.filter(
+          (fact) => fact.soldier_serial_id === soldierId
+        );
+      });
+
+      for (const [solId, solFacts] of Object.entries(soldiersFacts)) {
+        calculateAndUpdate(solId, solFacts);
+      }
+
+      if (err) console.log(err);
+    });
+
     res.sendStatus(200);
   } catch (e) {
     console.log(e);
     console.log("bad token");
   }
+};
+
+const calculateAndUpdate = (solId, solFacts) => {
+  var testFactObj = {};
+  var testFactIdArr = [];
+
+  solFacts.map((fact) => {
+    if (!testFactIdArr.includes(fact.test_type_id))
+      testFactIdArr.push(fact.test_type_id);
+  });
+
+  testFactIdArr.map((ttid) => {
+    testFactObj[ttid] = solFacts.filter((fact) => fact.test_type_id === ttid);
+  });
+
+  var final_grade_for_soldier = 0;
+  for (const [ttid, testFactsarr] of Object.entries(testFactObj)) {
+    final_grade_for_soldier += calculate(testFactsarr, ttid);
+  }
+
+  const sqlUpdateTrans = "UPDATE Fact SET final_grade=$1 WHERE id = $2";
+
+  //  facts.map((fact, ind) => {
+  // db.query(
+  //   sqlUpdateTrans,
+  //   [
+  //     date,
+  //     typeof fact.score == "string"
+  //       ? fact.score === "true"
+  //         ? 1
+  //         : 0
+  //       : fact.score,
+  //     comments[ind],
+  //     fact.id,
+  //   ],
+  //   (err, result) => {
+  //     if (err) console.log(err);
+  //   }
+  // );
+  //  });
+};
+
+const calculate = (factsArr, ttid) => {
+  var grade = 0;
+
+  factsArr.map((fact) => {
+    const sqlGet = "SELECT weight FROM question WHERE id=$1;";
+
+    db.query(sqlGet, [fact.question_id], (err, result) => {
+      console.log("weight:", result.rows);
+    });
+  });
+
+  return grade;
 };

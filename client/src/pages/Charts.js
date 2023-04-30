@@ -99,7 +99,6 @@ const Charts = ({ user, setUser }) => {
       ) : noData ? (
         <NoGraphToShow />
       ) : (
-        // <h2>אין מידע להצגה</h2>
         <ResponsiveContainer width="90%" height={400}>
           <BarChart width={400} height={200} data={data}>
             <CartesianGrid strokeDasharray="4 4" />

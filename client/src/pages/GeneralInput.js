@@ -340,6 +340,7 @@ const GeneralInput = ({ questions, categories }) => {
                       בחר שם לפלוגה: {question.id}
                     </Typography>
                   </Box>
+                  {}
                   <Box width="10px">
                     <DropDownCompany />
                   </Box>
@@ -415,28 +416,7 @@ const GeneralInput = ({ questions, categories }) => {
                             </Box>
                           ) : null}
 
-                          {/*CompanyChoicePage ? (
-                            <div>
-                            <TextField
-                                      sx={{
-                                        fontFamily: "Light",
-                                        width: "140px",
-                                        
-                                        borderRadius: 30,
-                                        background: "white",
-                                        boxShadow:
-                                          "inset 2px 2px 4px rgba(0, 0, 0, 0.25)",
-                                      }}
-                                      placeholder="בחר אות לפלוגה"
-                                      size="small"
-                                      type="text"
-                                      name={question.name}
-                                      value={companyNames[question.id]}
-                                      onChange={(e) => handleCompanySelected(e,question.id)
-                                      }
-                                    />
-                            </div>
-                                    ) : null*/}
+                        
 
                           {soldiers.map((sol) => {
                             return (
