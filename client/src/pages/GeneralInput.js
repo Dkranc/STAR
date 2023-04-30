@@ -24,7 +24,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import axios from "axios";
 import "./GeneralInput.css";
 
-const GeneralInput = ({ questions, categories }) => {
+const GeneralInput = ({ questions, categories, handleQuestionChange }) => {
   const [soldiers, setSoldiers] = useState([]);
   const [showQuestions, setShowQuestions] = useState({});
   const [loaded, setLoaded] = useState(false);
@@ -149,7 +149,23 @@ const GeneralInput = ({ questions, categories }) => {
     console.log(dict3);
     setLoaded(true);
   };
-
+  const LegitCompanyName = () => {
+    if (
+      questions[0].plooga_name === null ||
+      questions[1].plooga_name === null ||
+      questions[2].plooga_name === null
+    ) {
+      return false;
+    }
+    if (
+      questions[0].plooga_name === questions[1].plooga_name ||
+      questions[1].plooga_name === questions[2].plooga_name ||
+      questions[2].plooga_name === questions[0].plooga_name
+    ) {
+      return false;
+    }
+    return true;
+  };
   const LegitCompanyInput = () => {
     var countSoldiers = 0;
     for (const [company, soldiers] of Object.entries(checkedArray)) {
@@ -158,7 +174,7 @@ const GeneralInput = ({ questions, categories }) => {
       }
     }
 
-    if (countSoldiers === soldiers.length) {
+    if (countSoldiers === soldiers.length && LegitCompanyName()) {
       setError(false);
       return true;
     } else {
@@ -174,13 +190,15 @@ const GeneralInput = ({ questions, categories }) => {
         axios
           .post(
             "http://localhost:8080/api/general/soldier/updateCompanyInfo",
-            [checkedArray],
+            [checkedArray, questions],
             { headers: { token: sessionStorage.getItem("token") } }
           )
           .then((response) => {
             toast.success("הבקשה נשלחה בהצלחה");
             navigate(`/`);
           });
+      } else {
+        toast.error("שגיאה בהזנת נתונים");
       }
     } else {
       axios
@@ -237,7 +255,7 @@ const GeneralInput = ({ questions, categories }) => {
 
   const checkBoxChanged = async (e) => {
     const vals = e.target.value.split(",");
-    console.log(vals);
+    console.log(checkedArray);
     var finalCheckedBoxesList = checkedArray;
     var fixedList = {};
     if (CompanyChoicePage) {
@@ -324,28 +342,40 @@ const GeneralInput = ({ questions, categories }) => {
                 key={question.id}
                 value={question.id}
               >
-                <Box display="flex" flexDirection="row">
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                  >
-                    <Typography
-                      sx={{
-                        fontSize: "20px",
-                      }}
-                      fontFamily="Bold"
+                {CompanyChoicePage ? (
+                  <Box display="flex" flexDirection="row">
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      justifyContent="center"
                     >
-                      {" "}
-                      בחר שם לפלוגה: {question.id}
-                    </Typography>
+                      <Typography
+                        sx={{
+                          fontSize: "20px",
+                        }}
+                        fontFamily="Bold"
+                      >
+                        {" "}
+                        בחר שם לפלוגה: {question.id}
+                      </Typography>
+                    </Box>
+
+                    <Box width="10px">
+                      <DropDownCompany
+                        question={question}
+                        questions={questions}
+                        handleQuestionChange={handleQuestionChange}
+                      />
+                    </Box>
                   </Box>
-                  <Box width="10px">
-                    <DropDownCompany />
-                  </Box>
-                </Box>
+                ) : (
+                  <Box></Box>
+                )}
 
                 <ListItem
+                  onClick={(e) => {
+                    questionClicked(e);
+                  }}
                   sx={{
                     boxShadow: " 1px 1px 4px rgba(0, 0, 0, 0.25)",
                     width: "100%",
@@ -359,9 +389,6 @@ const GeneralInput = ({ questions, categories }) => {
                   key={question.id}
                 >
                   <ListItemButton
-                    onClick={(e) => {
-                      questionClicked(e);
-                    }}
                     id={question.id}
                     value={question.id}
                     sx={{
@@ -537,7 +564,7 @@ const GeneralInput = ({ questions, categories }) => {
       >
         שלח
       </Button>
-      <h4 style={{ color: "red" }}>{error ? "שגיאה, ודא הזנה נכונה" : null}</h4>
+      {/* <h4 style={{ color: "red" }}>{error ? "שגיאה, ודא הזנה נכונה" : null}</h4> */}
     </Box>
   );
 };
