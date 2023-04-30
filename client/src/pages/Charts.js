@@ -4,6 +4,7 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import { CircularProgress, Box } from "@mui/material";
 import NoGraphToShow from "../components/NoGraphToShow";
+import DataTable from "../components/DataTable";
 import {
   BarChart,
   CartesianGrid,
@@ -99,7 +100,6 @@ const Charts = ({ user, setUser }) => {
       ) : noData ? (
         <NoGraphToShow />
       ) : (
-  
         <Box sx={{ paddingRight: "20px" }}>
           <ResponsiveContainer width="100%" minHeight={400}>
             <BarChart
@@ -122,6 +122,8 @@ const Charts = ({ user, setUser }) => {
               <Bar dataKey="נבחנו" fill="#8884d8" />
             </BarChart>
           </ResponsiveContainer>
+          {console.log(facts)}
+          {/* <DataTable facts={facts} /> */}
         </Box>
       )}
     </div>
