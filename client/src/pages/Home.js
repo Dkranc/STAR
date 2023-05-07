@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import "./Home.css";
 import Welcome from "../components/Welcome";
 import NavBar from "../components/NavBar";
@@ -21,13 +21,20 @@ const Home = ({ user, setUser, lightMode, setLightMode }) => {
     " ",
     user.roles[0] === "User.Admin" ? "מנהל" : "מדריך"
   ); //presented page name
-
   const navigate = useNavigate();
 
   const userRole = user.roles[0];
+  const onClickBtn = (role) => {
+    navigate(`../SelectSoldiers/${role.id}`, {
+      state: {
+        role: role.id,
 
+        chosenSoldiers: [],
+      },
+    });
+  };
   const handleMashadTestClicked = (e) => {
-    navigate("/MyTrainees", {
+    navigate("../ChooseTraining", {
       state: {
         isMashad: true,
       },
@@ -94,11 +101,7 @@ const Home = ({ user, setUser, lightMode, setLightMode }) => {
                   borderRadius: 30,
                   fontFamily: "Bold",
                 }}
-                onClick={() =>
-                  navigate(`/SelectSoldiers/${role.id}`, {
-                    state: { chosenSoldiers: [] },
-                  })
-                }
+                onClick={() => onClickBtn(role)}
                 key={role.id}
               >
                 {role.name}

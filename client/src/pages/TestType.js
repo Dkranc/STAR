@@ -60,7 +60,9 @@ const TestType = ({ user, setUser }) => {
         user={user}
         pageName={`בחר מבחן עבור: ${
           location.state.soldier !== undefined
-            ? location.state.soldier.full_name
+            ? location.state.soldier.first_name +
+              " " +
+              location.state.soldier.last_name
             : "בחר מבחן כללי"
         }`}
       />
