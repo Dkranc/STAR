@@ -122,10 +122,9 @@ const Charts = ({ user, setUser }) => {
               <Bar dataKey="נבחנו" fill="#8884d8" />
             </BarChart>
           </ResponsiveContainer>
-          {console.log(facts)}
-          {/* <DataTable facts={facts} /> */}
         </Box>
       )}
+      <DataTable facts={facts.slice()} />
     </div>
   );
 };
