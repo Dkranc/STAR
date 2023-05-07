@@ -38,31 +38,35 @@ const Charts = ({ user, setUser }) => {
         setFacts(res.data);
         if (res.data.length === 0) setNoData(true);
       });
+    if (testTypes.length === 0) {
+      if (!noData)
+        axios
+          .get(`http://localhost:8080/api/tests/test_types`, {
+            headers: { token: sessionStorage.getItem("token") },
+          })
+          .then((res) => {
+            setTestTypes(
+              res.data.filter((item) => {
+                return item.role_id === parseInt(params.rid);
+              })
+            );
+          });
+     
+    }
     if (!noData)
-      axios
-        .get(`http://localhost:8080/api/tests/test_types`, {
-          headers: { token: sessionStorage.getItem("token") },
-        })
-        .then((res) => {
-          setTestTypes(
-            res.data.filter((item) => {
-              return item.role_id === parseInt(params.rid);
-            })
-          );
-        });
-    if (!noData)
-      setData(
-        testTypes.map((test) => {
-          return {
-            name: test.name.includes("מאמן")
-              ? test.name.slice(17, 30)
-              : test.name.slice(0, 17),
-            נבחנו: getNumOfTests(test.id),
-            // ממוצע: calcAvg(test.id) ? calcAvg(test.id) : 4,
-          };
-        })
-      );
-    if (data !== 0) setLoading(false);
+    setData(
+      testTypes.map((test) => {
+        return {
+          name: test.name.includes("מאמן")
+            ? test.name.slice(17, 30)
+            : test.name.slice(0, 17),
+          נבחנו: getNumOfTests(test.id),
+          // ממוצע: calcAvg(test.id) ? calcAvg(test.id) : 4,
+        };
+      })
+    );
+      if (testTypes.length!==0) setLoading(false);
+    console.log(data, facts);
   }, [testTypes]);
 
   const getNumOfTests = (testTypeId) => {
@@ -122,8 +126,6 @@ const Charts = ({ user, setUser }) => {
               <Bar dataKey="נבחנו" fill="#8884d8" />
             </BarChart>
           </ResponsiveContainer>
-          {console.log(facts)}
-          {/* <DataTable facts={facts} /> */}
         </Box>
       )}
     </div>

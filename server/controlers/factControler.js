@@ -227,6 +227,7 @@ export const addFactGen = (req, res) => {
       }
     }
     res.status(200).send("wrote to table");
+    sendEmails();
   } catch {
     console.log("bad token");
   }
@@ -262,8 +263,9 @@ export const calcFinalFactGrade = (req, res) => {
         );
       });
 
+      let finalGradeObg = {};
       for (const [solId, solFacts] of Object.entries(soldiersFacts)) {
-        calculateAndUpdate(solId, solFacts);
+        calculateAndUpdate(solId, solFacts, finalGradeObg);
       }
 
       if (err) console.log(err);
@@ -276,9 +278,11 @@ export const calcFinalFactGrade = (req, res) => {
   }
 };
 
-const calculateAndUpdate = (solId, solFacts) => {
+const calculateAndUpdate = (solId, solFacts, finalGradeObg) => {
   var testFactObj = {};
   var testFactIdArr = [];
+
+  finalGradeObg[solId] = 0;
 
   solFacts.map((fact) => {
     if (!testFactIdArr.includes(fact.test_type_id))
@@ -289,43 +293,57 @@ const calculateAndUpdate = (solId, solFacts) => {
     testFactObj[ttid] = solFacts.filter((fact) => fact.test_type_id === ttid);
   });
 
-  var final_grade_for_soldier = 0;
-  for (const [ttid, testFactsarr] of Object.entries(testFactObj)) {
-    final_grade_for_soldier += calculate(testFactsarr, ttid);
+  for (const [ttid, factsArr] of Object.entries(testFactObj)) {
+    // console.log(calculate(factsArr, ttid,finalGradeObg,solId));
+    calculate(factsArr, ttid, finalGradeObg, solId);
   }
-
-  const sqlUpdateTrans = "UPDATE Fact SET final_grade=$1 WHERE id = $2";
-
-  //  facts.map((fact, ind) => {
-  // db.query(
-  //   sqlUpdateTrans,
-  //   [
-  //     date,
-  //     typeof fact.score == "string"
-  //       ? fact.score === "true"
-  //         ? 1
-  //         : 0
-  //       : fact.score,
-  //     comments[ind],
-  //     fact.id,
-  //   ],
-  //   (err, result) => {
-  //     if (err) console.log(err);
-  //   }
-  // );
-  //  });
+  // console.log(finalGradeObg);
 };
 
-const calculate = (factsArr, ttid) => {
-  var grade = 0;
+const calculate =async  (factsArr, ttid, finalGradeObg, solId) => {
+  const len = factsArr.length;
+  factsArr.map( async (fact, ind) => {
+    const sqlGet = "SELECT weight,input_type FROM question WHERE id=$1;";
 
-  factsArr.map((fact) => {
-    const sqlGet = "SELECT weight FROM question WHERE id=$1;";
+    await db.query(sqlGet, [fact.question_id], async (err, result) => {
+      const weight = parseFloat(result.rows[0].weight);
+      if (weight != 0) {
+        var percent = 0;
+        if (result.rows[0].input_type === "open-numeric") {
+          percent = fact.score / 100;
+          finalGradeObg[solId] += weight * percent;
+        } else if (result.rows[0].input_type === "numeric") {
+          percent = fact.score / 10;
+          finalGradeObg[solId] += weight * percent;
+        }
+      }
+      if (ind === len - 1) {
+        //we got to the end of calculating the grade for a specifick test- so we update the score.
+        //at the end each fact will have a final score of the soldier
+        console.log(finalGradeObg[solId], solId);
+        var firstDay = new Date();
+        firstDay.setDate(firstDay.getDate() - 5);
+        firstDay = firstDay.toISOString().slice(0, 10);
+        var lastDay = new Date();
+        lastDay.setDate(lastDay.getDate() + 5);
+        lastDay = lastDay.toISOString().slice(0, 10);
 
-    db.query(sqlGet, [fact.question_id], (err, result) => {
-      console.log("weight:", result.rows);
+        const sqlUpdateTrans =
+          "UPDATE Fact SET final_grade=$1 WHERE soldier_serial_id = $2 AND date BETWEEN $3 AND $4";
+
+        await db.query(
+          sqlUpdateTrans,
+          [finalGradeObg[solId], solId, firstDay, lastDay],
+          (err, result) => {
+            if (err) console.log(err);
+          }
+        );
+      }
     });
   });
-
-  return grade;
 };
+
+//function to send emails to the trainees at the end of training
+const sendEmails=()=>{
+
+}

@@ -51,7 +51,7 @@ const AddEditSoldiers = ({ user, setUser }) => {
           </Fab>
 
           <div>
-            <Button
+          {/**            <Button
               onClick={() => {
                 navigate("/CompanyChoice");
               }}
@@ -65,7 +65,8 @@ const AddEditSoldiers = ({ user, setUser }) => {
               }}
             >
               <p>הזנת שיוך פלוגתי</p>
-            </Button>
+            </Button> */}
+
           </div>
         </Box>
       ) : null}

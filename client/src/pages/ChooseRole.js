@@ -2,6 +2,7 @@ import { React, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import NavBar from "../components/NavBar";
+import toast from "react-hot-toast";
 //mui
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -65,9 +66,14 @@ const ChooseRole = ({ user, setUser }) => {
         headers: { token: sessionStorage.getItem("token") },
       })
       .then((response) => {
-        console.log("calculated");
+        toast.success("האימון הסתיים! הדוחות נשלחו בהצלחה")
+        navigate("/");
       });
   };
+
+  const medicalTestClicked=(e)=>{
+    console.log("med clicked")
+  }
 
   return (
     <div className="test-types">
@@ -147,9 +153,25 @@ const ChooseRole = ({ user, setUser }) => {
               </Button>
             </div>
           ) : (
-           ""
+          ""
           )
-        ) : null}
+        ) :  <Button
+        variant="outlined"
+        sx={{
+          fontSize: "20px",
+          borderColor: "#2ED573",
+          color: "rgb(0,0,0)",
+          background: "white",
+          boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+          width: "100%",
+          mt: 2,
+          borderRadius: 30,
+          fontFamily: "Bold",
+        }}
+        onClick={(e) => medicalTestClicked(e)}
+      >
+        הזנת בוחן מערים כללי
+      </Button>}
       </Box>
     </div>
   );

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.addFactGen = exports.updateFact = exports.addFact = exports.getFactsByTestId = exports.getFactsByRolesId = exports.getFact = void 0;
+exports.calcFinalFactGrade = exports.addFactGen = exports.updateFact = exports.addFact = exports.getFactsByTestId = exports.getFactsByRolesId = exports.getFact = void 0;
 
 var _connectDB = require("../connectDB.js");
 
@@ -122,6 +122,7 @@ var addFact = function addFact(req, res) {
     var parent_external_id = req.body[6]; //null for now- will be battalion number of soldier
 
     var comments = req.body[7]; //is array
+    //const chosenSoldiers=  req.body[8];//this will be an array of soldiers for a תרגיל צוות
 
     for (var i = 0; i < scores.length; i++) {
       var sqlInsert = "INSERT INTO fact(soldier_serial_id, test_type_id, role, date, question_id, score, parent_external_id, comment) VALUES($1,$2,$3,$4,$5,$6,$7,$8)";
@@ -202,7 +203,7 @@ var addFactGen = function addFactGen(req, res) {
             if (result.rowCount === 0) {
               console.log(keySol, "no prev");
 
-              _connectDB.db.query(sqlInsert, [keySol, ttid, rid, new Date().toISOString().slice(0, 10), keyQuestion, valueAns ? 1 : 0, null], function (err, result) {
+              _connectDB.db.query(sqlInsert, [keySol, ttid, rid, new Date().toISOString().slice(0, 10), keyQuestion, typeof valueAns == "boolean" ? valueAns ? 1 : 0 : valueAns, null], function (err, result) {
                 if (err) {
                   console.log(err);
                 }
@@ -210,7 +211,7 @@ var addFactGen = function addFactGen(req, res) {
             } else {
               console.log(keySol, "hasprev");
 
-              _connectDB.db.query(sqlUpdate, [new Date().toISOString().slice(0, 10), valueAns ? 1 : 0, result.rows[0].id], function (err, result) {
+              _connectDB.db.query(sqlUpdate, [new Date().toISOString().slice(0, 10), typeof valueAns == "boolean" ? valueAns ? 1 : 0 : valueAns, result.rows[0].id], function (err, result) {
                 if (err) {
                   console.log(err);
                 }
@@ -229,10 +230,166 @@ var addFactGen = function addFactGen(req, res) {
       }
 
       res.status(200).send("wrote to table");
+      sendEmails();
     })();
   } catch (_unused6) {
     console.log("bad token");
   }
-};
+}; //calculate the final grade for the training
+
 
 exports.addFactGen = addFactGen;
+
+var calcFinalFactGrade = function calcFinalFactGrade(req, res) {
+  try {
+    _jsonwebtoken["default"].verify(req.body.headers.token, "9809502");
+
+    var firstDay = new Date();
+    firstDay.setDate(firstDay.getDate() - 5);
+    firstDay = firstDay.toISOString().slice(0, 10);
+    var lastDay = new Date();
+    lastDay.setDate(lastDay.getDate() + 5);
+    lastDay = lastDay.toISOString().slice(0, 10);
+    var sqlGet = "SELECT * FROM fact WHERE date BETWEEN $1 AND $2;";
+    var soldierArray = [];
+
+    _connectDB.db.query(sqlGet, [firstDay, lastDay], function (err, result) {
+      result.rows.map(function (fact) {
+        if (!soldierArray.includes(fact.soldier_serial_id)) {
+          soldierArray.push(fact.soldier_serial_id);
+        }
+      }); //get facts for each sodier
+
+      var soldiersFacts = {};
+      soldierArray.map(function (soldierId) {
+        soldiersFacts[soldierId] = result.rows.filter(function (fact) {
+          return fact.soldier_serial_id === soldierId;
+        });
+      });
+      var finalGradeObg = {};
+
+      for (var _i3 = 0, _Object$entries3 = Object.entries(soldiersFacts); _i3 < _Object$entries3.length; _i3++) {
+        var _Object$entries3$_i = _slicedToArray(_Object$entries3[_i3], 2),
+            solId = _Object$entries3$_i[0],
+            solFacts = _Object$entries3$_i[1];
+
+        calculateAndUpdate(solId, solFacts, finalGradeObg);
+      }
+
+      if (err) console.log(err);
+    });
+
+    res.sendStatus(200);
+  } catch (e) {
+    console.log(e);
+    console.log("bad token");
+  }
+};
+
+exports.calcFinalFactGrade = calcFinalFactGrade;
+
+var calculateAndUpdate = function calculateAndUpdate(solId, solFacts, finalGradeObg) {
+  var testFactObj = {};
+  var testFactIdArr = [];
+  finalGradeObg[solId] = 0;
+  solFacts.map(function (fact) {
+    if (!testFactIdArr.includes(fact.test_type_id)) testFactIdArr.push(fact.test_type_id);
+  });
+  testFactIdArr.map(function (ttid) {
+    testFactObj[ttid] = solFacts.filter(function (fact) {
+      return fact.test_type_id === ttid;
+    });
+  });
+
+  for (var _i4 = 0, _Object$entries4 = Object.entries(testFactObj); _i4 < _Object$entries4.length; _i4++) {
+    var _Object$entries4$_i = _slicedToArray(_Object$entries4[_i4], 2),
+        ttid = _Object$entries4$_i[0],
+        factsArr = _Object$entries4$_i[1];
+
+    // console.log(calculate(factsArr, ttid,finalGradeObg,solId));
+    calculate(factsArr, ttid, finalGradeObg, solId);
+  } // console.log(finalGradeObg);
+
+};
+
+var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
+  var len;
+  return regeneratorRuntime.async(function calculate$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          len = factsArr.length;
+          factsArr.map(function _callee2(fact, ind) {
+            var sqlGet;
+            return regeneratorRuntime.async(function _callee2$(_context2) {
+              while (1) {
+                switch (_context2.prev = _context2.next) {
+                  case 0:
+                    sqlGet = "SELECT weight,input_type FROM question WHERE id=$1;";
+                    _context2.next = 3;
+                    return regeneratorRuntime.awrap(_connectDB.db.query(sqlGet, [fact.question_id], function _callee(err, result) {
+                      var weight, percent, firstDay, lastDay, sqlUpdateTrans;
+                      return regeneratorRuntime.async(function _callee$(_context) {
+                        while (1) {
+                          switch (_context.prev = _context.next) {
+                            case 0:
+                              weight = parseFloat(result.rows[0].weight);
+
+                              if (weight != 0) {
+                                percent = 0;
+
+                                if (result.rows[0].input_type === "open-numeric") {
+                                  percent = fact.score / 100;
+                                  finalGradeObg[solId] += weight * percent;
+                                } else if (result.rows[0].input_type === "numeric") {
+                                  percent = fact.score / 10;
+                                  finalGradeObg[solId] += weight * percent;
+                                }
+                              }
+
+                              if (!(ind === len - 1)) {
+                                _context.next = 13;
+                                break;
+                              }
+
+                              //we got to the end of calculating the grade for a specifick test- so we update the score.
+                              //at the end each fact will have a final score of the soldier
+                              console.log(finalGradeObg[solId], solId);
+                              firstDay = new Date();
+                              firstDay.setDate(firstDay.getDate() - 5);
+                              firstDay = firstDay.toISOString().slice(0, 10);
+                              lastDay = new Date();
+                              lastDay.setDate(lastDay.getDate() + 5);
+                              lastDay = lastDay.toISOString().slice(0, 10);
+                              sqlUpdateTrans = "UPDATE Fact SET final_grade=$1 WHERE soldier_serial_id = $2 AND date BETWEEN $3 AND $4";
+                              _context.next = 13;
+                              return regeneratorRuntime.awrap(_connectDB.db.query(sqlUpdateTrans, [finalGradeObg[solId], solId, firstDay, lastDay], function (err, result) {
+                                if (err) console.log(err);
+                              }));
+
+                            case 13:
+                            case "end":
+                              return _context.stop();
+                          }
+                        }
+                      });
+                    }));
+
+                  case 3:
+                  case "end":
+                    return _context2.stop();
+                }
+              }
+            });
+          });
+
+        case 2:
+        case "end":
+          return _context3.stop();
+      }
+    }
+  });
+}; //function to send emails to the trainees at the end of training
+
+
+var sendEmails = function sendEmails() {};
