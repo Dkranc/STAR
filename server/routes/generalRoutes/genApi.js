@@ -4,7 +4,8 @@ import {
   getSoldiersById,
   addSoldier,
   updateSoldierById,
-  updateSoldiersCompanyInfo
+  updateSoldiersCompanyInfo,
+  getSoldiersByTrainingWeek,
 } from "../../controlers/soldiersControler.js";
 
 import { login } from "../../controlers/loginControler.js";
@@ -16,6 +17,8 @@ const router = express.Router();
 router.post("/login", login);
 
 /*SOLDIERS*/
+//get soldiers by training week number
+router.get("/soldier/training/:tid", getSoldiersByTrainingWeek);
 //get soldiers by department id
 router.get("/soldier/", getSoldiers);
 //get soldier by  id

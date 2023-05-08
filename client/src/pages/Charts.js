@@ -128,6 +128,7 @@ const Charts = ({ user, setUser }) => {
           </ResponsiveContainer>
         </Box>
       )}
+      <DataTable facts={facts.slice()} />
     </div>
   );
 };

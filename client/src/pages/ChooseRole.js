@@ -66,7 +66,7 @@ const ChooseRole = ({ user, setUser }) => {
         headers: { token: sessionStorage.getItem("token") },
       })
       .then((response) => {
-        toast.success("האימון הסתיים! הדוחות נשלחו בהצלחה")
+        toast.success("האימון הסתיים! הדוחות נשלחו בהצלחה");
         navigate("/");
       });
   };
@@ -154,25 +154,27 @@ const ChooseRole = ({ user, setUser }) => {
               </Button>
             </div>
           ) : (
-          ""
+            ""
           )
-        ) :  <Button
-        variant="outlined"
-        sx={{
-          fontSize: "20px",
-          borderColor: "#2ED573",
-          color: "rgb(0,0,0)",
-          background: "white",
-          boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
-          width: "100%",
-          mt: 2,
-          borderRadius: 30,
-          fontFamily: "Bold",
-        }}
-        onClick={(e) => medicalTestClicked(e)}
-      >
-        הזנת בוחן מערים כללי
-      </Button>}
+        ) : (
+          <Button
+            variant="outlined"
+            sx={{
+              fontSize: "20px",
+              borderColor: "#2ED573",
+              color: "rgb(0,0,0)",
+              background: "white",
+              boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+              width: "100%",
+              mt: 2,
+              borderRadius: 30,
+              fontFamily: "Bold",
+            }}
+            onClick={(e) => medicalTestClicked(e)}
+          >
+            הזנת בוחן מערים כללי
+          </Button>
+        )}
       </Box>
     </div>
   );

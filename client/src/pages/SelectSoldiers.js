@@ -1,5 +1,5 @@
-import { React, useEffect, useState } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { React, useEffect, useState, setState } from "react";
+import { useNavigate, useParams, useLocation, json } from "react-router-dom";
 import axios from "axios";
 import "./SelectSoldiers.css";
 import NavBar from "../components/NavBar";
@@ -25,8 +25,11 @@ const SelectSoldiers = ({
   role,
   setCollapse, //Collapse in SolPopUp
 }) => {
-  const [loaded, setLoaded] = useState(false);
-  const [soldiers, setSoldiers] = useState([]);
+  const [companyOptions, setCompanyOptions] = useState([]);
+  const [loaded, setLoaded] = useState(true);
+  const [soldiers, setSoldiers] = useState(
+    JSON.parse(window.sessionStorage.getItem("appData"))["soldiers"]
+  );
   const [solName, setSolName] = useState("");
   const [soldier, setSoldier] = useState(0);
   const location = useLocation();
@@ -37,42 +40,50 @@ const SelectSoldiers = ({
   const [addEditPage, setAddEditPage] = useState(false);
   chosenSoldiers = chosenSoldiers || location.state.chosenSoldiers;
 
+  // let filterCompanies = () => {
+  //   console.log(soldiers);
+  //   var temp_companies = [];
+  //   for (const [key, value] of Object.entries(soldiers)) {
+  //     temp_companies[value[1].company] = value[1].company;
+  //   }
+  //   console.log(temp_companies);
+  //   setCompanyOptions(temp_companies);
+  // };
+
   useEffect(() => {
+    // const list_data = Object.keys(json_data).map((key) => json_data[key]);
+    // console.log("json_data: ", json_data);
+    // console.log("list_data:", list_data);
+
+    console.log("soldiers", role);
     if (window.location.pathname.includes("Questionary")) setTeamTest(true);
     if (window.location.pathname.includes("AddEditSoldiers"))
       setAddEditPage(true);
-    axios
-      .get(`http://localhost:8080/api/general/soldier`, {
-        headers: { token: sessionStorage.getItem("token") },
-      })
-      .then((response) => {
-        setLoaded(true);
-        setSoldiers(Object.entries(response.data));
-        if (soldier !== 0) {
-          if (teamTest) {
-            setChosenSoldiers({ ...chosenSoldiers, [role]: soldier });
-          } else if (addEditPage) {
-            navigate(`/AddEditSoldiers/AddEditPage`, {
-              state: {
-                soldier: soldier,
-              },
-            });
-          } else if (Object.keys(params).length > 0) {
-            navigate(`/SelectSoldiers/${params.rid}/TestType`, {
-              state: {
-                soldier: soldier,
-              },
-            });
-          } else {
-            //we are in the mashad selection------------need to first choose role!!!
-            navigate(`/MyTrainees/ChooseRole`, {
-              state: {
-                soldier: soldier,
-              },
-            });
-          }
-        }
-      });
+
+    if (soldier !== 0) {
+      if (teamTest) {
+        setChosenSoldiers({ ...chosenSoldiers, [role]: soldier });
+      } else if (addEditPage) {
+        navigate(`/AddEditSoldiers/AddEditPage`, {
+          state: {
+            soldier: soldier,
+          },
+        });
+      } else if (Object.keys(params).length > 0) {
+        navigate(`/SelectSoldiers/${params.rid}/TestType`, {
+          state: {
+            soldier: soldier,
+          },
+        });
+      } else {
+        //we are in the mashad selection------------need to first choose role!!!
+        navigate(`/MyTrainees/ChooseRole`, {
+          state: {
+            soldier: soldier,
+          },
+        });
+      }
+    }
   }, [soldier]);
 
   const handleChoice = (soldier_pressed) => {
@@ -80,8 +91,8 @@ const SelectSoldiers = ({
       setCollapse(false);
     } //value to collapse is SolPopUp comp
     for (var sol in soldiers) {
-      if (soldiers[sol][1].id === soldier_pressed.id) {
-        setSoldier(soldiers[sol][1]);
+      if (soldiers[sol].id === soldier_pressed.id) {
+        setSoldier(soldiers[sol]);
       }
     }
   };
@@ -135,7 +146,12 @@ const SelectSoldiers = ({
           ""
         )}
       </div>
-      <Box display="flex" justifyContent="center" alignItems="center">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        sx={{ flexDirection: "column", marginX: "10%" }}
+      >
         <TextField
           size="small"
           sx={{

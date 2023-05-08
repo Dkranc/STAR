@@ -13,6 +13,7 @@ import AddEditPage from "./pages/AddEditPage";
 import CompanyChoice from "./pages/CompanyChoice";
 import TestInputGeneral from "./pages/TestInputGeneral";
 
+import ChooseTraining from "./pages/ChooseTraining";
 
 import jwtDecode from "jwt-decode";
 import ToggleThemeButton from "./components/ToggleThemeButton";
@@ -60,7 +61,12 @@ function App() {
                 path="/"
                 element={<Login setUser={setUser} lightMode={light} />}
               />
-
+              <Route
+                path="/Home"
+                element={
+                  <Login setUser={setUser} user={user} lightMode={light} />
+                }
+              />
               <Route
                 path="/SelectSoldiers/:rid/TestType/Questionary/:ttid"
                 element={<Login setUser={setUser} lightMode={light} />}
@@ -124,6 +130,16 @@ function App() {
             <Routes>
               <Route
                 path="/"
+                element={
+                  <ChooseTraining
+                    setUser={setUser}
+                    user={user}
+                    lightMode={light}
+                  />
+                }
+              />
+              <Route
+                path="/Home"
                 element={
                   <Home setUser={setUser} user={user} lightMode={light} />
                 }

@@ -7,8 +7,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
-function createData(id, calories, fat, carbs, protein) {
-  return { id, calories, fat, carbs, protein };
+function createData(id, one, two, three, four) {
+  return { id, one, two, three, four };
 }
 
 export default function DataTable({ facts }) {
@@ -28,9 +28,13 @@ export default function DataTable({ facts }) {
     }
     return in_rows;
   };
+  useEffect(() => {
+    // call api or anything
+    console.log("loaded");
+    setRows(parse_data(facts));
+  });
   return (
     <TableContainer component={Paper}>
-      {setRows(parse_data(facts))}
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
