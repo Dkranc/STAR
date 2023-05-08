@@ -171,8 +171,8 @@ const SelectSoldiers = ({
               //fiter acording to the name of soldier
               return solName === ""
                 ? sol
-                : sol[1].full_name.includes(solName) ||
-                    sol[1].serial_id.toString().includes(solName);
+                : (sol[1].first_name+" "+sol[1].last_name).includes(solName)|| 
+                    sol[1].soldier_serial_id.toString().includes(solName);
             })
             .filter((sol) => {
               //filter for the team test after choosing soldiers
@@ -212,7 +212,7 @@ const SelectSoldiers = ({
                         display: "inline-block",
                       }}
                     >
-                      {sol[1].full_name}
+                      {sol[1].first_name+" "+sol[1].last_name}
                     </Typography>
                   </Box>
                   <Box>
@@ -233,7 +233,7 @@ const SelectSoldiers = ({
                       fontFamily={"Bold"}
                       sx={{ width: "100%", fontSize: "20px" }}
                     >
-                      {sol[1].serial_id}
+                      {sol[1].soldier_serial_id}
                     </Typography>
                   </Box>
                 </ListItemButton>

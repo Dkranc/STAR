@@ -72,7 +72,8 @@ const ChooseRole = ({ user, setUser }) => {
   };
 
   const medicalTestClicked=(e)=>{
-    console.log("med clicked")
+    const medTestId= 1// now is hard coded but can be any id
+    navigate(`/SpecificTestInput/${medTestId}`)
   }
 
   return (

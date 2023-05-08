@@ -11,6 +11,7 @@ import {
 import {
   addFact,
   addFactGen,
+  addFactGenMed,
   updateFact,
   getFact,
   getFactsByTestId,
@@ -46,6 +47,8 @@ router.get("/fact/:ttid", getFactsByTestId);
 router.post("/fact", addFact);
 //add a general input for mashad test
 router.post("/fact/generalInput", addFactGen);
+//add a general input for mashad test
+router.post("/fact/medicalGeneralInput", addFactGenMed);
 //update facts
 router.post("/fact/update", updateFact);
 //calculate grade for all facts

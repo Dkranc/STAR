@@ -156,6 +156,56 @@ export const updateFact = (req, res) => {
   }
 };
 
+//add fact info for med test
+export const addFactGenMed = (req, res) => {
+  try {
+    jwt.verify(req.headers.token, "9809502");
+    const soldierAnswers = req.body;
+    var date = new Date();
+    date = date.toISOString().slice(0, 10);
+    const parent_external_id = null;
+    const selectSoldierQuery =
+      "SELECT role,soldier_serial_id from soldier WHERE id=$1;";
+    const selectQuestionJoinTestType = `SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id
+       WHERE q.name='מערים' AND role_id=$1;`;
+    const sqlInsert =
+      "INSERT INTO fact(soldier_serial_id, test_type_id, role, date, question_id, score, parent_external_id) VALUES($1,$2,$3,$4,$5,$6,$7)";
+    for (const [solId, value] of Object.entries(soldierAnswers)) {
+      db.query(selectSoldierQuery, [solId], (err, result) => {
+        if (err) console.log(err);
+
+        const role = result.rows[0].role;
+        const soldierSerialId = result.rows[0].soldier_serial_id;
+        db.query(selectQuestionJoinTestType, [role], (er, res2) => {
+          console.log(res2.rows[0]);
+          db.query(
+            sqlInsert,
+            [
+              soldierSerialId,
+              res2.rows[0].test_type_id,
+              role,
+              date,
+              res2.rows[0].id,
+              value === "true" ? 1 : 0, //if boolean then 1 for true, 0 for false
+              parent_external_id,
+            ],
+
+            (error, res3) => {
+              if (err) {
+                console.log(err);
+              }
+              
+            }
+          );
+        });
+      });
+    }
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 //add facts to table from general mashad nput.
 export const addFactGen = (req, res) => {
   try {
@@ -300,9 +350,9 @@ const calculateAndUpdate = (solId, solFacts, finalGradeObg) => {
   // console.log(finalGradeObg);
 };
 
-const calculate =async  (factsArr, ttid, finalGradeObg, solId) => {
+const calculate = async (factsArr, ttid, finalGradeObg, solId) => {
   const len = factsArr.length;
-  factsArr.map( async (fact, ind) => {
+  factsArr.map(async (fact, ind) => {
     const sqlGet = "SELECT weight,input_type FROM question WHERE id=$1;";
 
     await db.query(sqlGet, [fact.question_id], async (err, result) => {
@@ -344,6 +394,4 @@ const calculate =async  (factsArr, ttid, finalGradeObg, solId) => {
 };
 
 //function to send emails to the trainees at the end of training
-const sendEmails=()=>{
-
-}
+const sendEmails = () => {};

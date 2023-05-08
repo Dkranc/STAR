@@ -11,6 +11,8 @@ import ChooseRole from "./pages/ChooseRole";
 import AddEditSoldiers from "./pages/AddEditSoldiers";
 import AddEditPage from "./pages/AddEditPage";
 import CompanyChoice from "./pages/CompanyChoice";
+import TestInputGeneral from "./pages/TestInputGeneral";
+
 
 import jwtDecode from "jwt-decode";
 import ToggleThemeButton from "./components/ToggleThemeButton";
@@ -26,6 +28,7 @@ import lightModeLogo from "./image/logoLightMode.png";
 
 //theme
 import { themeLight, themeDark } from "./theme.js";
+
 
 function App() {
   const [user, setUser] = useState(
@@ -112,6 +115,10 @@ function App() {
                 path="/CompanyChoice"
                 element={<Login setUser={setUser} lightMode={light} />}
               />
+              <Route
+              path="/SpecificTestInput/:ttid"
+              element={<Login setUser={setUser} lightMode={light} />}
+            />
             </Routes>
           ) : (
             <Routes>
@@ -175,6 +182,10 @@ function App() {
                 path="/CompanyChoice"
                 element={<CompanyChoice user={user} setUser={setUser} />}
               />
+              <Route
+              path="/SpecificTestInput/:ttid"
+              element={<TestInputGeneral user={user} setUser={setUser} />}
+            />
             </Routes>
           )}
         </BrowserRouter>
