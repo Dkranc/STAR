@@ -35,10 +35,12 @@ const TestType = ({ user, setUser }) => {
 
   const handleTestChosen = (testId) => {
     if (location.state.soldier !== undefined) {
+     
       navigate(`/SelectSoldiers/${params.rid}/TestType/Questionary/${testId}`, {
         state: {
           soldier: location.state.soldier,
           isMashad: location.state.isMashad,
+          soldiers: location.state.soldiers
         },
       });
     } else {

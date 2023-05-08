@@ -194,7 +194,6 @@ export const addFactGenMed = (req, res) => {
               if (err) {
                 console.log(err);
               }
-              
             }
           );
         });
@@ -353,11 +352,17 @@ const calculateAndUpdate = (solId, solFacts, finalGradeObg) => {
 const calculate = async (factsArr, ttid, finalGradeObg, solId) => {
   const len = factsArr.length;
   factsArr.map(async (fact, ind) => {
-    const sqlGet = "SELECT weight,input_type FROM question WHERE id=$1;";
+    const sqlGet =
+      " SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id  WHERE q.id=$1;";
 
     await db.query(sqlGet, [fact.question_id], async (err, result) => {
-      const weight = parseFloat(result.rows[0].weight);
+      var weight = parseFloat(result.rows[0].weight);
+      const role = fact.role;
+      const teamTestId = 2;
       if (weight != 0) {
+        if (teamTestId === result.rows[0].test_type_id && role !== 1) {
+          weight = 1.8181;
+        }
         var percent = 0;
         if (result.rows[0].input_type === "open-numeric") {
           percent = fact.score / 100;
@@ -370,7 +375,7 @@ const calculate = async (factsArr, ttid, finalGradeObg, solId) => {
       if (ind === len - 1) {
         //we got to the end of calculating the grade for a specifick test- so we update the score.
         //at the end each fact will have a final score of the soldier
-        console.log(finalGradeObg[solId], solId);
+
         var firstDay = new Date();
         firstDay.setDate(firstDay.getDate() - 5);
         firstDay = firstDay.toISOString().slice(0, 10);

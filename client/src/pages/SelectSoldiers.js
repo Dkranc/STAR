@@ -25,14 +25,12 @@ const SelectSoldiers = ({
   role,
   setCollapse, //Collapse in SolPopUp
 }) => {
+  const location = useLocation();
   const [companyOptions, setCompanyOptions] = useState([]);
   const [loaded, setLoaded] = useState(true);
-  const [soldiers, setSoldiers] = useState(
-    JSON.parse(window.sessionStorage.getItem("appData"))["soldiers"]
-  );
+  const [soldiers, setSoldiers] = useState(location.state.soldiers);
   const [solName, setSolName] = useState("");
   const [soldier, setSoldier] = useState(0);
-  const location = useLocation();
   const pageName = "חיפוש מתאמן";
   const navigate = useNavigate();
   const params = useParams();
@@ -55,24 +53,25 @@ const SelectSoldiers = ({
     // console.log("json_data: ", json_data);
     // console.log("list_data:", list_data);
 
-    console.log("soldiers", role);
     if (window.location.pathname.includes("Questionary")) setTeamTest(true);
     if (window.location.pathname.includes("AddEditSoldiers"))
       setAddEditPage(true);
 
     if (soldier !== 0) {
       if (teamTest) {
-        setChosenSoldiers({ ...chosenSoldiers, [role]: soldier });
+        setChosenSoldiers({ ...chosenSoldiers, [role.name]: soldier });
       } else if (addEditPage) {
         navigate(`/AddEditSoldiers/AddEditPage`, {
           state: {
             soldier: soldier,
+            soldiers: soldiers,
           },
         });
       } else if (Object.keys(params).length > 0) {
         navigate(`/SelectSoldiers/${params.rid}/TestType`, {
           state: {
             soldier: soldier,
+            soldiers: soldiers,
           },
         });
       } else {
@@ -80,6 +79,7 @@ const SelectSoldiers = ({
         navigate(`/MyTrainees/ChooseRole`, {
           state: {
             soldier: soldier,
+            soldiers: soldiers,
           },
         });
       }
@@ -184,18 +184,26 @@ const SelectSoldiers = ({
         >
           {soldiers
             .filter((sol) => {
+              //fiter acording to the role
+
+              if (teamTest) {
+                console.log(sol.role, role.id);
+                return sol.role === role.id;
+              } else return sol.role === parseInt(params.rid);
+            })
+            .filter((sol) => {
               //fiter acording to the name of soldier
               return solName === ""
                 ? sol
-                : (sol[1].first_name+" "+sol[1].last_name).includes(solName)|| 
-                    sol[1].soldier_serial_id.toString().includes(solName);
+                : (sol.first_name + " " + sol.last_name).includes(solName) ||
+                    sol.soldier_serial_id.toString().includes(solName);
             })
             .filter((sol) => {
               //filter for the team test after choosing soldiers
               if (teamTest) {
                 var chosen = false;
                 for (const [key, value] of Object.entries(chosenSoldiers)) {
-                  if (value.id === sol[1].id) {
+                  if (value.id === sol.id) {
                     chosen = true;
                   }
                 }
@@ -215,8 +223,8 @@ const SelectSoldiers = ({
                     border: "none",
                     boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.25)",
                   }}
-                  key={sol[1].id}
-                  onClick={() => handleChoice(sol[1])}
+                  key={sol.id}
+                  onClick={() => handleChoice(sol)}
                 >
                   <Box>
                     <Typography
@@ -228,7 +236,7 @@ const SelectSoldiers = ({
                         display: "inline-block",
                       }}
                     >
-                      {sol[1].first_name+" "+sol[1].last_name}
+                      {sol.first_name + " " + sol.last_name}
                     </Typography>
                   </Box>
                   <Box>
@@ -241,7 +249,7 @@ const SelectSoldiers = ({
                         display: "inline-block",
                       }}
                     >
-                      {/* {sol[1].company} plooga name */}
+                      {/* {sol.company} plooga name */}
                     </Typography>
                   </Box>
                   <Box>
@@ -249,7 +257,7 @@ const SelectSoldiers = ({
                       fontFamily={"Bold"}
                       sx={{ width: "100%", fontSize: "20px" }}
                     >
-                      {sol[1].soldier_serial_id}
+                      {sol.soldier_serial_id}
                     </Typography>
                   </Box>
                 </ListItemButton>

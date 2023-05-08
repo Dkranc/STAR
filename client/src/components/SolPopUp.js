@@ -13,8 +13,10 @@ const SolPopUp = ({
   role,
   chosenSoldiers,
   setChosenSoldiers,
+  soldiers
 }) => {
   const [openSelected, setOpenSelected] = useState(false);
+  console.log(role)
 
   return (
     <Box
@@ -42,7 +44,7 @@ const SolPopUp = ({
         }}
         onClick={() => setOpenSelected(!openSelected)}
       >
-        בחר תפקיד עבור: {role}
+        בחר תפקיד עבור: {role.name}
       </Button>
       <Collapse
         orientation={"vertical"}

@@ -3,17 +3,21 @@ import "./Home.css";
 import Welcome from "../components/Welcome";
 import NavBar from "../components/NavBar";
 import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
 import { ThemeProvider } from "@mui/material/styles";
 
 const Home = ({ user, setUser, lightMode, setLightMode }) => {
+  const location = useLocation();
+
+  const soldiers = location.state.soldiers;
+
   const [roles, setRoles] = useState([
     { name: "מפקד", id: 1 },
     { name: "תותחן", id: 2 },
     { name: "טען", id: 3 },
     { name: "נהג", id: 4 },
-    { name: "הזנת הערכת משהד", id: 5 },
+    { name: "הזנת הערכת משהד", id: 6 },
   ]);
 
   const main = "ראשי - ";
@@ -28,13 +32,13 @@ const Home = ({ user, setUser, lightMode, setLightMode }) => {
     navigate(`../SelectSoldiers/${role.id}`, {
       state: {
         role: role.id,
-
+        soldiers: soldiers,
         chosenSoldiers: [],
       },
     });
   };
   const handleMashadTestClicked = (e) => {
-    navigate("../ChooseTraining", {
+    navigate("/GeneralInput/ChooseRole", {
       state: {
         isMashad: true,
       },
@@ -60,7 +64,7 @@ const Home = ({ user, setUser, lightMode, setLightMode }) => {
       >
         <Welcome setUser={setUser} user={user} />
         {roles.map((role) => {
-          if (role.id === 5) {
+          if (role.id === 6) {
             if (userRole === "User.Mashad" || userRole === "User.Admin") {
               return (
                 <Button

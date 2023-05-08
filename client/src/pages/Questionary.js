@@ -22,7 +22,7 @@ const Questionary = ({ soldier, user, setUser }) => {
   const [loaded, setLoaded] = useState(false);
   const [previuoslySubmited, setPreviuoslySubmited] = useState(false);
   const [facts, setFacts] = useState([]);
-  const rolesWithOutCommander = ["תותחן", "טען", "נהג"];
+  const rolesWithOutCommander = [{id:2, name:"תותחן"}, {id:3,name:"טען"},{id:4,name:"נהג"} ];
   const navigate = useNavigate();
   const location = useLocation();
   const sol = location.state.soldier;
@@ -39,7 +39,7 @@ const Questionary = ({ soldier, user, setUser }) => {
 
       await axios
         .get(
-          `http://localhost:8080/api/tests/fact/${sold.serial_id}/${params.ttid}`,
+          `http://localhost:8080/api/tests/fact/${sold.soldier_serial_id}/${params.ttid}`,
           { headers: { token: sessionStorage.getItem("token") } }
         )
         .then((response) => {
@@ -54,7 +54,7 @@ const Questionary = ({ soldier, user, setUser }) => {
         axios.post(
           `http://localhost:8080/api/tests/fact`,
           [
-            sold.serial_id,
+            sold.soldier_serial_id,
             params.ttid,
             key === "מפקד" ? 1 : key === "תותחן" ? 2 : key === "טען" ? 3 : 4,
             new Date().toISOString().slice(0, 10),
@@ -73,7 +73,6 @@ const Questionary = ({ soldier, user, setUser }) => {
           questions.map((question) => {
             if (question.id === fact.question_id) ans = answers[question.name];
           });
-          console.log(ans);
           fact.score = ans;
         });
 
@@ -89,7 +88,11 @@ const Questionary = ({ soldier, user, setUser }) => {
       }
     }
     toast.success("הבקשה נשלחה בהצלחה");
-    navigate(`/`);
+    navigate(`/Home`, {
+      state: {
+        soldiers: location.state.soldiers,
+      },
+    });
   };
 
   const handleSubmit = (e) => {
@@ -116,7 +119,7 @@ const Questionary = ({ soldier, user, setUser }) => {
           .post(
             `http://localhost:8080/api/tests/fact`,
             [
-              soldier.serial_id,
+              soldier.soldier_serial_id,
               params.ttid,
               params.rid,
               new Date().toISOString().slice(0, 10),
@@ -129,7 +132,11 @@ const Questionary = ({ soldier, user, setUser }) => {
           )
           .then((response) => {
             toast.success("הבקשה נשלחה בהצלחה");
-            navigate(`/`);
+            navigate(`/Home`, {
+              state: {
+                soldiers: location.state.soldiers,
+              },
+            });
           });
       } else {
         //if the soldiers test is being updated
@@ -154,7 +161,11 @@ const Questionary = ({ soldier, user, setUser }) => {
           )
           .then((response) => {
             toast.success("הבקשה נשלחה בהצלחה");
-            navigate(`/`);
+            navigate(`/Home`, {
+              state: {
+                soldiers: location.state.soldiers,
+              },
+            });
           });
       }
     }
@@ -183,7 +194,7 @@ const Questionary = ({ soldier, user, setUser }) => {
       if (sol !== undefined) {
         await axios
           .get(
-            `http://localhost:8080/api/tests/fact/${sol.serial_id}/${params.ttid}`,
+            `http://localhost:8080/api/tests/fact/${sol.soldier_serial_id}/${params.ttid}`,
             { headers: { token: sessionStorage.getItem("token") } }
           )
           .then((response) => {
@@ -267,6 +278,7 @@ const Questionary = ({ soldier, user, setUser }) => {
                       role={role}
                       chosenSoldiers={chosenSoldiers}
                       setChosenSoldiers={setChosenSoldiers}
+                      soldiers={ location.state.soldiers}
                     />
                     <Typography
                       fontFamily={"Regular"}
@@ -276,8 +288,8 @@ const Questionary = ({ soldier, user, setUser }) => {
                       component="div"
                       sx={{ flexGrow: 1 }}
                     >
-                      {chosenSoldiers[role] !== undefined
-                        ? chosenSoldiers[role].full_name
+                      {chosenSoldiers[role.name] !== undefined
+                        ? chosenSoldiers[role.name].first_name+" "+chosenSoldiers[role.name].last_name
                         : undefined}
                     </Typography>
                   </div>

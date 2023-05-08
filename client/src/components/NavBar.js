@@ -38,6 +38,7 @@ export default function NavBar({
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
+  const pathname = window.location.pathname;
 
   const onIdle = () => {
     logout("timer");
@@ -113,67 +114,70 @@ export default function NavBar({
         style={{ background: "transparent", boxShadow: "none" }}
       >
         <Toolbar dir="rtl" sx={{ flexGrow: 1, justifyContent: "center" }}>
-          <IconButton
-            size="large"
-            edge="start"
-            color="#000000"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon onClick={handleClickMenu} />
-            <Menu
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleCloseMenu}
-              MenuListProps={{
-                "aria-labelledby": "basic-button",
-              }}
+          {pathname !== "/" ? (
+            <IconButton
+              size="large"
+              edge="start"
+              color="#000000"
+              aria-label="menu"
+              sx={{ mr: 2 }}
             >
-              <MenuItem
-                onClick={() => {
-                  logout("user");
+              <MenuIcon onClick={handleClickMenu} />
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleCloseMenu}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
                 }}
-                dir="rtl"
               >
-                <ListItemIcon>
-                  <LogoutIcon fontSize="small" />
-                </ListItemIcon>
-                <Typography variant="inherit">{logoutText}</Typography>
-              </MenuItem>
-              <MenuItem onClick={handleCloseMenu} dir="rtl">
-                <ListItemIcon>
-                  <LightModeIcon fontSize="small" />
-                </ListItemIcon>
-                <Typography variant="inherit">{lightModeText}</Typography>
-              </MenuItem>
-              {user.roles[0] === "User.Admin" ? (
-                <div>
-                  <MenuItem onClick={reportsClicked} dir="rtl">
-                    <ListItemIcon>
-                      <AssessmentIcon fontSize="small" />
-                    </ListItemIcon>
-                    <Typography variant="inherit">{reportsText}</Typography>
-                  </MenuItem>
-                  <MenuItem onClick={addEditClicked} dir="rtl">
-                    <ListItemIcon>
-                      <LibraryAddIcon fontSize="small" />
-                    </ListItemIcon>
-                    <Typography variant="inherit">
-                      {addEditSoldierText}
-                    </Typography>
-                  </MenuItem>
-                </div>
-              ) : null}
+                <MenuItem
+                  onClick={() => {
+                    logout("user");
+                  }}
+                  dir="rtl"
+                >
+                  <ListItemIcon>
+                    <LogoutIcon fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="inherit">{logoutText}</Typography>
+                </MenuItem>
+                <MenuItem onClick={handleCloseMenu} dir="rtl">
+                  <ListItemIcon>
+                    <LightModeIcon fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="inherit">{lightModeText}</Typography>
+                </MenuItem>
+                {user.roles[0] === "User.Admin" ? (
+                  <div>
+                    <MenuItem onClick={reportsClicked} dir="rtl">
+                      <ListItemIcon>
+                        <AssessmentIcon fontSize="small" />
+                      </ListItemIcon>
+                      <Typography variant="inherit">{reportsText}</Typography>
+                    </MenuItem>
+                    <MenuItem onClick={addEditClicked} dir="rtl">
+                      <ListItemIcon>
+                        <LibraryAddIcon fontSize="small" />
+                      </ListItemIcon>
+                      <Typography variant="inherit">
+                        {addEditSoldierText}
+                      </Typography>
+                    </MenuItem>
+                  </div>
+                ) : null}
 
-              <MenuItem onClick={homeClicked} dir="rtl">
-                <ListItemIcon>
-                  <HomeIcon fontSize="small" />
-                </ListItemIcon>
-                <Typography variant="inherit">{backHomeText}</Typography>
-              </MenuItem>
-            </Menu>
-          </IconButton>
+                <MenuItem onClick={homeClicked} dir="rtl">
+                  <ListItemIcon>
+                    <HomeIcon fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="inherit">{backHomeText}</Typography>
+                </MenuItem>
+              </Menu>
+            </IconButton>
+          ) : null}
+
           <Typography
             fontFamily={"ExtraBold"}
             align="center"
