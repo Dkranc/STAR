@@ -1,12 +1,19 @@
+//import react
 import { React, useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import "./Questionary.css";
+
+//import axios
 import axios from "axios";
+
+//import custom components
 import Questions from "../components/Questions";
 import NavBar from "../components/NavBar";
 import SolPopUp from "../components/SolPopUp";
 import GeneralInput from "./GeneralInput";
 import toast from "react-hot-toast";
+import "./Questionary.css";
+
+//import mui
 import { Button, Typography } from "@mui/material";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import { Box } from "@mui/system";
@@ -22,7 +29,11 @@ const Questionary = ({ soldier, user, setUser }) => {
   const [loaded, setLoaded] = useState(false);
   const [previuoslySubmited, setPreviuoslySubmited] = useState(false);
   const [facts, setFacts] = useState([]);
-  const rolesWithOutCommander = [{id:2, name:"תותחן"}, {id:3,name:"טען"},{id:4,name:"נהג"} ];
+  const rolesWithOutCommander = [
+    { id: 2, name: "תותחן" },
+    { id: 3, name: "טען" },
+    { id: 4, name: "נהג" },
+  ];
   const navigate = useNavigate();
   const location = useLocation();
   const sol = location.state.soldier;
@@ -278,7 +289,7 @@ const Questionary = ({ soldier, user, setUser }) => {
                       role={role}
                       chosenSoldiers={chosenSoldiers}
                       setChosenSoldiers={setChosenSoldiers}
-                      soldiers={ location.state.soldiers}
+                      soldiers={location.state.soldiers}
                     />
                     <Typography
                       fontFamily={"Regular"}
@@ -289,7 +300,9 @@ const Questionary = ({ soldier, user, setUser }) => {
                       sx={{ flexGrow: 1 }}
                     >
                       {chosenSoldiers[role.name] !== undefined
-                        ? chosenSoldiers[role.name].first_name+" "+chosenSoldiers[role.name].last_name
+                        ? chosenSoldiers[role.name].first_name +
+                          " " +
+                          chosenSoldiers[role.name].last_name
                         : undefined}
                     </Typography>
                   </div>

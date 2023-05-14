@@ -1,12 +1,21 @@
+//import react
 import { React, useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
+
+//import axios
+import axios from "axios";
+
+//import custom components
 import NavBar from "../components/NavBar";
 import toast from "react-hot-toast";
-//mui
+
+//import mui
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-
+/*
+ChooseRole.js - choose the rule for tests and navigate to choose soldier 
+by setting role.id and in use effect navigate to path.
+*/
 const ChooseRole = ({ user, setUser }) => {
   const roles = [
     { name: "מפקד", id: 1 },
@@ -71,10 +80,10 @@ const ChooseRole = ({ user, setUser }) => {
       });
   };
 
-  const medicalTestClicked=(e)=>{
-    const medTestId= 1// now is hard coded but can be any id
-    navigate(`/SpecificTestInput/${medTestId}`)
-  }
+  const medicalTestClicked = (e) => {
+    const medTestId = 1; // now is hard coded but can be any id
+    navigate(`/SpecificTestInput/${medTestId}`);
+  };
 
   return (
     <div className="test-types">
