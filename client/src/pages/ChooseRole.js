@@ -29,12 +29,16 @@ const ChooseRole = ({ user, setUser }) => {
               isMashad: true,
               mashadTests: mashadTests,
               soldier: location.state.soldier,
+              soldiers: location.state.soldiers,
             },
           });
         } else {
           //in case of reports page
           navigate(`/Charts/${roleId}/Graphs`, {
-            state: { soldier: location.state.user },
+            state: {
+              soldier: location.state.user,
+              soldiers: location.state.soldiers,
+            },
           });
         }
       } else {
@@ -42,6 +46,7 @@ const ChooseRole = ({ user, setUser }) => {
           state: {
             soldier: undefined,
             mashadTests: mashadTests,
+            soldiers: location.state.soldiers
           },
         });
       }
@@ -71,10 +76,10 @@ const ChooseRole = ({ user, setUser }) => {
       });
   };
 
-  const medicalTestClicked=(e)=>{
-    const medTestId= 1// now is hard coded but can be any id
-    navigate(`/SpecificTestInput/${medTestId}`)
-  }
+  const medicalTestClicked = (e) => {
+    const medTestId = 1; // now is hard coded but can be any id
+    navigate(`/SpecificTestInput/${medTestId}`);
+  };
 
   return (
     <div className="test-types">
@@ -85,7 +90,9 @@ const ChooseRole = ({ user, setUser }) => {
           soldier !== undefined
             ? soldier == null
               ? "דוחות"
-              : location.state.soldier.full_name
+              : location.state.soldier.first_name +
+                " " +
+                location.state.soldier.last_name
             : "הזנה כללית"
         }`}
       />

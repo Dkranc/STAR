@@ -16,6 +16,7 @@ const TestType = ({ user, setUser }) => {
 
   const params = useParams();
   const location = useLocation();
+  console.log(location.state.soldiers);
 
   useEffect(() => {
     if (location.state.isMashad || location.state.soldier === undefined) {
@@ -35,12 +36,11 @@ const TestType = ({ user, setUser }) => {
 
   const handleTestChosen = (testId) => {
     if (location.state.soldier !== undefined) {
-     
       navigate(`/SelectSoldiers/${params.rid}/TestType/Questionary/${testId}`, {
         state: {
           soldier: location.state.soldier,
           isMashad: location.state.isMashad,
-          soldiers: location.state.soldiers
+          soldiers: location.state.soldiers,
         },
       });
     } else {
@@ -49,6 +49,7 @@ const TestType = ({ user, setUser }) => {
         {
           state: {
             soldier: undefined,
+            soldiers: location.state.soldiers,
           },
         }
       );

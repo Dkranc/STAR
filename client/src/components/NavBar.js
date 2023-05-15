@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -26,6 +26,7 @@ export default function NavBar({
   lightMode,
   setLightMode,
 }) {
+  const location = useLocation();
   const [remaining, setRemaining] = useState(0);
   const logoutText = "התנתקות";
   const lightModeText = "מצב תאורה";
@@ -76,7 +77,7 @@ export default function NavBar({
 
   const addEditClicked = () => {
     navigate("/AddEditSoldiers", {
-      state: {},
+      state: { soldiers: location.state.soldiers },
     });
   };
   const lightModeClicked = () => {
@@ -157,14 +158,16 @@ export default function NavBar({
                       </ListItemIcon>
                       <Typography variant="inherit">{reportsText}</Typography>
                     </MenuItem>
-                    <MenuItem onClick={addEditClicked} dir="rtl">
-                      <ListItemIcon>
-                        <LibraryAddIcon fontSize="small" />
-                      </ListItemIcon>
-                      <Typography variant="inherit">
-                        {addEditSoldierText}
-                      </Typography>
-                    </MenuItem>
+                    {location.pathname === "/Home" ? (
+                      <MenuItem onClick={addEditClicked} dir="rtl">
+                        <ListItemIcon>
+                          <LibraryAddIcon fontSize="small" />
+                        </ListItemIcon>
+                        <Typography variant="inherit">
+                          {addEditSoldierText}
+                        </Typography>
+                      </MenuItem>
+                    ) : null}
                   </div>
                 ) : null}
 

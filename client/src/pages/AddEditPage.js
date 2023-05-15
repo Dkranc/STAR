@@ -8,35 +8,45 @@ import toast from "react-hot-toast";
 
 const AddEditPage = ({ user, setUser }) => {
   const location = useLocation();
+
   /** set the soldiers value if were in edit stage , null if were adding a new one */
   const [soldier, setSoldier] = useState(
-    location.state !== null
+    location.state.soldier != null
       ? location.state.soldier
-      : { id: null, serial_id: null, full_name: null, company: null }
+      : {
+          id: null,
+          soldier_serial_id: null,
+          first_name: null,
+          last_name: null,
+          pluga: null,
+          role: null,
+          week_number: null,
+          mail: null,
+        }
   );
+
   const [error, setError] = useState(false);
   const navigate = useNavigate();
 
   const abc = "אבגדהוזחטיכלמנסעפצקרשת";
 
   const sendClicked = () => {
-    console.log(
-      soldier.serial_id === null,
-      soldier.full_name === null,
-      soldier.company === null,
-      soldier.serial_id.length < 9 && soldier.serial_id.length < 6,
-      soldier.company.length !== 1,
-      !abc.includes(soldier.company)
-    );
+    console.log(parseInt(soldier.role) < 1 ,
+    parseInt(soldier.role) > 4 );
 
     let inputError =
-      soldier.serial_id === null ||
-      soldier.full_name === null ||
-      soldier.company === null ||
-      soldier.serial_id.length < 7 ||
-      soldier.serial_id.length > 8 ||
-      soldier.company.length !== 1 ||
-      !abc.includes(soldier.company);
+      soldier.soldier_serial_id === null ||
+      soldier.first_name === null ||
+      soldier.last_name === null ||
+      soldier.pluga === null ||
+      soldier.role === null ||
+      soldier.week_number === null ||
+      soldier.soldier_serial_id.length < 7 ||
+      soldier.soldier_serial_id.length > 8 ||
+      soldier.pluga.length !== 1 ||
+      parseInt(soldier.role) < 1 ||
+      parseInt(soldier.role) > 4 ||
+      !abc.includes(soldier.pluga);
 
     if (inputError) {
       setError(true);
@@ -46,7 +56,15 @@ const AddEditPage = ({ user, setUser }) => {
       if (soldier.id === null) {
         axios.post(
           `http://localhost:8080/api/general/soldier`,
-          [soldier.serial_id, soldier.full_name, soldier.company],
+          [
+            soldier.soldier_serial_id,
+            soldier.first_name,
+            soldier.last_name,
+            soldier.pluga,
+            soldier.role,
+            soldier.week_number,
+            soldier.mail,
+          ],
           {
             headers: { token: sessionStorage.getItem("token") },
           }
@@ -54,14 +72,26 @@ const AddEditPage = ({ user, setUser }) => {
       } else {
         axios.put(
           `http://localhost:8080/api/general/soldier/${soldier.id}`,
-          [soldier.serial_id, soldier.full_name, soldier.company],
+          [
+            soldier.soldier_serial_id,
+            soldier.first_name,
+            soldier.last_name,
+            soldier.pluga,
+            soldier.role,
+            soldier.week_number,
+            soldier.mail,
+          ],
           {
             headers: { token: sessionStorage.getItem("token") },
           }
         );
       }
       toast.success("הבקשה נשלחה בהצלחה");
-      navigate("/");
+      navigate("/Home", {
+        state: {
+          soldiers: location.state.soldiers,
+        },
+      });
     }
   };
 
@@ -95,10 +125,18 @@ const AddEditPage = ({ user, setUser }) => {
                   setSoldier({ ...soldier, [key]: e.target.value })
                 }
                 placeholder={
-                  key === "serial_id"
+                  key === "soldier_serial_id"
                     ? "מספר אישי"
-                    : key === "full_name"
-                    ? "שם מלא"
+                    : key === "first_name"
+                    ? "שם פרטי"
+                    : key === "last_name"
+                    ? "שם משפחה"
+                    : key === "role"
+                    ? "מספר תפקיד (1-4)"
+                    : key === "mail"
+                    ? "e-mail"
+                    : key === "week_number"
+                    ? "מספר שבוע אימון (1-4)"
                     : "פלוגה (א-ת)  "
                 }
                 type="text"

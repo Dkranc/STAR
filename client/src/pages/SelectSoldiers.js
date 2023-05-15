@@ -20,12 +20,14 @@ import { CircularProgress } from "@mui/material";
 const SelectSoldiers = ({
   user,
   setUser,
+  addEdit,
   setChosenSoldiers,
   chosenSoldiers,
   role,
   setCollapse, //Collapse in SolPopUp
 }) => {
   const location = useLocation();
+
   const [companyOptions, setCompanyOptions] = useState([]);
   const [loaded, setLoaded] = useState(true);
   const [soldiers, setSoldiers] = useState(location.state.soldiers);
@@ -35,7 +37,7 @@ const SelectSoldiers = ({
   const navigate = useNavigate();
   const params = useParams();
   const [teamTest, setTeamTest] = useState(false);
-  const [addEditPage, setAddEditPage] = useState(false);
+  const [addEditPage, setAddEditPage] = useState(addEdit || false);
   chosenSoldiers = chosenSoldiers || location.state.chosenSoldiers;
 
   // let filterCompanies = () => {
@@ -185,13 +187,15 @@ const SelectSoldiers = ({
           {soldiers
             .filter((sol) => {
               //fiter acording to the role
-
+              
               if (teamTest) {
                 console.log(sol.role, role.id);
                 return sol.role === role.id;
-              } else return sol.role === parseInt(params.rid);
+              } else if (!addEditPage) return sol.role === parseInt(params.rid);
+              else return true;
             })
             .filter((sol) => {
+              
               //fiter acording to the name of soldier
               return solName === ""
                 ? sol
@@ -199,6 +203,7 @@ const SelectSoldiers = ({
                     sol.soldier_serial_id.toString().includes(solName);
             })
             .filter((sol) => {
+              
               //filter for the team test after choosing soldiers
               if (teamTest) {
                 var chosen = false;

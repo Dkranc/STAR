@@ -7,7 +7,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import NavBar from "../components/NavBar";
@@ -19,16 +19,19 @@ const TestInputGeneral = ({ user, setUser, lightMode }) => {
   const [question, setQuestion] = useState({});
   const params = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     (async function anyNameFunction() {
-        var soldiersArray=[];
+      var soldiersArray = [];
+
+      console.log(location.state);
       await axios
         .get(`http://localhost:8080/api/general/soldier`, {
           headers: { token: sessionStorage.getItem("token") },
         })
         .then((response) => {
-            soldiersArray=Object.entries(response.data);
+          soldiersArray = Object.entries(response.data);
           setSoldiers(soldiersArray);
         });
       var checkedSoldiers = {};
@@ -43,7 +46,7 @@ const TestInputGeneral = ({ user, setUser, lightMode }) => {
     var dict2 = {};
     soldiers.map((sol) => {
       // this sets the initial checkbox fileds to true
-      dict2[sol[1].serial_id] = true;
+      dict2[sol[1].soldier_serial_id] = true;
     });
 
     setCheckedArray(dict2);
@@ -53,7 +56,7 @@ const TestInputGeneral = ({ user, setUser, lightMode }) => {
     var dict2 = {};
     soldiers.map((sol) => {
       // this sets the initial checkbox fileds to false
-      dict2[sol[1].serial_id] = false;
+      dict2[sol[1].soldier_serial_id] = false;
     });
 
     setCheckedArray(dict2);
@@ -118,12 +121,12 @@ const TestInputGeneral = ({ user, setUser, lightMode }) => {
               sx={{ border: "none" }}
               alignItems="flex-end"
               dir={"rtl"}
-              key={sol[1].serial_id}
+              key={sol[1].soldier_serial_id}
               secondaryAction={
                 <input
                   type="checkbox"
-                  value={sol[1].serial_id}
-                  checked={checkedArray[sol[1].serial_id]}
+                  value={sol[1].soldier_serial_id}
+                  checked={checkedArray[sol[1].soldier_serial_id]}
                   onChange={(e) => checkBoxChanged(e)}
                 />
               }
@@ -136,7 +139,7 @@ const TestInputGeneral = ({ user, setUser, lightMode }) => {
                 }}
                 dir={"rtl"}
                 id={sol.id}
-                primary={sol[1].first_name+" "+sol[1].last_name}
+                primary={sol[1].first_name + " " + sol[1].last_name}
               />
             </ListItem>
           );

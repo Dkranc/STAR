@@ -41,6 +41,7 @@ const Home = ({ user, setUser, lightMode, setLightMode }) => {
     navigate("/GeneralInput/ChooseRole", {
       state: {
         isMashad: true,
+        soldiers: soldiers,
       },
     });
   };

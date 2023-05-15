@@ -56,17 +56,34 @@ export const addSoldier = (req, res) => {
   try {
     jwt.verify(req.headers.token, "9809502");
     const serial_id = req.body[0];
-    const full_name = req.body[1];
-    const company = req.body[2];
-    console.log(req.body);
+    const first_name = req.body[1];
+    const last_name = req.body[2];
+    const pluga = req.body[3];
+    const role = req.body[4];
+    const week_number = req.body[5];
+    const mail = req.body[6];
+
     const sqlInsert =
-      "INSERT INTO Soldier(serial_id, full_name, company) VALUES($1,$2,$3)";
-    db.query(sqlInsert, [serial_id, full_name, company], (err, result) => {
-      if (err) console.log(err);
-      else {
-        res.send(result);
+      "INSERT INTO Soldier(soldier_serial_id, first_name, pluga, parent_external_id, mail, role, last_name, week_number) VALUES($1,$2,$3,$4,$5,$6,$7,$8)";
+    db.query(
+      sqlInsert,
+      [
+        serial_id,
+        first_name,
+        pluga,
+        0,
+        mail,
+        role,
+        last_name,
+        week_number,
+      ],
+      (err, result) => {
+        if (err) console.log(err);
+        else {
+          res.send(result);
+        }
       }
-    });
+    );
   } catch {
     console.log("bad token");
   }
@@ -78,13 +95,27 @@ export const updateSoldierById = (req, res) => {
     jwt.verify(req.headers.token, "9809502");
     const { sid } = req.params;
     const serial_id = req.body[0];
-    const full_name = req.body[1];
-    const company = req.body[2];
+    const first_name = req.body[1];
+    const last_name = req.body[2];
+    const pluga = req.body[3];
+    const role = req.body[4];
+    const week_number = req.body[5];
+    const mail = req.body[6];
     const sqlUpdateTrans =
-      "UPDATE Soldier SET serial_id=$1, full_name=$2, company=$3 WHERE id = $4";
+      "UPDATE Soldier SET soldier_serial_id=$1, first_name=$2, pluga=$3,  parent_external_id=$4,  mail=$5, role=$6, last_name=$7, week_number=$8  WHERE id = $9";
     db.query(
       sqlUpdateTrans,
-      [serial_id, full_name, company, sid],
+      [
+        serial_id,
+        first_name,
+        pluga,
+        0,
+        mail,
+        role,
+        last_name,
+        week_number,
+        sid,
+      ],
       (err, result) => {
         if (err) console.log(err);
         res.send(result);

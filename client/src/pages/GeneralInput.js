@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import DropDownCompany from "../components/DropDownCompany";
 import {
@@ -33,10 +33,12 @@ const GeneralInput = ({ questions, categories, handleQuestionChange }) => {
   const CompanyChoicePage = window.location.pathname === "/CompanyChoice";
   const [error, setError] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const params = useParams();
 
   useEffect(() => {
     (async function anyNameFunction() {
+      console.log(params);
       if (!CompanyChoicePage)
         await axios
           .get(`http://localhost:8080/api/tests/fact/${params.ttid}`, {
@@ -46,13 +48,11 @@ const GeneralInput = ({ questions, categories, handleQuestionChange }) => {
             setFactFromTestType(response.data);
           });
 
-      await axios
-        .get(`http://localhost:8080/api/general/soldier`, {
-          headers: { token: sessionStorage.getItem("token") },
+      setSoldiers(
+        location.state.soldiers.filter((soldier) => {
+          return soldier.role === parseInt(params.rid);
         })
-        .then((response) => {
-          setSoldiers(Object.entries(response.data));
-        });
+      );
 
       var dict = {};
       questions.map((question) => {
@@ -67,7 +67,7 @@ const GeneralInput = ({ questions, categories, handleQuestionChange }) => {
         var dict2 = {};
 
         soldiers.map((sol) => {
-          dict2[sol[1].serial_id] = false;
+          dict2[sol.soldier_serial_id] = false;
         });
 
         soldiers.map((sol) => {
@@ -75,20 +75,21 @@ const GeneralInput = ({ questions, categories, handleQuestionChange }) => {
 
           if (CompanyChoicePage) {
             const company =
-              sol[1].company === "א" ? 1 : sol[1].company === "ב" ? 2 : 3;
+              sol.company === "א" ? 1 : sol.company === "ב" ? 2 : 3;
 
             if (company === question.id) {
-              dict2[sol[1].serial_id] = true;
+              dict2[sol.soldier_serial_id] = true;
             }
           } else {
             factsFromTestType.map((fact) => {
               if (
-                sol[1].serial_id.toString() === fact.soldier_serial_id &&
+                sol.soldier_serial_id.toString() === fact.soldier_serial_id &&
                 question.id === fact.question_id
               ) {
                 if (question.input_type === "boolean")
-                  dict2[sol[1].serial_id] = fact.score === 1 ? true : false;
-                else dict2[sol[1].serial_id] = fact.score;
+                  dict2[sol.soldier_serial_id] =
+                    fact.score === 1 ? true : false;
+                else dict2[sol.soldier_serial_id] = fact.score;
               }
             });
           }
@@ -114,29 +115,28 @@ const GeneralInput = ({ questions, categories, handleQuestionChange }) => {
       var dict2 = {};
 
       soldiers.map((sol) => {
-        dict2[sol[1].serial_id] = false;
+        dict2[sol.soldier_serial_id] = false;
       });
 
       soldiers.map((sol) => {
         // this sets the initial checkbox fileds
 
         if (CompanyChoicePage) {
-          const company =
-            sol[1].company === "א" ? 1 : sol[1].company === "ב" ? 2 : 3;
+          const company = sol.company === "א" ? 1 : sol.company === "ב" ? 2 : 3;
           if (company === question.id) {
-            dict2[sol[1].serial_id] = true;
+            dict2[sol.soldier_serial_id] = true;
           }
         } else {
           factsFromTestType.map((fact) => {
             /// need to fix here so we can get questions with the answers in advance.
 
             if (
-              sol[1].serial_id.toString() === fact.soldier_serial_id &&
+              sol.soldier_serial_id.toString() === fact.soldier_serial_id &&
               question.id === fact.question_id
             ) {
               if (question.input_type === "boolean")
-                dict2[sol[1].serial_id] = fact.score === 1 ? true : false;
-              else dict2[sol[1].serial_id] = fact.score;
+                dict2[sol.soldier_serial_id] = fact.score === 1 ? true : false;
+              else dict2[sol.soldier_serial_id] = fact.score;
             }
           });
         }
@@ -209,7 +209,11 @@ const GeneralInput = ({ questions, categories, handleQuestionChange }) => {
         )
         .then((response) => {
           toast.success("הבקשה נשלחה בהצלחה");
-          navigate(`/`);
+          navigate(`/Home`, {
+            state: {
+              soldiers: location.state.soldiers,
+            },
+          });
         });
     }
   };
@@ -218,7 +222,7 @@ const GeneralInput = ({ questions, categories, handleQuestionChange }) => {
     var dict2 = {};
     soldiers.map((sol) => {
       // this sets the initial checkbox fileds to true
-      dict2[sol[1].serial_id] = true;
+      dict2[sol.soldier_serial_id] = true;
     });
 
     setCheckedArray({ ...checkedArray, [e.target.value]: dict2 });
@@ -228,7 +232,7 @@ const GeneralInput = ({ questions, categories, handleQuestionChange }) => {
     var dict2 = {};
     soldiers.map((sol) => {
       // this sets the initial checkbox fileds to false
-      dict2[sol[1].serial_id] = false;
+      dict2[sol.soldier_serial_id] = false;
     });
 
     setCheckedArray({ ...checkedArray, [e.target.value]: dict2 });
@@ -292,11 +296,9 @@ const GeneralInput = ({ questions, categories, handleQuestionChange }) => {
     };
 
     setCheckedArray(finalCheckedBoxesList);
-    console.log(finalCheckedBoxesList);
   };
 
   const handleCompanySelected = (e, companyNum) => {
-    console.log(companyNames);
     let comps = companyNames;
     comps[companyNum - 1] = e.target.value;
 
@@ -423,7 +425,6 @@ const GeneralInput = ({ questions, categories, handleQuestionChange }) => {
                           question.input_type === "boolean" ? (
                             <Box className="btns-add-rmv">
                               <Button
-                                id={question.id}
                                 value={question.id}
                                 onClick={(e) => {
                                   selectAllClicked(e);
@@ -442,24 +443,25 @@ const GeneralInput = ({ questions, categories, handleQuestionChange }) => {
                             </Box>
                           ) : null}
 
-                        
-
                           {soldiers.map((sol) => {
                             return (
                               <ListItem
                                 sx={{ border: "none" }}
                                 alignItems="flex-end"
                                 dir={"rtl"}
-                                key={sol[1].serial_id}
+                                key={sol.soldier_serial_id}
                                 secondaryAction={
                                   question.input_type === "boolean" ||
                                   question.input_type === undefined ? (
                                     <input
                                       type="checkbox"
-                                      value={[question.id, sol[1].serial_id]}
+                                      value={[
+                                        question.id,
+                                        sol.soldier_serial_id,
+                                      ]}
                                       checked={
                                         checkedArray[question.id][
-                                          sol[1].serial_id
+                                          sol.soldier_serial_id
                                         ]
                                       }
                                       onChange={(e) => checkBoxChanged(e)}
@@ -485,14 +487,14 @@ const GeneralInput = ({ questions, categories, handleQuestionChange }) => {
                                       value={
                                         /*need to find value from prev test*/
                                         checkedArray[question.id][
-                                          sol[1].serial_id
+                                          sol.soldier_serial_id
                                         ]
                                       }
                                       onChange={(e) =>
                                         gradeChange(
                                           e,
                                           question.id,
-                                          sol[1].serial_id
+                                          sol.soldier_serial_id
                                         )
                                       }
                                     />
@@ -507,7 +509,7 @@ const GeneralInput = ({ questions, categories, handleQuestionChange }) => {
                                   }}
                                   dir={"rtl"}
                                   id={labelId}
-                                  primary={sol[1].full_name}
+                                  primary={sol.first_name + " " + sol.last_name}
                                 />
                               </ListItem>
                             );

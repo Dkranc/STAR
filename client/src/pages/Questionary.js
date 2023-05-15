@@ -22,7 +22,11 @@ const Questionary = ({ soldier, user, setUser }) => {
   const [loaded, setLoaded] = useState(false);
   const [previuoslySubmited, setPreviuoslySubmited] = useState(false);
   const [facts, setFacts] = useState([]);
-  const rolesWithOutCommander = [{id:2, name:"תותחן"}, {id:3,name:"טען"},{id:4,name:"נהג"} ];
+  const rolesWithOutCommander = [
+    { id: 2, name: "תותחן" },
+    { id: 3, name: "טען" },
+    { id: 4, name: "נהג" },
+  ];
   const navigate = useNavigate();
   const location = useLocation();
   const sol = location.state.soldier;
@@ -247,7 +251,7 @@ const Questionary = ({ soldier, user, setUser }) => {
             }}
           >
             <Typography fontFamily={"ExtraBold"} fontSize={"22px"}>
-              {sol.full_name}
+              {sol.first_name + " " + sol.last_name}
             </Typography>
             <div>
               <Button
@@ -278,7 +282,7 @@ const Questionary = ({ soldier, user, setUser }) => {
                       role={role}
                       chosenSoldiers={chosenSoldiers}
                       setChosenSoldiers={setChosenSoldiers}
-                      soldiers={ location.state.soldiers}
+                      soldiers={location.state.soldiers}
                     />
                     <Typography
                       fontFamily={"Regular"}
@@ -289,7 +293,9 @@ const Questionary = ({ soldier, user, setUser }) => {
                       sx={{ flexGrow: 1 }}
                     >
                       {chosenSoldiers[role.name] !== undefined
-                        ? chosenSoldiers[role.name].first_name+" "+chosenSoldiers[role.name].last_name
+                        ? chosenSoldiers[role.name].first_name +
+                          " " +
+                          chosenSoldiers[role.name].last_name
                         : undefined}
                     </Typography>
                   </div>
