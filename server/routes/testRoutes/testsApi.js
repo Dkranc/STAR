@@ -16,7 +16,8 @@ import {
   getFact,
   getFactsByTestId,
   getFactsByRolesId,
-  calcFinalFactGrade
+  calcFinalFactGrade,
+  getFactsByQuestionId
 } from "../../controlers/factControler.js";
 
 const router = express.Router();
@@ -41,6 +42,8 @@ router.get("/question/:ttid", getQuestionsByParentId);
 router.get("/fact/:ssid/:ttid", getFact);
 // get a facts by roleId
 router.get("/fact/rid/rid/:rid", getFactsByRolesId);
+//get facts by question id
+router.get("/fact/questionId/qid/:qid", getFactsByQuestionId);
 // get facts by test type id
 router.get("/fact/:ttid", getFactsByTestId);
 //add a fact

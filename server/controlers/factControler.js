@@ -74,6 +74,32 @@ export const getFactsByTestId = (req, res) => {
   }
 };
 
+export const getFactsByQuestionId = (req, res) => {
+  try {
+    jwt.verify(req.headers.token, "9809502");
+    const { qid } = req.params;
+    var firstDay = new Date();
+    firstDay.setDate(firstDay.getDate() + 5);
+    firstDay = firstDay.toISOString().slice(0, 10);
+    var lastDay = new Date();
+    lastDay.setDate(lastDay.getDate() - 5);
+    lastDay = lastDay.toISOString().slice(0, 10);
+
+    const sqlGet =
+      "SELECT *,s.id FROM fact f INNER JOIN soldier s ON CAST(f.soldier_serial_id AS INTEGER) = s.soldier_serial_id WHERE f.question_id=$1 AND  f.date BETWEEN $2 AND $3;";
+    db.query(sqlGet, [qid, lastDay, firstDay], (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(402).json(err);
+      }
+      console.log(result.rows);
+      res.send(result.rows);
+    });
+  } catch {
+    console.log("bad token");
+  }
+};
+
 //add new fact to table.
 export const addFact = (req, res) => {
   try {
@@ -161,41 +187,75 @@ export const addFactGenMed = (req, res) => {
   try {
     jwt.verify(req.headers.token, "9809502");
     const soldierAnswers = req.body;
+    console.log("aswers", soldierAnswers);
     var date = new Date();
     date = date.toISOString().slice(0, 10);
+    var firstDay = new Date();
+    firstDay.setDate(firstDay.getDate() - 5);
+    firstDay = firstDay.toISOString().slice(0, 10);
+    var lastDay = new Date();
+    lastDay.setDate(lastDay.getDate() + 5);
+    lastDay = lastDay.toISOString().slice(0, 10);
     const parent_external_id = null;
     const selectSoldierQuery =
       "SELECT role,soldier_serial_id from soldier WHERE id=$1;";
     const selectQuestionJoinTestType = `SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id
-       WHERE q.name='מערים' AND role_id=$1;`;
+       WHERE q.name='מערים' AND tt.role_id=$1;`;
+
+    const sqlSelectFactIfExists =
+      "SELECT * FROM fact WHERE soldier_serial_id=$1 AND question_id=$2 AND date BETWEEN $3 AND $4;";
+    const sqlUpdateIfExists =
+      "UPDATE fact SET date=$1, score=$2 WHERE id = $3";
     const sqlInsert =
       "INSERT INTO fact(soldier_serial_id, test_type_id, role, date, question_id, score, parent_external_id) VALUES($1,$2,$3,$4,$5,$6,$7)";
+
     for (const [solId, value] of Object.entries(soldierAnswers)) {
       db.query(selectSoldierQuery, [solId], (err, result) => {
         if (err) console.log(err);
-
         const role = result.rows[0].role;
         const soldierSerialId = result.rows[0].soldier_serial_id;
         db.query(selectQuestionJoinTestType, [role], (er, res2) => {
-          console.log(res2.rows[0]);
-          db.query(
-            sqlInsert,
-            [
-              soldierSerialId,
-              res2.rows[0].test_type_id,
-              role,
-              date,
-              res2.rows[0].id,
-              value === "true" ? 1 : 0, //if boolean then 1 for true, 0 for false
-              parent_external_id,
-            ],
+          if (res2.rows.length == 0) {
+            console.log("no question found", role);
+          }
 
-            (error, res3) => {
-              if (err) {
-                console.log(err);
+          if (res2.rows.length != 0) {
+            db.query(
+              sqlSelectFactIfExists,
+              [soldierSerialId, res2.rows[0].id, firstDay, lastDay],
+              (err, resEx) => {
+                if (resEx.rows.length != 0) {
+                  
+                  db.query(
+                    sqlUpdateIfExists,
+                    [date, value === true ? 1 : 0, resEx.rows[0].id],
+                    (err, res4) => {
+                      if (err) console.log(err);
+                    }
+                  );
+                } else {
+                  db.query(
+                    sqlInsert,
+                    [
+                      soldierSerialId,
+                      res2.rows[0].test_type_id,
+                      role,
+                      date,
+                      res2.rows[0].id,
+                      value === true ? 1 : 0, //if boolean then 1 for true, 0 for false
+                      parent_external_id,
+                    ],
+
+                    (error, res3) => {
+                      if (err) {
+                        console.log(err);
+                      }
+                    }
+                  );
+                }
               }
-            }
-          );
+            );
+          }
         });
       });
     }

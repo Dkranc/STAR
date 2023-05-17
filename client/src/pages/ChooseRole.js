@@ -78,7 +78,9 @@ const ChooseRole = ({ user, setUser }) => {
 
   const medicalTestClicked = (e) => {
     const medTestId = 1; // now is hard coded but can be any id
-    navigate(`/SpecificTestInput/${medTestId}`);
+    navigate(`/SpecificTestInput/${medTestId}`,{state:{
+      soldiers:location.state.soldiers
+    }});
   };
 
   return (

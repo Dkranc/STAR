@@ -36,14 +36,20 @@ router.get("/question/:ttid", _questionControler.getQuestionsByParentId);
 
 router.get("/fact/:ssid/:ttid", _factControler.getFact); // get a facts by roleId
 
-router.get("/fact/rid/rid/:rid", _factControler.getFactsByRolesId); // get facts by test type id
+router.get("/fact/rid/rid/:rid", _factControler.getFactsByRolesId); //get facts by question id
+
+router.get("/fact/questionId/qid/:qid", _factControler.getFactsByQuestionId); // get facts by test type id
 
 router.get("/fact/:ttid", _factControler.getFactsByTestId); //add a fact
 
 router.post("/fact", _factControler.addFact); //add a general input for mashad test
 
-router.post("/fact/generalInput", _factControler.addFactGen); //update facts
+router.post("/fact/generalInput", _factControler.addFactGen); //add a general input for mashad test
 
-router.post("/fact/update", _factControler.updateFact);
+router.post("/fact/medicalGeneralInput", _factControler.addFactGenMed); //update facts
+
+router.post("/fact/update", _factControler.updateFact); //calculate grade for all facts
+
+router.put("/fact/calcFinalGrade", _factControler.calcFinalFactGrade);
 var _default = router;
 exports["default"] = _default;
