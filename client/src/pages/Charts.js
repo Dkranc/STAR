@@ -15,6 +15,7 @@ import {
   Bar,
   ResponsiveContainer,
 } from "recharts";
+import { GridRowsProp, GridColDef } from "@mui/x-data-grid";
 
 // import "./Charts.css";
 
@@ -28,8 +29,11 @@ const Charts = ({ user, setUser }) => {
   const [data, setData] = useState(0);
   const [loading, setLoading] = useState(true);
   const [noData, setNoData] = useState(false);
+  const [rows, setRows] = useState([]);
+  const [columns, setColumns] = useState([]);
 
   useEffect(() => {
+    console.log(location.state);
     axios
       .get(`http://localhost:8080/api/tests/fact/rid/rid/${params.rid}`, {
         headers: { token: sessionStorage.getItem("token") },
@@ -51,22 +55,31 @@ const Charts = ({ user, setUser }) => {
               })
             );
           });
-     
     }
     if (!noData)
-    setData(
-      testTypes.map((test) => {
-        return {
-          name: test.name.includes("מאמן")
-            ? test.name.slice(17, 30)
-            : test.name.slice(0, 17),
-          נבחנו: getNumOfTests(test.id),
-          // ממוצע: calcAvg(test.id) ? calcAvg(test.id) : 4,
-        };
-      })
-    );
-      if (testTypes.length!==0) setLoading(false);
-    console.log(data, facts);
+      setData(
+        testTypes.map((test) => {
+          return {
+            name: test.name.includes("מאמן")
+              ? test.name.slice(17, 30)
+              : test.name.slice(0, 17),
+            נבחנו: getNumOfTests(test.id),
+            // ממוצע: calcAvg(test.id) ? calcAvg(test.id) : 4,
+          };
+        })
+      );
+    if (testTypes.length !== 0) setLoading(false);
+    setRows([
+      { id: 1, name: "יוסי כהן", col1: "V", col2: "V" },
+      { id: 2, name: "יוסי כהן", col1: "X", col2: "X" },
+      { id: 3, name: "יוסי כהן", col1: "V", col2: "V" },
+    ]);
+
+    setColumns([
+      { field: "name", headerName: "שם החייל", width: 150 },
+      { field: "col1", headerName: "משהד", width: 150 },
+      { field: "col2", headerName: "בוחן צוות", width: 150 },
+    ]);
   }, [testTypes]);
 
   const getNumOfTests = (testTypeId) => {
@@ -128,7 +141,7 @@ const Charts = ({ user, setUser }) => {
           </ResponsiveContainer>
         </Box>
       )}
-      <DataTable facts={facts.slice()} />
+      <DataTable rows={rows} columns={columns} />
     </div>
   );
 };
