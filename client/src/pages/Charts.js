@@ -5,6 +5,8 @@ import NavBar from "../components/NavBar";
 import { CircularProgress, Box } from "@mui/material";
 import NoGraphToShow from "../components/NoGraphToShow";
 import DataTable from "../components/DataTable";
+import CheckIcon from "@mui/icons-material/Check";
+import ClearIcon from "@mui/icons-material/Clear";
 import {
   BarChart,
   CartesianGrid,
@@ -69,18 +71,56 @@ const Charts = ({ user, setUser }) => {
         })
       );
     if (testTypes.length !== 0) setLoading(false);
-    setRows([
-      { id: 1, name: "יוסי כהן", col1: "V", col2: "V" },
-      { id: 2, name: "יוסי כהן", col1: "X", col2: "X" },
-      { id: 3, name: "יוסי כהן", col1: "V", col2: "V" },
-    ]);
+    setDataForTable();
+  }, [testTypes]);
+
+  const setDataForTable = () => {
+    setRows(
+      location.state.soldiers
+        .filter((soldier) => {
+          return soldier.role === parseInt(params.rid);
+        })
+        .map((soldier) => {
+          return {
+            id: soldier.id,
+            name: soldier.first_name + " " + soldier.last_name,
+            soldier_serial_id: soldier.soldier_serial_id,
+          };
+        })
+    );
+
+    testTypes.map((test) => {
+      console.log(test);
+    });
+
+
+    testTypes.map((test) => {
+      console.log(test.name);
+      return { field: test.name, headerName: test.name, width: 100 };
+    });
 
     setColumns([
-      { field: "name", headerName: "שם החייל", width: 150 },
-      { field: "col1", headerName: "משהד", width: 150 },
-      { field: "col2", headerName: "בוחן צוות", width: 150 },
+      { field: "name", headerName: "שם החייל", width: 110 },
+      { field: "soldier_serial_id", headerName: "מספר אישי", width: 90 },
+      {
+        field: "test1",
+        headerName: "בוחן צוות",
+        sortable: false,
+        width: 70,
+        disableClickEventBubbling: true,
+        renderCell: (params) => {
+          return (
+            <div
+              className="d-flex justify-content-between align-items-center"
+              style={{ cursor: "pointer" }}
+            >
+              {false ? <CheckIcon /> : <ClearIcon />}
+            </div>
+          );
+        },
+      },
     ]);
-  }, [testTypes]);
+  };
 
   const getNumOfTests = (testTypeId) => {
     //need to count test types not facts

@@ -65,6 +65,7 @@ export default function NavBar({
     navigate("/Charts/ChooseRole", {
       state: {
         soldier: null,
+        soldiers: location.state.soldiers,
       },
     });
   };

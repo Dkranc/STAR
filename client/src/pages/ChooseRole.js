@@ -21,6 +21,7 @@ const ChooseRole = ({ user, setUser }) => {
   const soldier = location.state.soldier;
 
   useEffect(() => {
+    console.log(location.state)
     if (roleId !== 0) {
       if (soldier !== undefined) {
         if (soldier !== null) {

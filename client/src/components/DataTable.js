@@ -69,7 +69,7 @@ export default function DataTable({ rows, columns }) {
     //   </Table>
     // </TableContainer>
     <div style={{ height: 300, width: "100%" }}>
-      <DataGrid rows={rows} columns={columns} />
+      <DataGrid layoutDirection={'rtl'} rows={rows} columns={columns} />
     </div>
   );
 }
