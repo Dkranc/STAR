@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.calcFinalFactGrade = exports.addFactGen = exports.updateFact = exports.addFact = exports.getFactsByTestId = exports.getFactsByRolesId = exports.getFact = void 0;
+exports.calcFinalFactGrade = exports.addFactGen = exports.addFactGenMed = exports.updateFact = exports.addFact = exports.getFactsByQuestionId = exports.getFactsByTestId = exports.getFactsByRolesId = exports.getFact = void 0;
 
 var _connectDB = require("../connectDB.js");
 
@@ -102,10 +102,39 @@ var getFactsByTestId = function getFactsByTestId(req, res) {
   } catch (_unused3) {
     console.log("bad token");
   }
+};
+
+exports.getFactsByTestId = getFactsByTestId;
+
+var getFactsByQuestionId = function getFactsByQuestionId(req, res) {
+  try {
+    _jsonwebtoken["default"].verify(req.headers.token, "9809502");
+
+    var qid = req.params.qid;
+    var firstDay = new Date();
+    firstDay.setDate(firstDay.getDate() + 5);
+    firstDay = firstDay.toISOString().slice(0, 10);
+    var lastDay = new Date();
+    lastDay.setDate(lastDay.getDate() - 5);
+    lastDay = lastDay.toISOString().slice(0, 10);
+    var sqlGet = "SELECT *,s.id FROM fact f INNER JOIN soldier s ON CAST(f.soldier_serial_id AS INTEGER) = s.soldier_serial_id WHERE f.question_id=$1 AND  f.date BETWEEN $2 AND $3;";
+
+    _connectDB.db.query(sqlGet, [qid, lastDay, firstDay], function (err, result) {
+      if (err) {
+        console.log(err);
+        return res.status(402).json(err);
+      }
+
+      console.log(result.rows);
+      res.send(result.rows);
+    });
+  } catch (_unused4) {
+    console.log("bad token");
+  }
 }; //add new fact to table.
 
 
-exports.getFactsByTestId = getFactsByTestId;
+exports.getFactsByQuestionId = getFactsByQuestionId;
 
 var addFact = function addFact(req, res) {
   try {
@@ -136,7 +165,7 @@ var addFact = function addFact(req, res) {
     }
 
     res.status(200).send("wrote to table");
-  } catch (_unused4) {
+  } catch (_unused5) {
     console.log("bad token");
   }
 }; //update a fact by its id
@@ -158,13 +187,88 @@ var updateFact = function updateFact(req, res) {
       });
     });
     res.sendStatus(200);
-  } catch (_unused5) {
+  } catch (_unused6) {
     console.log("bad token");
+  }
+}; //add fact info for med test
+
+
+exports.updateFact = updateFact;
+
+var addFactGenMed = function addFactGenMed(req, res) {
+  try {
+    var date;
+    var firstDay;
+    var lastDay;
+
+    (function () {
+      _jsonwebtoken["default"].verify(req.headers.token, "9809502");
+
+      var soldierAnswers = req.body;
+      console.log("aswers", soldierAnswers);
+      date = new Date();
+      date = date.toISOString().slice(0, 10);
+      firstDay = new Date();
+      firstDay.setDate(firstDay.getDate() - 5);
+      firstDay = firstDay.toISOString().slice(0, 10);
+      lastDay = new Date();
+      lastDay.setDate(lastDay.getDate() + 5);
+      lastDay = lastDay.toISOString().slice(0, 10);
+      var parent_external_id = null;
+      var selectSoldierQuery = "SELECT role,soldier_serial_id from soldier WHERE id=$1;";
+      var selectQuestionJoinTestType = "SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id\n       WHERE q.name='\u05DE\u05E2\u05E8\u05D9\u05DD' AND tt.role_id=$1;";
+      var sqlSelectFactIfExists = "SELECT * FROM fact WHERE soldier_serial_id=$1 AND question_id=$2 AND date BETWEEN $3 AND $4;";
+      var sqlUpdateIfExists = "UPDATE fact SET date=$1, score=$2 WHERE id = $3";
+      var sqlInsert = "INSERT INTO fact(soldier_serial_id, test_type_id, role, date, question_id, score, parent_external_id) VALUES($1,$2,$3,$4,$5,$6,$7)";
+
+      var _loop = function _loop() {
+        var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
+            solId = _Object$entries$_i[0],
+            value = _Object$entries$_i[1];
+
+        _connectDB.db.query(selectSoldierQuery, [solId], function (err, result) {
+          if (err) console.log(err);
+          var role = result.rows[0].role;
+          var soldierSerialId = result.rows[0].soldier_serial_id;
+
+          _connectDB.db.query(selectQuestionJoinTestType, [role], function (er, res2) {
+            if (res2.rows.length == 0) {
+              console.log("no question found", role);
+            }
+
+            if (res2.rows.length != 0) {
+              _connectDB.db.query(sqlSelectFactIfExists, [soldierSerialId, res2.rows[0].id, firstDay, lastDay], function (err, resEx) {
+                if (resEx.rows.length != 0) {
+                  _connectDB.db.query(sqlUpdateIfExists, [date, value === true ? 1 : 0, resEx.rows[0].id], function (err, res4) {
+                    if (err) console.log(err);
+                  });
+                } else {
+                  _connectDB.db.query(sqlInsert, [soldierSerialId, res2.rows[0].test_type_id, role, date, res2.rows[0].id, value === true ? 1 : 0, //if boolean then 1 for true, 0 for false
+                  parent_external_id], function (error, res3) {
+                    if (err) {
+                      console.log(err);
+                    }
+                  });
+                }
+              });
+            }
+          });
+        });
+      };
+
+      for (var _i = 0, _Object$entries = Object.entries(soldierAnswers); _i < _Object$entries.length; _i++) {
+        _loop();
+      }
+
+      res.sendStatus(200);
+    })();
+  } catch (err) {
+    console.log(err);
   }
 }; //add facts to table from general mashad nput.
 
 
-exports.updateFact = updateFact;
+exports.addFactGenMed = addFactGenMed;
 
 var addFactGen = function addFactGen(req, res) {
   try {
@@ -187,15 +291,15 @@ var addFactGen = function addFactGen(req, res) {
       var sqlGet = "SELECT * FROM fact WHERE soldier_serial_id=$1 AND question_id=$2 AND  date BETWEEN $3 AND $4;";
       var sqlUpdate = "UPDATE Fact SET date=$1, score=$2 WHERE id = $3";
 
-      var _loop = function _loop() {
-        var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
-            keyQuestion = _Object$entries$_i[0],
-            valQuestion = _Object$entries$_i[1];
+      var _loop2 = function _loop2() {
+        var _Object$entries2$_i = _slicedToArray(_Object$entries2[_i2], 2),
+            keyQuestion = _Object$entries2$_i[0],
+            valQuestion = _Object$entries2$_i[1];
 
-        var _loop2 = function _loop2() {
-          var _Object$entries2$_i = _slicedToArray(_Object$entries2[_i2], 2),
-              keySol = _Object$entries2$_i[0],
-              valueAns = _Object$entries2$_i[1];
+        var _loop3 = function _loop3() {
+          var _Object$entries3$_i = _slicedToArray(_Object$entries3[_i3], 2),
+              keySol = _Object$entries3$_i[0],
+              valueAns = _Object$entries3$_i[1];
 
           _connectDB.db.query(sqlGet, [keySol.toString(), keyQuestion, lastDay, firstDay], function (err, result) {
             if (err) console.log(err);
@@ -220,19 +324,19 @@ var addFactGen = function addFactGen(req, res) {
           });
         };
 
-        for (var _i2 = 0, _Object$entries2 = Object.entries(valQuestion); _i2 < _Object$entries2.length; _i2++) {
-          _loop2();
+        for (var _i3 = 0, _Object$entries3 = Object.entries(valQuestion); _i3 < _Object$entries3.length; _i3++) {
+          _loop3();
         }
       };
 
-      for (var _i = 0, _Object$entries = Object.entries(completedArray); _i < _Object$entries.length; _i++) {
-        _loop();
+      for (var _i2 = 0, _Object$entries2 = Object.entries(completedArray); _i2 < _Object$entries2.length; _i2++) {
+        _loop2();
       }
 
       res.status(200).send("wrote to table");
       sendEmails();
     })();
-  } catch (_unused6) {
+  } catch (_unused7) {
     console.log("bad token");
   }
 }; //calculate the final grade for the training
@@ -268,10 +372,10 @@ var calcFinalFactGrade = function calcFinalFactGrade(req, res) {
       });
       var finalGradeObg = {};
 
-      for (var _i3 = 0, _Object$entries3 = Object.entries(soldiersFacts); _i3 < _Object$entries3.length; _i3++) {
-        var _Object$entries3$_i = _slicedToArray(_Object$entries3[_i3], 2),
-            solId = _Object$entries3$_i[0],
-            solFacts = _Object$entries3$_i[1];
+      for (var _i4 = 0, _Object$entries4 = Object.entries(soldiersFacts); _i4 < _Object$entries4.length; _i4++) {
+        var _Object$entries4$_i = _slicedToArray(_Object$entries4[_i4], 2),
+            solId = _Object$entries4$_i[0],
+            solFacts = _Object$entries4$_i[1];
 
         calculateAndUpdate(solId, solFacts, finalGradeObg);
       }
@@ -301,10 +405,10 @@ var calculateAndUpdate = function calculateAndUpdate(solId, solFacts, finalGrade
     });
   });
 
-  for (var _i4 = 0, _Object$entries4 = Object.entries(testFactObj); _i4 < _Object$entries4.length; _i4++) {
-    var _Object$entries4$_i = _slicedToArray(_Object$entries4[_i4], 2),
-        ttid = _Object$entries4$_i[0],
-        factsArr = _Object$entries4$_i[1];
+  for (var _i5 = 0, _Object$entries5 = Object.entries(testFactObj); _i5 < _Object$entries5.length; _i5++) {
+    var _Object$entries5$_i = _slicedToArray(_Object$entries5[_i5], 2),
+        ttid = _Object$entries5$_i[0],
+        factsArr = _Object$entries5$_i[1];
 
     // console.log(calculate(factsArr, ttid,finalGradeObg,solId));
     calculate(factsArr, ttid, finalGradeObg, solId);
@@ -325,17 +429,23 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
               while (1) {
                 switch (_context2.prev = _context2.next) {
                   case 0:
-                    sqlGet = "SELECT weight,input_type FROM question WHERE id=$1;";
+                    sqlGet = " SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id  WHERE q.id=$1;";
                     _context2.next = 3;
                     return regeneratorRuntime.awrap(_connectDB.db.query(sqlGet, [fact.question_id], function _callee(err, result) {
-                      var weight, percent, firstDay, lastDay, sqlUpdateTrans;
+                      var weight, role, teamTestId, percent, firstDay, lastDay, sqlUpdateTrans;
                       return regeneratorRuntime.async(function _callee$(_context) {
                         while (1) {
                           switch (_context.prev = _context.next) {
                             case 0:
                               weight = parseFloat(result.rows[0].weight);
+                              role = fact.role;
+                              teamTestId = 2;
 
                               if (weight != 0) {
+                                if (teamTestId === result.rows[0].test_type_id && role !== 1) {
+                                  weight = 1.8181;
+                                }
+
                                 percent = 0;
 
                                 if (result.rows[0].input_type === "open-numeric") {
@@ -348,13 +458,12 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
                               }
 
                               if (!(ind === len - 1)) {
-                                _context.next = 13;
+                                _context.next = 14;
                                 break;
                               }
 
                               //we got to the end of calculating the grade for a specifick test- so we update the score.
                               //at the end each fact will have a final score of the soldier
-                              console.log(finalGradeObg[solId], solId);
                               firstDay = new Date();
                               firstDay.setDate(firstDay.getDate() - 5);
                               firstDay = firstDay.toISOString().slice(0, 10);
@@ -362,12 +471,12 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
                               lastDay.setDate(lastDay.getDate() + 5);
                               lastDay = lastDay.toISOString().slice(0, 10);
                               sqlUpdateTrans = "UPDATE Fact SET final_grade=$1 WHERE soldier_serial_id = $2 AND date BETWEEN $3 AND $4";
-                              _context.next = 13;
+                              _context.next = 14;
                               return regeneratorRuntime.awrap(_connectDB.db.query(sqlUpdateTrans, [finalGradeObg[solId], solId, firstDay, lastDay], function (err, result) {
                                 if (err) console.log(err);
                               }));
 
-                            case 13:
+                            case 14:
                             case "end":
                               return _context.stop();
                           }

@@ -12,6 +12,8 @@ import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 
 const AddEditSoldiers = ({ user, setUser }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+
 
   return (
     <div>
@@ -45,7 +47,11 @@ const AddEditSoldiers = ({ user, setUser }) => {
           >
             <PersonAddAltOutlinedIcon
               onClick={() => {
-                navigate(`/AddEditSoldiers/AddEditPage`);
+                navigate(`/AddEditSoldiers/AddEditPage`, {
+                  state: {
+                    soldiers: location.state.soldiers,
+                  },
+                });
               }}
             />
           </Fab>

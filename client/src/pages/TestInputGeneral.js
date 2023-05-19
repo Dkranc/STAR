@@ -7,7 +7,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import NavBar from "../components/NavBar";
@@ -19,31 +19,48 @@ const TestInputGeneral = ({ user, setUser, lightMode }) => {
   const [question, setQuestion] = useState({});
   const params = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     (async function anyNameFunction() {
-        var soldiersArray=[];
-      await axios
-        .get(`http://localhost:8080/api/general/soldier`, {
-          headers: { token: sessionStorage.getItem("token") },
-        })
-        .then((response) => {
-            soldiersArray=Object.entries(response.data);
-          setSoldiers(soldiersArray);
-        });
+      setSoldiers(location.state.soldiers);
+
       var checkedSoldiers = {};
-      soldiersArray.map((sol) => {
-        checkedSoldiers[sol[1].id] = false;
+      soldiers.map((sol) => {
+        checkedSoldiers[sol.id] = false;
       });
+
       setCheckedArray(checkedSoldiers);
+
+      const medTests = ["1", "6", "10", "13"];
+
+      medTests.map(async (qid) => {
+        await axios
+          .get(`http://localhost:8080/api/tests/fact/questionId/qid/${qid}`, {
+            headers: { token: sessionStorage.getItem("token") },
+          })
+          .then((response) => {
+            response.data.map((fact) => {
+              const solId = fact.id;
+              const val = fact.score != 0 ? true : false;
+              // console.log(solId, val);
+              checkedSoldiers = { ...checkedSoldiers, [solId]: val };
+              setCheckedArray(checkedSoldiers);
+            });
+          })
+          .then(() => {
+            setLoading(false);
+          });
+      });
     })();
-  }, []);
+  }, [soldiers]);
 
   const selectAllClicked = (e) => {
     var dict2 = {};
     soldiers.map((sol) => {
       // this sets the initial checkbox fileds to true
-      dict2[sol[1].serial_id] = true;
+      dict2[sol.id] = true;
     });
 
     setCheckedArray(dict2);
@@ -53,7 +70,7 @@ const TestInputGeneral = ({ user, setUser, lightMode }) => {
     var dict2 = {};
     soldiers.map((sol) => {
       // this sets the initial checkbox fileds to false
-      dict2[sol[1].serial_id] = false;
+      dict2[sol.id] = false;
     });
 
     setCheckedArray(dict2);
@@ -66,9 +83,11 @@ const TestInputGeneral = ({ user, setUser, lightMode }) => {
       [val]: !checkedArray[val],
     };
     setCheckedArray(newSolCompleteList);
+    console.log(checkedArray);
   };
 
   const sendClicked = () => {
+    console.log(checkedArray);
     axios
       .post(
         "http://localhost:8080/api/tests/fact/medicalGeneralInput",
@@ -77,7 +96,7 @@ const TestInputGeneral = ({ user, setUser, lightMode }) => {
       )
       .then((response) => {
         toast.success("הבקשה נשלחה בהצלחה");
-        navigate(`/`);
+        navigate(`/Home`, { state: { soldiers: location.state.soldiers } });
       });
   };
 
@@ -85,80 +104,86 @@ const TestInputGeneral = ({ user, setUser, lightMode }) => {
 
   return (
     <div>
-      <Box dir="rtl">
-        <NavBar
-          setUser={setUser}
-          user={user}
-          pageName={pageName}
-          lightMode={lightMode}
-        />
-        <Box className="btns-add-rmv">
-          <Button
-            id={question.id}
-            value={question.id}
-            onClick={(e) => {
-              selectAllClicked(e);
-            }}
-          >
-            סמן הכל
-          </Button>
-          <Button
-            value={question.id}
-            onClick={(e) => {
-              removeAllClicked(e);
-            }}
-          >
-            נקה הכל
-          </Button>
-        </Box>
-
-        {soldiers.map((sol) => {
-          return (
-            <ListItem
-              sx={{ border: "none" }}
-              alignItems="flex-end"
-              dir={"rtl"}
-              key={sol[1].serial_id}
-              secondaryAction={
-                <input
-                  type="checkbox"
-                  value={sol[1].serial_id}
-                  checked={checkedArray[sol[1].serial_id]}
-                  onChange={(e) => checkBoxChanged(e)}
-                />
-              }
-            >
-              <ListItemText
-                sx={{
-                  marginRight: "40px",
-                  fontFamily: "Bold",
-                  textAlign: "right",
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <div>
+          <Box dir="rtl">
+            <NavBar
+              setUser={setUser}
+              user={user}
+              pageName={pageName}
+              lightMode={lightMode}
+            />
+            <Box className="btns-add-rmv">
+              <Button
+                id={question.id}
+                value={question.id}
+                onClick={(e) => {
+                  selectAllClicked(e);
                 }}
-                dir={"rtl"}
-                id={sol.id}
-                primary={sol[1].first_name+" "+sol[1].last_name}
-              />
-            </ListItem>
-          );
-        })}
-      </Box>
-      <Button
-        sx={{
-          background:
-            "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
-          boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
-          color: "black",
-          fontFamily: "Bold",
-          fontSize: "20px",
-          paddingX: "20%",
-          borderRadius: "30px",
-          marginTop: "20px",
-          marginLeft: "25%",
-        }}
-        onClick={sendClicked}
-      >
-        שלח
-      </Button>
+              >
+                סמן הכל
+              </Button>
+              <Button
+                value={question.id}
+                onClick={(e) => {
+                  removeAllClicked(e);
+                }}
+              >
+                נקה הכל
+              </Button>
+            </Box>
+
+            {soldiers.map((sol) => {
+              return (
+                <ListItem
+                  sx={{ border: "none" }}
+                  alignItems="flex-end"
+                  dir={"rtl"}
+                  key={sol.id}
+                  secondaryAction={
+                    <input
+                      type="checkbox"
+                      value={sol.id}
+                      checked={checkedArray[sol.id]}
+                      onChange={(e) => checkBoxChanged(e)}
+                    />
+                  }
+                >
+                  <ListItemText
+                    sx={{
+                      marginRight: "40px",
+                      fontFamily: "Bold",
+                      textAlign: "right",
+                    }}
+                    dir={"rtl"}
+                    id={sol.id}
+                    primary={sol.first_name + " " + sol.last_name}
+                  />
+                </ListItem>
+              );
+            })}
+          </Box>
+          <Button
+            sx={{
+              background:
+                "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
+              boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+              color: "black",
+              fontFamily: "Bold",
+              fontSize: "20px",
+              paddingX: "20%",
+              borderRadius: "30px",
+              marginTop: "20px",
+              marginLeft: "25%",
+            }}
+            onClick={sendClicked}
+          >
+            שלח
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

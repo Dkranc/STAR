@@ -258,7 +258,7 @@ const Questionary = ({ soldier, user, setUser }) => {
             }}
           >
             <Typography fontFamily={"ExtraBold"} fontSize={"22px"}>
-              {sol.full_name}
+              {sol.first_name + " " + sol.last_name}
             </Typography>
             <div>
               <Button
