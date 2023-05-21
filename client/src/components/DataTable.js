@@ -8,7 +8,6 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { DataGrid } from "@mui/x-data-grid";
 
-
 function createData(id, one, two, three, four) {
   return { id, one, two, three, four };
 }
@@ -69,7 +68,7 @@ export default function DataTable({ rows, columns }) {
     //   </Table>
     // </TableContainer>
     <div style={{ height: 300, width: "100%" }}>
-      <DataGrid layoutDirection={'rtl'} rows={rows} columns={columns} />
+      <DataGrid layoutDirection={"rtl"} rows={rows} columns={columns} />
     </div>
   );
 }
