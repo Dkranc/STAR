@@ -115,73 +115,95 @@ const TestInputGeneral = ({ user, setUser, lightMode }) => {
               pageName={pageName}
               lightMode={lightMode}
             />
-            <Box className="btns-add-rmv">
-              <Button
-                id={question.id}
-                value={question.id}
-                onClick={(e) => {
-                  selectAllClicked(e);
+            <Box
+              sx={{
+                margin: "10%",
+                border: "none",
+                backgroundColor: "white",
+                borderRadius: "30px",
+                boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.25)",
+              }}
+            >
+              <Box
+                className="btns-add-rmv"
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
                 }}
               >
-                סמן הכל
-              </Button>
-              <Button
-                value={question.id}
-                onClick={(e) => {
-                  removeAllClicked(e);
-                }}
-              >
-                נקה הכל
-              </Button>
-            </Box>
-
-            {soldiers.map((sol) => {
-              return (
-                <ListItem
-                  sx={{ border: "none" }}
-                  alignItems="flex-end"
-                  dir={"rtl"}
-                  key={sol.id}
-                  secondaryAction={
-                    <input
-                      type="checkbox"
-                      value={sol.id}
-                      checked={checkedArray[sol.id]}
-                      onChange={(e) => checkBoxChanged(e)}
-                    />
-                  }
+                <Button
+                  id={question.id}
+                  value={question.id}
+                  onClick={(e) => {
+                    selectAllClicked(e);
+                  }}
                 >
-                  <ListItemText
-                    sx={{
-                      marginRight: "40px",
-                      fontFamily: "Bold",
-                      textAlign: "right",
-                    }}
+                  סמן הכל
+                </Button>
+                <Button
+                  value={question.id}
+                  onClick={(e) => {
+                    removeAllClicked(e);
+                  }}
+                >
+                  נקה הכל
+                </Button>
+              </Box>
+
+              {soldiers.map((sol) => {
+                return (
+                  <ListItem
+                    sx={{ border: "none" }}
+                    alignItems="flex-end"
                     dir={"rtl"}
-                    id={sol.id}
-                    primary={sol.first_name + " " + sol.last_name}
-                  />
-                </ListItem>
-              );
-            })}
+                    key={sol.id}
+                    secondaryAction={
+                      <input
+                        type="checkbox"
+                        value={sol.id}
+                        checked={checkedArray[sol.id]}
+                        onChange={(e) => checkBoxChanged(e)}
+                      />
+                    }
+                  >
+                    <ListItemText
+                      sx={{
+                        marginRight: "40px",
+                        fontFamily: "Bold",
+                        textAlign: "right",
+                      }}
+                      dir={"rtl"}
+                      id={sol.id}
+                      primary={
+                        sol.first_name +
+                        " " +
+                        sol.last_name +
+                        " " +
+                        sol.soldier_serial_id
+                      }
+                    />
+                  </ListItem>
+                );
+              })}
+            </Box>
+            <Button
+              sx={{
+                background:
+                  "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
+                boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+                color: "black",
+                fontFamily: "Bold",
+                fontSize: "20px",
+                paddingX: "20%",
+                borderRadius: "30px",
+                marginTop: "20px",
+                marginLeft: "25%",
+              }}
+              onClick={sendClicked}
+            >
+              שלח
+            </Button>
           </Box>
-          <Button
-            sx={{
-              background:
-                "linear-gradient(275.76deg, #2ED573 44.33%, #7BED9F 98.56%)",
-              boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
-              color: "black",
-              fontFamily: "Bold",
-              fontSize: "20px",
-              paddingX: "20%",
-              borderRadius: "30px",
-              marginTop: "20px",
-              marginLeft: "25%",
-            }}
-            onClick={sendClicked}
-          >
-            שלח
-          </Button>
         </div>
       )}
     </div>
