@@ -13,15 +13,32 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import QuestionMap from "../components/QuestionMap";
 
-const get_ans_count = (item) => {
-  var ans_count = 0;
-  for (const [key, value] of Object.entries(item)) {
-    if (value != "undefined") {
-      ans_count++;
-    }
-  }
-  return ans_count;
+const filterObjectByValue = (myObject, acceptedValues) => {
+  const asArray = Object.entries(myObject); //object to iter array
+  var filtered = asArray.filter(
+    ([key, value]) => value["parent_id"] === acceptedValues[0]
+  ); //filter by parent it of category
+  return filtered;
 };
+
+const getAnswerCount = (answers, myObject) => {
+  const asArray = Object.entries(answers); //object to iter array
+
+  var filteredAnswer = asArray.filter(([key, value]) => value !== "undefined"); //filter by answer defined
+
+  let arr = []; //from array of array to one array
+  filteredAnswer.forEach((array) => {
+    arr = arr.concat(array);
+  });
+
+  //check if answer in each category
+  var filterByAnswered = myObject.filter(([key, value]) =>
+    arr.includes(value["name"])
+  );
+
+  return filterByAnswered;
+};
+
 const GeneralPopUp = ({
   isMashadTest,
   questions,
@@ -68,6 +85,7 @@ const GeneralPopUp = ({
           dir="rtl"
         >
           {categories.map((category) => {
+            console.log("cat", category);
             return (
               <Box
                 marginTop={"5%"}
@@ -96,12 +114,24 @@ const GeneralPopUp = ({
                   endIcon={
                     openCategories[category.id] ? (
                       <Box>
-                        {get_ans_count(answers)}/{Object.keys(answers).length}
+                        {
+                          getAnswerCount(
+                            answers,
+                            filterObjectByValue(questions, [category.id])
+                          ).length
+                        }
+                        /{filterObjectByValue(questions, [category.id]).length}
                         <ArrowDropUpIcon />
                       </Box>
                     ) : (
                       <Box>
-                        {get_ans_count(answers)}/{Object.keys(answers).length}
+                        {
+                          getAnswerCount(
+                            answers,
+                            filterObjectByValue(questions, [category.id])
+                          ).length
+                        }
+                        /{filterObjectByValue(questions, [category.id]).length}
                         <ArrowDropDownIcon />
                       </Box>
                     )
