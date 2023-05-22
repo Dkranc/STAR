@@ -1,13 +1,23 @@
+
+//import react
 import { React, useEffect, useState } from "react";
-import axios from "axios";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+
+//import axios
+import axios from "axios";
+
+//import custom components
 import NavBar from "../components/NavBar";
 
-//mui
+//import mui
 import { Button } from "@mui/material";
 import { Box } from "@mui/system";
 import { CircularProgress } from "@mui/material";
 
+/* 
+TestType.js - a page for selecting the test for role selected in previous page.
+navigate to the questionary depending on test id.
+*/
 const TestType = ({ user, setUser }) => {
   const navigate = useNavigate();
 

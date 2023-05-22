@@ -25,6 +25,11 @@ import axios from "axios";
 import lightModeLogo from "../image/logoLightMode.png";
 import darkModeLogo from "../image/logoLightMode.png";
 
+/*
+Login page - first page in the app:
+Contains Login Button directing to microsoft login window and saving the auth token in session storage.
+In addition, setting timer for auto logout and directing to ChooseTraining.js
+*/
 const Login = ({ setUser, lightState }) => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);

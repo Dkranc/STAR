@@ -1,12 +1,19 @@
+//import react
 import { React, useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import "./Questionary.css";
+
+//import axios
 import axios from "axios";
+
+//import custom components
 import Questions from "../components/Questions";
 import NavBar from "../components/NavBar";
 import SolPopUp from "../components/SolPopUp";
 import GeneralInput from "./GeneralInput";
 import toast from "react-hot-toast";
+import "./Questionary.css";
+
+//import mui
 import { Button, Typography } from "@mui/material";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import { Box } from "@mui/system";

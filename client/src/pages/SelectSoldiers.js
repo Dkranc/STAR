@@ -1,10 +1,15 @@
+//import react
 import { React, useEffect, useState, setState } from "react";
 import { useNavigate, useParams, useLocation, json } from "react-router-dom";
+
+//import axios
 import axios from "axios";
+
+//import custom components
 import "./SelectSoldiers.css";
 import NavBar from "../components/NavBar";
 
-//mui import
+//import mui
 import { ListItemButton, Fab } from "@mui/material";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";

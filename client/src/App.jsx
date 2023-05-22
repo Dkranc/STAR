@@ -215,7 +215,9 @@ function App() {
               overflow: "hidden",
             }}
             display="center"
-            justifyContent="center"
+            
+            
+            Content="center"
             alignItems="center"
           >
             <Box
