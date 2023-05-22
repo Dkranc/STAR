@@ -71,8 +71,8 @@ export default function NavBar({
   };
 
   const homeClicked = () => {
-    navigate("/", {
-      state: {},
+    navigate(`/Home`, {
+      state: { soldiers: location.state.soldiers},
     });
   };
 

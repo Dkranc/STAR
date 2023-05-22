@@ -232,9 +232,7 @@ var addFactGenMed = function addFactGenMed(req, res) {
           var soldierSerialId = result.rows[0].soldier_serial_id;
 
           _connectDB.db.query(selectQuestionJoinTestType, [role], function (er, res2) {
-            if (res2.rows.length == 0) {
-              console.log("no question found", role);
-            }
+            if (res2.rows.length == 0) {}
 
             if (res2.rows.length != 0) {
               _connectDB.db.query(sqlSelectFactIfExists, [soldierSerialId, res2.rows[0].id, firstDay, lastDay], function (err, resEx) {
@@ -243,8 +241,6 @@ var addFactGenMed = function addFactGenMed(req, res) {
                     if (err) console.log(err);
                   });
                 } else {
-                  console.log(res2.rows[0]);
-
                   _connectDB.db.query(sqlInsert, [soldierSerialId, res2.rows[0].test_type_id, role, date, res2.rows[0].id, value === true ? 1 : 0, //if boolean then 1 for true, 0 for false
                   parent_external_id], function (error, res3) {
                     if (err) {
@@ -307,16 +303,12 @@ var addFactGen = function addFactGen(req, res) {
             if (err) console.log(err);
 
             if (result.rowCount === 0) {
-              console.log(keySol, "no prev");
-
               _connectDB.db.query(sqlInsert, [keySol, ttid, rid, new Date().toISOString().slice(0, 10), keyQuestion, typeof valueAns == "boolean" ? valueAns ? 1 : 0 : valueAns, null], function (err, result) {
                 if (err) {
                   console.log(err);
                 }
               });
             } else {
-              console.log(keySol, "hasprev");
-
               _connectDB.db.query(sqlUpdate, [new Date().toISOString().slice(0, 10), typeof valueAns == "boolean" ? valueAns ? 1 : 0 : valueAns, result.rows[0].id], function (err, result) {
                 if (err) {
                   console.log(err);
@@ -439,12 +431,12 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
                         while (1) {
                           switch (_context.prev = _context.next) {
                             case 0:
-                              console.log("id:", fact.question_id);
                               weight = parseFloat(result.rows[0].weight);
                               role = fact.role;
                               teamTestId = 2;
 
                               if (weight != 0) {
+                                //the team test is worth a diferent amoubt for each role
                                 if (teamTestId === result.rows[0].test_type_id && role !== 1) {
                                   weight = 1.8181; // need to fix this with new scores and wegihts
                                 }
@@ -458,15 +450,9 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
                                   percent = fact.score / 10;
                                   finalGradeObg[solId] += weight * percent;
                                 }
-                              }
+                              } //now that we have the wegiht and score we can calculate the final grade and update the fact scores.
 
-                              if (!(ind === len - 1)) {
-                                _context.next = 15;
-                                break;
-                              }
 
-                              //we got to the end of calculating the grade for a specifick test- so we update the score.
-                              //at the end each fact will have a final score of the soldier
                               firstDay = new Date();
                               firstDay.setDate(firstDay.getDate() - 5);
                               firstDay = firstDay.toISOString().slice(0, 10);
@@ -474,12 +460,12 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
                               lastDay.setDate(lastDay.getDate() + 5);
                               lastDay = lastDay.toISOString().slice(0, 10);
                               sqlUpdateTrans = "UPDATE Fact SET final_grade=$1 WHERE soldier_serial_id = $2 AND date BETWEEN $3 AND $4";
-                              _context.next = 15;
+                              _context.next = 13;
                               return regeneratorRuntime.awrap(_connectDB.db.query(sqlUpdateTrans, [finalGradeObg[solId], solId, firstDay, lastDay], function (err, result) {
                                 if (err) console.log(err);
                               }));
 
-                            case 15:
+                            case 13:
                             case "end":
                               return _context.stop();
                           }
@@ -502,16 +488,19 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
     }
   });
 }; //function to send emails to the trainees at the end of training
+//need to get files and send them!!!!
+//will be in new controller!!
 
 
 var sendEmails = function sendEmails() {
   console.log("sending emails");
+  var soldier_serial_id = 42;
 
   var transporter = _nodemailer["default"].createTransport({
     service: "gmail",
     auth: {
-      user: "dvdkranc22@gmail.com",
-      pass: "Dkranc2007"
+      user: "StarDevHatal@gmail.com",
+      pass: "vonyaqorwxtkvonw"
     }
   });
 
@@ -519,7 +508,12 @@ var sendEmails = function sendEmails() {
     from: "dvdkranc22@gmail.com",
     to: "dvdkranc22@gmail.com",
     subject: "Sending Email using Node.js",
-    text: "That was easy! wow!!"
+    text: "That was easy! wow!!",
+    attachments: [{
+      filename: "form-doch.pdf",
+      path: "../server/pdf/\u05D3\u05D5\u05D7-\u05E1\u05D9\u05DB\u05D5\u05DD-\u05E9\u05D1\u05D5\u05E2".concat(soldier_serial_id, ".pdf"),
+      contentType: "application/pdf"
+    }]
   };
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {

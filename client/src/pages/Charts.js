@@ -69,8 +69,6 @@ const Charts = ({ user, setUser }) => {
         .map((soldier) => {
           plugaArr.push(soldier["soldier_serial_id"]);
         });
-
-      console.log("pluga ", pluga, plugaArr);
     });
 
     //set the chart data
@@ -119,7 +117,7 @@ const Charts = ({ user, setUser }) => {
           (soldier.role === parseInt(params.rid) && pluga == "all")
         );
       });
-      console.log(filteredSoldiers);
+
       setData(
         testTypes.map((test) => {
           return {
@@ -155,37 +153,41 @@ const Charts = ({ user, setUser }) => {
         })
     );
 
-    testTypes.map((test) => {
-      console.log(test);
-    });
-
-    testTypes.map((test) => {
-      console.log(test.name);
-      return { field: test.name, headerName: test.name, width: 100 };
-    });
-
-    setColumns([
-      { field: "name", headerName: "שם החייל", width: 110 },
-      { field: "soldier_serial_id", headerName: "מספר אישי", width: 90 },
-      { field: "pluga", headerName: "פלוגה", width: 50 },
-      {
-        field: "test1",
-        headerName: "בוחן צוות",
-        sortable: false,
-        width: 70,
-        disableClickEventBubbling: true,
-        renderCell: (params) => {
+    const rowsWithAnswers = rows;
+    rowsWithAnswers.map((row) => {
+      testTypes.map((testType) => {
+        const result = facts.find((fact) => {
           return (
-            <div
-              className="d-flex justify-content-between align-items-center"
-              style={{ cursor: "pointer" }}
-            >
-              {false ? <CheckIcon /> : <ClearIcon />}
-            </div>
+            //make sure the fact exists so we count it if it isnt a MAARIM test- that could be seprate
+            fact.test_type_id === testType.id &&
+            fact.soldier_serial_id === row.id &&
+            fact.question_id !== 1 &&
+            fact.question_id !== 45 &&
+            fact.question_id !== 85 &&
+            fact.question_id !== 112
           );
-        },
-      },
-    ]);
+        });
+        if (result != null) {
+          row[testType.name] = "V";
+        } else {
+          row[testType.name] = "X";
+        }
+      });
+
+      setRows(rowsWithAnswers);
+    });
+
+    var cols = [
+      { field: "name", headerName: "שם החייל" },
+      { field: "soldier_serial_id", headerName: "מספר אישי" },
+      { field: "pluga", headerName: "פלוגה" },
+    ];
+
+    testTypes.map((tt) => {
+      cols.push({ field: tt.name, headerName: tt.name });
+    });
+
+    setColumns(cols);
   };
 
   const getNumOfTests = (testTypeId, plugaArr) => {
@@ -198,12 +200,20 @@ const Charts = ({ user, setUser }) => {
           plugaArr.includes(Number(fact.soldier_serial_id))) ||
         (fact.test_type_id === testTypeId && plugaArr.length === 0) //if plugaArr empty give all
       ) {
-        if (!sols.includes(fact.soldier_serial_id)) {
+        //add to the array if the fact hasent been counted, and if it is not a MAARIM test.
+
+        if (
+          !sols.includes(fact.soldier_serial_id) &&
+          fact.question_id !== 1 &&
+          fact.question_id !== 45 &&
+          fact.question_id !== 85 &&
+          fact.question_id !== 112
+        ) {
           sols.push(fact.soldier_serial_id);
         }
       }
     });
-    console.log("sols", sols.length);
+    console.log("sols", sols);
     return sols.length;
   };
 

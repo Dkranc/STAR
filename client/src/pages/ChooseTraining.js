@@ -83,6 +83,9 @@ const ChooseTraining = ({ user, setUser }) => {
           <MenuItem dir="rtl" value={3}>
             אימון שלישי
           </MenuItem>
+          <MenuItem dir="rtl" value={4}>
+            אימון רביעי
+          </MenuItem>
         </Select>
         <Button
           sx={{

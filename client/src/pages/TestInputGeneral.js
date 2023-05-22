@@ -78,17 +78,15 @@ const TestInputGeneral = ({ user, setUser, lightMode }) => {
 
   const checkBoxChanged = async (e) => {
     const val = e.target.value;
-    console.log(val);
+
     var newSolCompleteList = {
       ...checkedArray,
       [val]: !checkedArray[val],
     };
     setCheckedArray(newSolCompleteList);
-    console.log(checkedArray);
   };
 
   const sendClicked = () => {
-    console.log(checkedArray);
     axios
       .post(
         "http://localhost:8080/api/tests/fact/medicalGeneralInput",

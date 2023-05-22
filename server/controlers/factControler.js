@@ -183,7 +183,7 @@ export const updateFact = (req, res) => {
 };
 
 //add fact info for med test
-export const addFactGenMed =  (req, res) => {
+export const addFactGenMed = (req, res) => {
   try {
     jwt.verify(req.headers.token, "9809502");
     const soldierAnswers = req.body;
@@ -214,7 +214,6 @@ export const addFactGenMed =  (req, res) => {
         const soldierSerialId = result.rows[0].soldier_serial_id;
         db.query(selectQuestionJoinTestType, [role], (er, res2) => {
           if (res2.rows.length == 0) {
-            console.log("no question found", role);
           }
 
           if (res2.rows.length != 0) {
@@ -231,7 +230,6 @@ export const addFactGenMed =  (req, res) => {
                     }
                   );
                 } else {
-                  console.log(res2.rows[0]);
                   db.query(
                     sqlInsert,
                     [
@@ -295,7 +293,6 @@ export const addFactGen = (req, res) => {
             if (err) console.log(err);
 
             if (result.rowCount === 0) {
-              console.log(keySol, "no prev");
               db.query(
                 sqlInsert,
                 [
@@ -314,7 +311,6 @@ export const addFactGen = (req, res) => {
                 }
               );
             } else {
-              console.log(keySol, "hasprev");
               db.query(
                 sqlUpdate,
                 [
@@ -334,7 +330,6 @@ export const addFactGen = (req, res) => {
       }
     }
 
-    
     res.status(200).send("wrote to table");
   } catch {
     console.log("bad token");
@@ -410,18 +405,19 @@ const calculateAndUpdate = (solId, solFacts, finalGradeObg) => {
 
 const calculate = async (factsArr, ttid, finalGradeObg, solId) => {
   const len = factsArr.length;
+
   factsArr.map(async (fact, ind) => {
     const sqlGet =
       "SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id  WHERE q.id=$1;";
 
     await db.query(sqlGet, [fact.question_id], async (err, result) => {
-      console.log("id:", fact.question_id);
       var weight = parseFloat(result.rows[0].weight);
       const role = fact.role;
       const teamTestId = 2;
       if (weight != 0) {
+        //the team test is worth a diferent amoubt for each role
         if (teamTestId === result.rows[0].test_type_id && role !== 1) {
-          weight = 1.8181;// need to fix this with new scores and wegihts
+          weight = 1.8181; // need to fix this with new scores and wegihts
         }
         var percent = 0;
         if (result.rows[0].input_type === "open-numeric") {
@@ -432,40 +428,43 @@ const calculate = async (factsArr, ttid, finalGradeObg, solId) => {
           finalGradeObg[solId] += weight * percent;
         }
       }
-      if (ind === len - 1) {
-        //we got to the end of calculating the grade for a specifick test- so we update the score.
-        //at the end each fact will have a final score of the soldier
 
-        var firstDay = new Date();
-        firstDay.setDate(firstDay.getDate() - 5);
-        firstDay = firstDay.toISOString().slice(0, 10);
-        var lastDay = new Date();
-        lastDay.setDate(lastDay.getDate() + 5);
-        lastDay = lastDay.toISOString().slice(0, 10);
+      //now that we have the wegiht and score we can calculate the final grade and update the fact scores.
 
-        const sqlUpdateTrans =
-          "UPDATE Fact SET final_grade=$1 WHERE soldier_serial_id = $2 AND date BETWEEN $3 AND $4";
+      var firstDay = new Date();
+      firstDay.setDate(firstDay.getDate() - 5);
+      firstDay = firstDay.toISOString().slice(0, 10);
+      var lastDay = new Date();
+      lastDay.setDate(lastDay.getDate() + 5);
+      lastDay = lastDay.toISOString().slice(0, 10);
 
-        await db.query(
-          sqlUpdateTrans,
-          [finalGradeObg[solId], solId, firstDay, lastDay],
-          (err, result) => {
-            if (err) console.log(err);
-          }
-        );
-      }
+      const sqlUpdateTrans =
+        "UPDATE Fact SET final_grade=$1 WHERE soldier_serial_id = $2 AND date BETWEEN $3 AND $4";
+
+      await db.query(
+        sqlUpdateTrans,
+        [finalGradeObg[solId], solId, firstDay, lastDay],
+        (err, result) => {
+          if (err) console.log(err);
+        }
+      );
     });
   });
 };
 
 //function to send emails to the trainees at the end of training
-const sendEmails =  () => {
+//need to get files and send them!!!!
+//will be in new controller!!
+const sendEmails = () => {
   console.log("sending emails");
+
+  const soldier_serial_id = 42;
+
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "dvdkranc22@gmail.com",
-      pass: "Dkranc2007",
+      user: "StarDevHatal@gmail.com",
+      pass: "vonyaqorwxtkvonw",
     },
   });
 
@@ -474,6 +473,13 @@ const sendEmails =  () => {
     to: "dvdkranc22@gmail.com",
     subject: "Sending Email using Node.js",
     text: "That was easy! wow!!",
+    attachments: [
+      {
+        filename: "form-doch.pdf",
+        path: `../server/pdf/דוח-סיכום-שבוע${soldier_serial_id}.pdf`,
+        contentType: "application/pdf",
+      },
+    ],
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
