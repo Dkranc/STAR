@@ -9,6 +9,8 @@ var _connectDB = require("../connectDB.js");
 
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 
+var _nodemailer = _interopRequireDefault(require("nodemailer"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
@@ -125,7 +127,6 @@ var getFactsByQuestionId = function getFactsByQuestionId(req, res) {
         return res.status(402).json(err);
       }
 
-      console.log(result.rows);
       res.send(result.rows);
     });
   } catch (_unused4) {
@@ -205,7 +206,6 @@ var addFactGenMed = function addFactGenMed(req, res) {
       _jsonwebtoken["default"].verify(req.headers.token, "9809502");
 
       var soldierAnswers = req.body;
-      console.log("aswers", soldierAnswers);
       date = new Date();
       date = date.toISOString().slice(0, 10);
       firstDay = new Date();
@@ -216,7 +216,7 @@ var addFactGenMed = function addFactGenMed(req, res) {
       lastDay = lastDay.toISOString().slice(0, 10);
       var parent_external_id = null;
       var selectSoldierQuery = "SELECT role,soldier_serial_id from soldier WHERE id=$1;";
-      var selectQuestionJoinTestType = "SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id\n       WHERE q.name='\u05DE\u05E2\u05E8\u05D9\u05DD' AND tt.role_id=$1;";
+      var selectQuestionJoinTestType = "SELECT * FROM test_type tt  INNER JOIN question q ON q.test_type_id = tt.id\n       WHERE q.name='\u05DE\u05E2\u05E8\u05D9\u05DD' AND tt.role_id=$1;";
       var sqlSelectFactIfExists = "SELECT * FROM fact WHERE soldier_serial_id=$1 AND question_id=$2 AND date BETWEEN $3 AND $4;";
       var sqlUpdateIfExists = "UPDATE fact SET date=$1, score=$2 WHERE id = $3";
       var sqlInsert = "INSERT INTO fact(soldier_serial_id, test_type_id, role, date, question_id, score, parent_external_id) VALUES($1,$2,$3,$4,$5,$6,$7)";
@@ -243,6 +243,8 @@ var addFactGenMed = function addFactGenMed(req, res) {
                     if (err) console.log(err);
                   });
                 } else {
+                  console.log(res2.rows[0]);
+
                   _connectDB.db.query(sqlInsert, [soldierSerialId, res2.rows[0].test_type_id, role, date, res2.rows[0].id, value === true ? 1 : 0, //if boolean then 1 for true, 0 for false
                   parent_external_id], function (error, res3) {
                     if (err) {
@@ -334,7 +336,6 @@ var addFactGen = function addFactGen(req, res) {
       }
 
       res.status(200).send("wrote to table");
-      sendEmails();
     })();
   } catch (_unused7) {
     console.log("bad token");
@@ -383,6 +384,7 @@ var calcFinalFactGrade = function calcFinalFactGrade(req, res) {
       if (err) console.log(err);
     });
 
+    sendEmails();
     res.sendStatus(200);
   } catch (e) {
     console.log(e);
@@ -429,7 +431,7 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
               while (1) {
                 switch (_context2.prev = _context2.next) {
                   case 0:
-                    sqlGet = " SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id  WHERE q.id=$1;";
+                    sqlGet = "SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id  WHERE q.id=$1;";
                     _context2.next = 3;
                     return regeneratorRuntime.awrap(_connectDB.db.query(sqlGet, [fact.question_id], function _callee(err, result) {
                       var weight, role, teamTestId, percent, firstDay, lastDay, sqlUpdateTrans;
@@ -437,13 +439,14 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
                         while (1) {
                           switch (_context.prev = _context.next) {
                             case 0:
+                              console.log("id:", fact.question_id);
                               weight = parseFloat(result.rows[0].weight);
                               role = fact.role;
                               teamTestId = 2;
 
                               if (weight != 0) {
                                 if (teamTestId === result.rows[0].test_type_id && role !== 1) {
-                                  weight = 1.8181;
+                                  weight = 1.8181; // need to fix this with new scores and wegihts
                                 }
 
                                 percent = 0;
@@ -458,7 +461,7 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
                               }
 
                               if (!(ind === len - 1)) {
-                                _context.next = 14;
+                                _context.next = 15;
                                 break;
                               }
 
@@ -471,12 +474,12 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
                               lastDay.setDate(lastDay.getDate() + 5);
                               lastDay = lastDay.toISOString().slice(0, 10);
                               sqlUpdateTrans = "UPDATE Fact SET final_grade=$1 WHERE soldier_serial_id = $2 AND date BETWEEN $3 AND $4";
-                              _context.next = 14;
+                              _context.next = 15;
                               return regeneratorRuntime.awrap(_connectDB.db.query(sqlUpdateTrans, [finalGradeObg[solId], solId, firstDay, lastDay], function (err, result) {
                                 if (err) console.log(err);
                               }));
 
-                            case 14:
+                            case 15:
                             case "end":
                               return _context.stop();
                           }
@@ -501,4 +504,28 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
 }; //function to send emails to the trainees at the end of training
 
 
-var sendEmails = function sendEmails() {};
+var sendEmails = function sendEmails() {
+  console.log("sending emails");
+
+  var transporter = _nodemailer["default"].createTransport({
+    service: "gmail",
+    auth: {
+      user: "dvdkranc22@gmail.com",
+      pass: "Dkranc2007"
+    }
+  });
+
+  var mailOptions = {
+    from: "dvdkranc22@gmail.com",
+    to: "dvdkranc22@gmail.com",
+    subject: "Sending Email using Node.js",
+    text: "That was easy! wow!!"
+  };
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+};

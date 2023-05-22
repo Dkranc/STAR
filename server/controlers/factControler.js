@@ -1,5 +1,6 @@
 import { db } from "../connectDB.js";
 import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
 
 //get specific rows from Question table using a test type id and the soldier sereial id that can be found in the params of the request. then send only those rows to the client
 export const getFact = (req, res) => {
@@ -92,7 +93,6 @@ export const getFactsByQuestionId = (req, res) => {
         console.log(err);
         return res.status(402).json(err);
       }
-      console.log(result.rows);
       res.send(result.rows);
     });
   } catch {
@@ -183,11 +183,10 @@ export const updateFact = (req, res) => {
 };
 
 //add fact info for med test
-export const addFactGenMed = (req, res) => {
+export const addFactGenMed =  (req, res) => {
   try {
     jwt.verify(req.headers.token, "9809502");
     const soldierAnswers = req.body;
-    console.log("aswers", soldierAnswers);
     var date = new Date();
     date = date.toISOString().slice(0, 10);
     var firstDay = new Date();
@@ -199,13 +198,12 @@ export const addFactGenMed = (req, res) => {
     const parent_external_id = null;
     const selectSoldierQuery =
       "SELECT role,soldier_serial_id from soldier WHERE id=$1;";
-    const selectQuestionJoinTestType = `SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id
+    const selectQuestionJoinTestType = `SELECT * FROM test_type tt  INNER JOIN question q ON q.test_type_id = tt.id
        WHERE q.name='מערים' AND tt.role_id=$1;`;
 
     const sqlSelectFactIfExists =
       "SELECT * FROM fact WHERE soldier_serial_id=$1 AND question_id=$2 AND date BETWEEN $3 AND $4;";
-    const sqlUpdateIfExists =
-      "UPDATE fact SET date=$1, score=$2 WHERE id = $3";
+    const sqlUpdateIfExists = "UPDATE fact SET date=$1, score=$2 WHERE id = $3";
     const sqlInsert =
       "INSERT INTO fact(soldier_serial_id, test_type_id, role, date, question_id, score, parent_external_id) VALUES($1,$2,$3,$4,$5,$6,$7)";
 
@@ -225,7 +223,6 @@ export const addFactGenMed = (req, res) => {
               [soldierSerialId, res2.rows[0].id, firstDay, lastDay],
               (err, resEx) => {
                 if (resEx.rows.length != 0) {
-                  
                   db.query(
                     sqlUpdateIfExists,
                     [date, value === true ? 1 : 0, resEx.rows[0].id],
@@ -234,6 +231,7 @@ export const addFactGenMed = (req, res) => {
                     }
                   );
                 } else {
+                  console.log(res2.rows[0]);
                   db.query(
                     sqlInsert,
                     [
@@ -335,8 +333,9 @@ export const addFactGen = (req, res) => {
         );
       }
     }
+
+    
     res.status(200).send("wrote to table");
-    sendEmails();
   } catch {
     console.log("bad token");
   }
@@ -379,7 +378,7 @@ export const calcFinalFactGrade = (req, res) => {
 
       if (err) console.log(err);
     });
-
+    sendEmails();
     res.sendStatus(200);
   } catch (e) {
     console.log(e);
@@ -413,15 +412,16 @@ const calculate = async (factsArr, ttid, finalGradeObg, solId) => {
   const len = factsArr.length;
   factsArr.map(async (fact, ind) => {
     const sqlGet =
-      " SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id  WHERE q.id=$1;";
+      "SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id  WHERE q.id=$1;";
 
     await db.query(sqlGet, [fact.question_id], async (err, result) => {
+      console.log("id:", fact.question_id);
       var weight = parseFloat(result.rows[0].weight);
       const role = fact.role;
       const teamTestId = 2;
       if (weight != 0) {
         if (teamTestId === result.rows[0].test_type_id && role !== 1) {
-          weight = 1.8181;
+          weight = 1.8181;// need to fix this with new scores and wegihts
         }
         var percent = 0;
         if (result.rows[0].input_type === "open-numeric") {
@@ -459,4 +459,28 @@ const calculate = async (factsArr, ttid, finalGradeObg, solId) => {
 };
 
 //function to send emails to the trainees at the end of training
-const sendEmails = () => {};
+const sendEmails =  () => {
+  console.log("sending emails");
+  var transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "dvdkranc22@gmail.com",
+      pass: "Dkranc2007",
+    },
+  });
+
+  var mailOptions = {
+    from: "dvdkranc22@gmail.com",
+    to: "dvdkranc22@gmail.com",
+    subject: "Sending Email using Node.js",
+    text: "That was easy! wow!!",
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+};

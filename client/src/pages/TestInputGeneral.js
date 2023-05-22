@@ -33,7 +33,7 @@ const TestInputGeneral = ({ user, setUser, lightMode }) => {
 
       setCheckedArray(checkedSoldiers);
 
-      const medTests = ["1", "6", "10", "13"];
+      const medTests = ["1", "45", "85", "112"];
 
       medTests.map(async (qid) => {
         await axios
@@ -78,6 +78,7 @@ const TestInputGeneral = ({ user, setUser, lightMode }) => {
 
   const checkBoxChanged = async (e) => {
     const val = e.target.value;
+    console.log(val);
     var newSolCompleteList = {
       ...checkedArray,
       [val]: !checkedArray[val],

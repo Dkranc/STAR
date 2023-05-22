@@ -72,8 +72,13 @@ const ChooseRole = ({ user, setUser }) => {
         headers: { token: sessionStorage.getItem("token") },
       })
       .then((response) => {
+        console.log(response);
         toast.success("האימון הסתיים! הדוחות נשלחו בהצלחה");
-        navigate("/");
+        navigate(`/Home`, {
+          state: {
+            soldiers: location.state.soldiers,
+          },
+        });
       });
   };
 
