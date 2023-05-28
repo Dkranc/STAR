@@ -1,47 +1,87 @@
 import { React, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import BarChartIcon from "@mui/icons-material/BarChart";
+//mui
+import Typography from "@mui/material/Typography";
+import { CssBaseline } from "@mui/material";
+import { Container } from "@mui/system";
+import Box from "@mui/material/Box";
+import { ThemeProvider } from "@mui/material/styles";
 
-const Welcome = ({ isAuthenticated }) => {
+const Welcome = ({ setUser, user, lightMode, setLightMode }) => {
   const [openOptionTab, setOpenOptionTab] = useState(false);
 
-  const userRole = sessionStorage.getItem("role");
   var usrRoleInHebrew = "";
-  if (userRole === "User.Admin") usrRoleInHebrew = "מנהל";
-  if (userRole === "User.Instructor") usrRoleInHebrew = "מדריך/חונך/בוחן";
-  if (userRole === "User.Mashad") usrRoleInHebrew = "משהד";
 
-  const userJson = sessionStorage.getItem("user");
-  const user = JSON.parse(userJson)
-  console.log(user)
+  if (user.roles[0] === "User.Admin") usrRoleInHebrew = "מנהל";
+  if (user.roles[0] === "User.Instructor") usrRoleInHebrew = "מדריך/חונך/בוחן";
+  if (user.roles[0] === "User.Mashad") usrRoleInHebrew = "משהד";
+
+  const welcomeNameText = `שלום ${user.name}`;
+  const welcomeMsgText = `את מי אנחנו מאמנים היום?`;
 
   const logout = () => {
-    isAuthenticated(false);
+    setUser(null);
+    sessionStorage.removeItem("user");
     //need to navigate to login page
-    //and logout of public client
-    // and clear the storage
   };
 
+  // return (
+  //   <div>
+  //     <div id="top-bar">
+  //       <h4>שלום {user.name} </h4>
+  //       {userRole=='User.Mashad' ? <BarChartIcon /> : null}
+  // <MenuIcon
+  //   onClick={() => {
+  //     setOpenOptionTab(!openOptionTab);
+  //   }}
+  // />
+  // {openOptionTab ? (
+  //   <div id="opion-tab">
+  //     <p onClick={logout}>התנתקות</p>
+  //   </div>
+  // ) : null}
+  //     </div>
+
+  //     <p>{usrRoleInHebrew}</p>
+  //     <h3>איזה תפקיד תרצה לאמן?</h3>
+  //   </div>
+  // );
   return (
-    <div>
+    <ThemeProvider>
       <div id="top-bar">
-        <h4>שלום {user.name} </h4>
-        <BarChartIcon />
-        <MenuIcon
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <Box
+            dir="rtl"
+            sx={{
+              marginTop: 0,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+            }}
+          >
+            <Typography fontSize={"20px"} fontFamily={"ExtraBold"}>
+              {welcomeNameText}
+            </Typography>
+            <Typography fontSize={"20px"}>{welcomeMsgText}</Typography>
+            <Typography fontSize={"20px"}>
+              {user.roles[0] == "User.Mashad" ? <BarChartIcon /> : null}
+            </Typography>
+          </Box>
+        </Container>
+        {/* <MenuIcon
           onClick={() => {
             setOpenOptionTab(!openOptionTab);
           }}
         />
         {openOptionTab ? (
           <div id="opion-tab">
-            <p onclick={logout}>התנתקות</p>
+            <p onClick={logout}>התנתקות</p>
           </div>
-        ) : null}
+        ) : null} */}
       </div>
-
-      <p>{usrRoleInHebrew}</p>
-      <h3>איזה תפקיד תרצה לאמן?</h3>
-    </div>
+    </ThemeProvider>
   );
 };
 

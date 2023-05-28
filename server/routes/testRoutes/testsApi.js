@@ -1,28 +1,60 @@
 import express from "express";
-import { getTestTypes } from "../../controlers/testTypesControler.js";
-import { getQuestionsByTestTypeId } from "../../controlers/questionControler.js";
-import { addFact, updateFact } from "../../controlers/factControler.js";
-
+import {
+  getTestTypesById,
+  getMashadTestsById,
+  getTestTypes,
+} from "../../controlers/testTypesControler.js";
+import {
+  getQuestionsByTestTypeId,
+  getQuestionsByParentId,
+} from "../../controlers/questionControler.js";
+import {
+  addFact,
+  addFactGen,
+  addFactGenMed,
+  updateFact,
+  getFact,
+  getFactsByTestId,
+  getFactsByRolesId,
+  calcFinalFactGrade,
+  getFactsByQuestionId
+} from "../../controlers/factControler.js";
 
 const router = express.Router();
 
-
 /** TEST_TYPE */
+//get  test type by id
+router.get("/test_types/:rrid", getTestTypesById);
 //get all test types
-router.get("/test_types",  getTestTypes);
+router.get("/test_types/", getTestTypes);
+
+//get all test types for mashad
+router.get("/test_types/mashad/:rrid", getMashadTestsById);
 
 /** Question */
-//get all questions with specific test type id 
-router.get("/question/:ttid",  getQuestionsByTestTypeId);
+//get all questions with specific test type id
+router.get("/question/:ttid", getQuestionsByTestTypeId);
+//get all questions with specific parent id
+router.get("/question/:ttid", getQuestionsByParentId);
 
 /** Fact */
+// get a fact by soldier serial id  and test type id
+router.get("/fact/:ssid/:ttid", getFact);
+// get a facts by roleId
+router.get("/fact/rid/rid/:rid", getFactsByRolesId);
+//get facts by question id
+router.get("/fact/questionId/qid/:qid", getFactsByQuestionId);
+// get facts by test type id
+router.get("/fact/:ttid", getFactsByTestId);
 //add a fact
 router.post("/fact", addFact);
-//update fact by id
-router.put("/fact/:fid", updateFact);
-
-
-
-
+//add a general input for mashad test
+router.post("/fact/generalInput", addFactGen);
+//add a general input for mashad test
+router.post("/fact/medicalGeneralInput", addFactGenMed);
+//update facts
+router.post("/fact/update", updateFact);
+//calculate grade for all facts
+router.put("/fact/calcFinalGrade", calcFinalFactGrade);
 
 export default router;

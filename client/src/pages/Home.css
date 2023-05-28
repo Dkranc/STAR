@@ -1,6 +1,8 @@
 #role-btns{
-    margin-top: 70px;
-    height: 300px;
+    margin-top: 0px;
+    /* height: 300px; */
+
+
     display:flex;
     flex-direction: column;
     justify-content: space-between;
@@ -10,7 +12,6 @@ button{
 }
 h4{
     width: 60%;
-
 }
 h3{
     margin-right: 50px;

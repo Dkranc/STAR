@@ -1,32 +1,120 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import "./Home.css";
 import Welcome from "../components/Welcome";
+import NavBar from "../components/NavBar";
+import { Button } from "@mui/material";
+import { useNavigate, useLocation } from "react-router-dom";
+import Box from "@mui/material/Box";
+import { ThemeProvider } from "@mui/material/styles";
 
-const Home = ({setIsAuthenticated }) => {
+const Home = ({ user, setUser, lightMode, setLightMode }) => {
+  const location = useLocation();
+
+  const soldiers = location.state.soldiers;
+
   const [roles, setRoles] = useState([
     { name: "מפקד", id: 1 },
     { name: "תותחן", id: 2 },
     { name: "טען", id: 3 },
     { name: "נהג", id: 4 },
-    { name: "המתאמנים שלי", id: 5 },
+    { name: "הזנת הערכת משהד", id: 6 },
   ]);
 
-  const userRole=sessionStorage.getItem('role');
+  const main = "ראשי - ";
+  const pageName = main.concat(
+    " ",
+    user.roles[0] === "User.Admin" ? "מנהל" : "מדריך"
+  ); //presented page name
+  const navigate = useNavigate();
+
+  const userRole = user.roles[0];
+  const onClickBtn = (role) => {
+    navigate(`../SelectSoldiers/${role.id}`, {
+      state: {
+        role: role.id,
+        soldiers: soldiers,
+        chosenSoldiers: [],
+      },
+    });
+  };
+  const handleMashadTestClicked = (e) => {
+    navigate("/GeneralInput/ChooseRole", {
+      state: {
+        isMashad: true,
+        soldiers: soldiers,
+      },
+    });
+  };
 
   return (
-    <div dir="rtl">
-      <div id="role-btns">
-           <Welcome setIsAuthenticated={setIsAuthenticated} />
+    <Box dir="rtl">
+      <NavBar
+        setUser={setUser}
+        user={user}
+        pageName={pageName}
+        lightMode={lightMode}
+      />
+      <Box
+        sx={{
+          paddingY: "16px",
+          paddingX: "32px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Welcome setUser={setUser} user={user} />
         {roles.map((role) => {
-          if (role.id===5){
-            if(userRole==='User.Mashad'){
-              return <button key={role.id}>{role.name}</button>;
-            } 
-          }
-           else return <button key={role.id}>{role.name}</button>;
+          if (role.id === 6) {
+            if (userRole === "User.Mashad" || userRole === "User.Admin") {
+              return (
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  sx={{
+                    fontSize: "25px",
+                    borderColor: "#2ED573",
+                    color: "rgb(0,0,0)",
+                    background: "white",
+                    boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+                    width: "100%",
+                    mt: 2,
+                    borderRadius: 30,
+                    fontFamily: "Bold",
+                  }}
+                  // color={lightState ? "success" : "info"}
+                  key={role.id}
+                  onClick={(e) => handleMashadTestClicked(e)}
+                >
+                  {role.name}
+                </Button>
+              );
+            }
+            return null;
+          } else
+            return (
+              <Button
+                variant="outlined"
+                sx={{
+                  fontSize: "25px",
+                  borderColor: "#2ED573",
+                  color: "rgb(0,0,0)",
+                  background: "white",
+                  boxShadow: "inset 5px 5px 10px rgba(46, 213, 115, 0.15)",
+                  width: "100%",
+                  mt: 2,
+                  borderRadius: 30,
+                  fontFamily: "Bold",
+                }}
+                onClick={() => onClickBtn(role)}
+                key={role.id}
+              >
+                {role.name}
+              </Button>
+            );
         })}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

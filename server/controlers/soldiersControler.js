@@ -1,111 +1,162 @@
+import { request } from "express";
 import { db } from "../connectDB.js";
+import jwt from "jsonwebtoken";
 
-//get  the soldiers from the Soldier table according to their  battalion id
-export const getSoldiersByBatId = (req, res) => {
-  const { bid } = req.params;
-  const sqlGet = "SELECT * FROM Soldier WHERE battalion_id=?";
-  db.query(sqlGet, [bid], (err, result) => {
-    if (err) return res.status(402).json(err);
-    res.send(result.rows);
-  });
+//get soldiers by week number
+export const getSoldiersByTrainingWeek = (req, res) => {
+  try {
+    jwt.verify(req.headers.token, "9809502");
+    const tid = req.params.tid;
+
+    const sqlGet = "SELECT * FROM soldier WHERE week_number = $1";
+    db.query(sqlGet, [tid], (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(402).json(err);
+      }
+      res.send(result.rows);
+    });
+  } catch {
+    console.log("bad token");
+  }
 };
 
-//get  the soldiers from the Soldier table according to their  company id
-export const getSoldiersByCompId = (req, res) => {
-  const { cid } = req.params;
-  const sqlGet = "SELECT * FROM Soldier WHERE company_id=?";
-  db.query(sqlGet, [cid], (err, result) => {
-    if (err) return res.status(402).json(err);
-    res.send(result.rows);
-  });
-};
+//get all soldiers from table
+export const getSoldiers = (req, res) => {
+  try {
+    jwt.verify(req.headers.token, "9809502");
 
-//get  the soldiers from the Soldier table according to their  department id
-export const getSoldiersByDepId = (req, res) => {
-  const { did } = req.params;
-  const sqlGet = "SELECT * FROM Soldier WHERE department_id=?";
-  db.query(sqlGet, [did], (err, result) => {
-    if (err) return res.status(402).json(err);
-    res.send(result.rows);
-  });
+    const sqlGet = "SELECT * FROM Soldier";
+    db.query(sqlGet, (err, result) => {
+      if (err) return res.status(402).json(err);
+      res.send(result.rows);
+    });
+  } catch {
+    console.log("bad token");
+  }
 };
-
 //get specific row from Soldier table using a sid that can be found in the params of the request. then send only that row to the client
 export const getSoldiersById = (req, res) => {
-  const { sid } = req.params;
-  const sqlGet = "SELECT * FROM Soldier WHERE id= (?);";
-  db.query(sqlGet, [sid], (err, result) => {
-    if (err) return res.status(402).json(err);
-    res.send(result.rows);
-  });
+  try {
+    jwt.verify(req.headers.token, "9809502");
+    const { sid } = req.params;
+    const sqlGet = "SELECT * FROM Soldier WHERE id= $1";
+    db.query(sqlGet, [sid], (err, result) => {
+      if (err) return res.status(402).json(err);
+      res.send(result.rows);
+    });
+  } catch {
+    console.log("bad token");
+  }
 };
 
 //add new soldier to table.
 export const addSoldier = (req, res) => {
-  const {
-    serial_id,
-    full_name,
-    department_id,
-    company_id,
-    battalion_id,
-    position_id,
-    is_reserve,
-    email,
-  } = req.body;
-  const sqlInsert =
-    "INSERT INTO Soldier(serial_id, full_name, department_id, company_id, battalion_id, position_id, is_reserve,email,final_grade) VALUES(?,?,?,?,?,?,?,?,?)";
-  db.query(
-    sqlInsert,
-    [
-      serial_id,
-      full_name,
-      department_id,
-      company_id,
-      battalion_id,
-      position_id,
-      is_reserve,
-      email,
-      final_grade,
-    ],
-    (err, result) => {
-      if (err) console.log(err);
-    }
-  );
+  try {
+    jwt.verify(req.headers.token, "9809502");
+    const serial_id = req.body[0];
+    const first_name = req.body[1];
+    const last_name = req.body[2];
+    const pluga = req.body[3];
+    const role = req.body[4];
+    const week_number = req.body[5];
+    const mail = req.body[6];
+
+    const sqlInsert =
+      "INSERT INTO Soldier(soldier_serial_id, first_name, pluga, parent_external_id, mail, role, last_name, week_number) VALUES($1,$2,$3,$4,$5,$6,$7,$8)";
+    db.query(
+      sqlInsert,
+      [
+        serial_id,
+        first_name,
+        pluga,
+        0,
+        mail,
+        role,
+        last_name,
+        week_number,
+      ],
+      (err, result) => {
+        if (err) console.log(err);
+        else {
+          res.send(result);
+        }
+      }
+    );
+  } catch {
+    console.log("bad token");
+  }
 };
 
 //update a soldier by its id
 export const updateSoldierById = (req, res) => {
-  const { sid } = req.params;
-  const {
-    serial_id,
-    full_name,
-    department_id,
-    company_id,
-    battalion_id,
-    position_id,
-    is_reserve,
-    email,
-    final_grade,
-  } = req.body;
-  const sqlUpdateTrans =
-    "UPDATE Soldier SET serial_id=?, full_name=?, department_id=?, company_id=?, battalion_id=?, position_id=?, is_reserve=? ,email=?, final_grade WHERE id = ?";
-  db.query(
-    sqlUpdateTrans,
-    [
-      serial_id,
-      full_name,
-      department_id,
-      company_id,
-      battalion_id,
-      position_id,
-      is_reserve,
-      email,
-      final_grade,
-      sid,
-    ],
-    (err, result) => {
-      if (err) console.log(err);
-      res.send(result);
+  try {
+    jwt.verify(req.headers.token, "9809502");
+    const { sid } = req.params;
+    const serial_id = req.body[0];
+    const first_name = req.body[1];
+    const last_name = req.body[2];
+    const pluga = req.body[3];
+    const role = req.body[4];
+    const week_number = req.body[5];
+    const mail = req.body[6];
+    const sqlUpdateTrans =
+      "UPDATE Soldier SET soldier_serial_id=$1, first_name=$2, pluga=$3,  parent_external_id=$4,  mail=$5, role=$6, last_name=$7, week_number=$8  WHERE id = $9";
+    db.query(
+      sqlUpdateTrans,
+      [
+        serial_id,
+        first_name,
+        pluga,
+        0,
+        mail,
+        role,
+        last_name,
+        week_number,
+        sid,
+      ],
+      (err, result) => {
+        if (err) console.log(err);
+        res.send(result);
+      }
+    );
+  } catch {
+    console.log("bad token");
+  }
+};
+
+//update a soldier by its id
+export const updateSoldiersCompanyInfo = (req, res) => {
+  try {
+    jwt.verify(req.headers.token, "9809502");
+
+    const soldiers = req.body[0];
+
+    const sqlUpdate = "UPDATE Soldier SET company=$1 WHERE serial_id = $2";
+    for (const [company, soldierList] of Object.entries(soldiers)) {
+      for (const [soldier_serial_id, soldierValue] of Object.entries(
+        soldierList
+      )) {
+        if (soldierValue) {
+          //only if the solider value is true. else we dont add.
+          db.query(
+            sqlUpdate,
+            [
+              company === "1" ? "א" : company === "2" ? "ב" : "ג",
+              soldier_serial_id,
+            ],
+            (err, result) => {
+              if (err) {
+                console.log(err);
+                res.status(500).send(err);
+              }
+            }
+          );
+        }
+      }
     }
-  );
+    res.status(200).send("updated");
+  } catch {
+    console.log("bad token");
+  }
 };

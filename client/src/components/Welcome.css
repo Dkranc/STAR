@@ -3,3 +3,6 @@
     flex-direction: row;
     justify-content: space-between;
 }
+.new-line {
+    white-space: pre-line;
+  }
