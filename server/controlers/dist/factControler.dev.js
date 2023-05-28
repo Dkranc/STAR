@@ -9,7 +9,7 @@ var _connectDB = require("../connectDB.js");
 
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 
-var _nodemailer = _interopRequireDefault(require("nodemailer"));
+var _generatePdf = require("../pdf/generatePdf.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -338,50 +338,121 @@ var addFactGen = function addFactGen(req, res) {
 exports.addFactGen = addFactGen;
 
 var calcFinalFactGrade = function calcFinalFactGrade(req, res) {
-  try {
-    _jsonwebtoken["default"].verify(req.body.headers.token, "9809502");
+  var firstDay, lastDay, sqlGet, soldierArray, errorWithSending, sqlGetSoldier;
+  return regeneratorRuntime.async(function calcFinalFactGrade$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          try {
+            _jsonwebtoken["default"].verify(req.body.headers.token, "9809502");
 
-    var firstDay = new Date();
-    firstDay.setDate(firstDay.getDate() - 5);
-    firstDay = firstDay.toISOString().slice(0, 10);
-    var lastDay = new Date();
-    lastDay.setDate(lastDay.getDate() + 5);
-    lastDay = lastDay.toISOString().slice(0, 10);
-    var sqlGet = "SELECT * FROM fact WHERE date BETWEEN $1 AND $2;";
-    var soldierArray = [];
+            firstDay = new Date();
+            firstDay.setDate(firstDay.getDate() - 5);
+            firstDay = firstDay.toISOString().slice(0, 10);
+            lastDay = new Date();
+            lastDay.setDate(lastDay.getDate() + 5);
+            lastDay = lastDay.toISOString().slice(0, 10);
+            sqlGet = "SELECT * FROM fact WHERE date BETWEEN $1 AND $2;";
+            soldierArray = [];
 
-    _connectDB.db.query(sqlGet, [firstDay, lastDay], function (err, result) {
-      result.rows.map(function (fact) {
-        if (!soldierArray.includes(fact.soldier_serial_id)) {
-          soldierArray.push(fact.soldier_serial_id);
-        }
-      }); //get facts for each sodier
+            _connectDB.db.query(sqlGet, [firstDay, lastDay], function (err, result) {
+              result.rows.map(function (fact) {
+                if (!soldierArray.includes(fact.soldier_serial_id)) {
+                  soldierArray.push(fact.soldier_serial_id);
+                }
+              }); //get facts for each sodier
 
-      var soldiersFacts = {};
-      soldierArray.map(function (soldierId) {
-        soldiersFacts[soldierId] = result.rows.filter(function (fact) {
-          return fact.soldier_serial_id === soldierId;
-        });
-      });
-      var finalGradeObg = {};
+              var soldiersFacts = {};
+              soldierArray.map(function (soldierId) {
+                soldiersFacts[soldierId] = result.rows.filter(function (fact) {
+                  return fact.soldier_serial_id === soldierId;
+                });
+              });
+              var finalGradeObg = {};
 
-      for (var _i4 = 0, _Object$entries4 = Object.entries(soldiersFacts); _i4 < _Object$entries4.length; _i4++) {
-        var _Object$entries4$_i = _slicedToArray(_Object$entries4[_i4], 2),
-            solId = _Object$entries4$_i[0],
-            solFacts = _Object$entries4$_i[1];
+              for (var _i4 = 0, _Object$entries4 = Object.entries(soldiersFacts); _i4 < _Object$entries4.length; _i4++) {
+                var _Object$entries4$_i = _slicedToArray(_Object$entries4[_i4], 2),
+                    solId = _Object$entries4$_i[0],
+                    solFacts = _Object$entries4$_i[1];
 
-        calculateAndUpdate(solId, solFacts, finalGradeObg);
+                calculateAndUpdate(solId, solFacts, finalGradeObg);
+              }
+
+              if (err) console.log(err);
+            });
+
+            errorWithSending = [];
+            sqlGetSoldier = "SELECT * FROM soldier WHERE soldier_serial_id=$1;";
+
+            _connectDB.db.query(sqlGet, [firstDay, lastDay], function (err, result) {
+              result.rows.map(function (fact) {
+                if (!soldierArray.includes(fact.soldier_serial_id)) {
+                  soldierArray.push(fact.soldier_serial_id);
+                }
+              });
+              soldierArray.forEach(function (soldierSerialId, index) {
+                _connectDB.db.query(sqlGetSoldier, [soldierSerialId], function _callee(err, result) {
+                  var soldier, succesSendingMail;
+                  return regeneratorRuntime.async(function _callee$(_context) {
+                    while (1) {
+                      switch (_context.prev = _context.next) {
+                        case 0:
+                          if (err) console.log(err);
+                          soldier = result.rows[0];
+                          _context.next = 4;
+                          return regeneratorRuntime.awrap((0, _generatePdf.generatePdf)(soldier));
+
+                        case 4:
+                          succesSendingMail = _context.sent;
+                          // send the pdf file and if faild add to failed list
+                          if (!succesSendingMail) errorWithSending.push(soldier);
+
+                        case 6:
+                        case "end":
+                          return _context.stop();
+                      }
+                    }
+                  });
+                });
+              });
+              var getMP = 'SELECT * FROM soldier WHERE role=$1 AND week_number=$2;';
+
+              _connectDB.db.query(getMP, [5, 1], function _callee2(err, result) {
+                var commander, succesSendingMail;
+                return regeneratorRuntime.async(function _callee2$(_context2) {
+                  while (1) {
+                    switch (_context2.prev = _context2.next) {
+                      case 0:
+                        commander = result.rows[0];
+                        _context2.next = 3;
+                        return regeneratorRuntime.awrap((0, _generatePdf.generateCommanderPdf)(commander));
+
+                      case 3:
+                        succesSendingMail = _context2.sent;
+                        // send the pdf file to MP and if faild add to failed list
+                        if (!succesSendingMail) errorWithSending.push(commander);
+
+                      case 5:
+                      case "end":
+                        return _context2.stop();
+                    }
+                  }
+                });
+              });
+
+              res.send(errorWithSending);
+            });
+          } catch (e) {
+            console.log(e);
+            console.log("bad token");
+          }
+
+        case 1:
+        case "end":
+          return _context3.stop();
       }
-
-      if (err) console.log(err);
-    });
-
-    sendEmails();
-    res.sendStatus(200);
-  } catch (e) {
-    console.log(e);
-    console.log("bad token");
-  }
+    }
+  });
 };
 
 exports.calcFinalFactGrade = calcFinalFactGrade;
@@ -412,24 +483,24 @@ var calculateAndUpdate = function calculateAndUpdate(solId, solFacts, finalGrade
 
 var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
   var len;
-  return regeneratorRuntime.async(function calculate$(_context3) {
+  return regeneratorRuntime.async(function calculate$(_context6) {
     while (1) {
-      switch (_context3.prev = _context3.next) {
+      switch (_context6.prev = _context6.next) {
         case 0:
           len = factsArr.length;
-          factsArr.map(function _callee2(fact, ind) {
+          factsArr.map(function _callee4(fact, ind) {
             var sqlGet;
-            return regeneratorRuntime.async(function _callee2$(_context2) {
+            return regeneratorRuntime.async(function _callee4$(_context5) {
               while (1) {
-                switch (_context2.prev = _context2.next) {
+                switch (_context5.prev = _context5.next) {
                   case 0:
                     sqlGet = "SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id  WHERE q.id=$1;";
-                    _context2.next = 3;
-                    return regeneratorRuntime.awrap(_connectDB.db.query(sqlGet, [fact.question_id], function _callee(err, result) {
+                    _context5.next = 3;
+                    return regeneratorRuntime.awrap(_connectDB.db.query(sqlGet, [fact.question_id], function _callee3(err, result) {
                       var weight, role, teamTestId, percent, firstDay, lastDay, sqlUpdateTrans;
-                      return regeneratorRuntime.async(function _callee$(_context) {
+                      return regeneratorRuntime.async(function _callee3$(_context4) {
                         while (1) {
-                          switch (_context.prev = _context.next) {
+                          switch (_context4.prev = _context4.next) {
                             case 0:
                               weight = parseFloat(result.rows[0].weight);
                               role = fact.role;
@@ -460,14 +531,14 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
                               lastDay.setDate(lastDay.getDate() + 5);
                               lastDay = lastDay.toISOString().slice(0, 10);
                               sqlUpdateTrans = "UPDATE Fact SET final_grade=$1 WHERE soldier_serial_id = $2 AND date BETWEEN $3 AND $4";
-                              _context.next = 13;
+                              _context4.next = 13;
                               return regeneratorRuntime.awrap(_connectDB.db.query(sqlUpdateTrans, [finalGradeObg[solId], solId, firstDay, lastDay], function (err, result) {
                                 if (err) console.log(err);
                               }));
 
                             case 13:
                             case "end":
-                              return _context.stop();
+                              return _context4.stop();
                           }
                         }
                       });
@@ -475,7 +546,7 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
 
                   case 3:
                   case "end":
-                    return _context2.stop();
+                    return _context5.stop();
                 }
               }
             });
@@ -483,43 +554,8 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
 
         case 2:
         case "end":
-          return _context3.stop();
+          return _context6.stop();
       }
-    }
-  });
-}; //function to send emails to the trainees at the end of training
-//need to get files and send them!!!!
-//will be in new controller!!
-
-
-var sendEmails = function sendEmails() {
-  console.log("sending emails");
-  var soldier_serial_id = 42;
-
-  var transporter = _nodemailer["default"].createTransport({
-    service: "gmail",
-    auth: {
-      user: "StarDevHatal@gmail.com",
-      pass: "vonyaqorwxtkvonw"
-    }
-  });
-
-  var mailOptions = {
-    from: "dvdkranc22@gmail.com",
-    to: "dvdkranc22@gmail.com",
-    subject: "Sending Email using Node.js",
-    text: "That was easy! wow!!",
-    attachments: [{
-      filename: "form-doch.pdf",
-      path: "../server/pdf/\u05D3\u05D5\u05D7-\u05E1\u05D9\u05DB\u05D5\u05DD-\u05E9\u05D1\u05D5\u05E2".concat(soldier_serial_id, ".pdf"),
-      contentType: "application/pdf"
-    }]
-  };
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Email sent: " + info.response);
     }
   });
 };

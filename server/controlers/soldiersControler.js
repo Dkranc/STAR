@@ -7,14 +7,13 @@ export const getSoldiersByTrainingWeek = (req, res) => {
   try {
     jwt.verify(req.headers.token, "9809502");
     const tid = req.params.tid;
-    console.log(tid);
+
     const sqlGet = "SELECT * FROM soldier WHERE week_number = $1";
     db.query(sqlGet, [tid], (err, result) => {
       if (err) {
         console.log(err);
         return res.status(402).json(err);
       }
-      console.log(result.rows);
       res.send(result.rows);
     });
   } catch {

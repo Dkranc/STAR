@@ -82,12 +82,18 @@ const ChooseRole = ({ user, setUser }) => {
       })
       .then((response) => {
         console.log(response);
-        toast.success("האימון הסתיים! הדוחות נשלחו בהצלחה");
-        navigate(`/Home`, {
-          state: {
-            soldiers: location.state.soldiers,
-          },
-        });
+        if(response.status === 200){
+          toast.success("האימון הסתיים! הדוחות נשלחו בהצלחה");
+          navigate(`/Home`, {
+            state: {
+              soldiers: location.state.soldiers,
+            },
+          });
+        }
+        else{
+          //show the error that acured
+        }
+
       });
   };
 

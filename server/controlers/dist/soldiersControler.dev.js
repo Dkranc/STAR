@@ -27,7 +27,6 @@ var getSoldiersByTrainingWeek = function getSoldiersByTrainingWeek(req, res) {
     _jsonwebtoken["default"].verify(req.headers.token, "9809502");
 
     var tid = req.params.tid;
-    console.log(tid);
     var sqlGet = "SELECT * FROM soldier WHERE week_number = $1";
 
     _connectDB.db.query(sqlGet, [tid], function (err, result) {
@@ -36,7 +35,6 @@ var getSoldiersByTrainingWeek = function getSoldiersByTrainingWeek(req, res) {
         return res.status(402).json(err);
       }
 
-      console.log(result.rows);
       res.send(result.rows);
     });
   } catch (_unused) {

@@ -1,6 +1,7 @@
 import { db } from "../connectDB.js";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
+
+import { generatePdf, generateCommanderPdf } from "../pdf/generatePdf.js";
 
 //get specific rows from Question table using a test type id and the soldier sereial id that can be found in the params of the request. then send only those rows to the client
 export const getFact = (req, res) => {
@@ -337,7 +338,7 @@ export const addFactGen = (req, res) => {
 };
 
 //calculate the final grade for the training
-export const calcFinalFactGrade = (req, res) => {
+export const calcFinalFactGrade = async (req, res) => {
   try {
     jwt.verify(req.body.headers.token, "9809502");
 
@@ -373,8 +374,36 @@ export const calcFinalFactGrade = (req, res) => {
 
       if (err) console.log(err);
     });
-    sendEmails();
-    res.sendStatus(200);
+
+    const errorWithSending = [];
+    const sqlGetSoldier = "SELECT * FROM soldier WHERE soldier_serial_id=$1;";
+
+    db.query(sqlGet, [firstDay, lastDay],  (err, result) => {
+      result.rows.map((fact) => {
+        if (!soldierArray.includes(fact.soldier_serial_id)) {
+          soldierArray.push(fact.soldier_serial_id);
+        }
+      });
+      soldierArray.forEach((soldierSerialId, index) => {
+        db.query(sqlGetSoldier, [soldierSerialId], async (err, result) => {
+          if (err) console.log(err);
+          const soldier=result.rows[0];
+          const succesSendingMail = await generatePdf(soldier); // send the pdf file and if faild add to failed list
+          if (!succesSendingMail) errorWithSending.push(soldier);
+        });
+      });
+
+      const getMP= 'SELECT * FROM soldier WHERE role=$1 AND week_number=$2;';
+      db.query(getMP, [5, 1], async (err, result) => {
+        const commander= result.rows[0];
+        const succesSendingMail = await generateCommanderPdf(commander); // send the pdf file to MP and if faild add to failed list
+        if (!succesSendingMail) errorWithSending.push(commander);
+      })
+      
+      res.send(errorWithSending);
+    });
+
+   
   } catch (e) {
     console.log(e);
     console.log("bad token");
@@ -449,44 +478,5 @@ const calculate = async (factsArr, ttid, finalGradeObg, solId) => {
         }
       );
     });
-  });
-};
-
-//function to send emails to the trainees at the end of training
-//need to get files and send them!!!!
-//will be in new controller!!
-const sendEmails = () => {
-  console.log("sending emails");
-
-  const soldier_serial_id = 42;
-
-  var transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: "StarDevHatal@gmail.com",
-      pass: "vonyaqorwxtkvonw",
-    },
-  });
-
-  var mailOptions = {
-    from: "dvdkranc22@gmail.com",
-    to: "dvdkranc22@gmail.com",
-    subject: "Sending Email using Node.js",
-    text: "That was easy! wow!!",
-    attachments: [
-      {
-        filename: "form-doch.pdf",
-        path: `../server/pdf/דוח-סיכום-שבוע${soldier_serial_id}.pdf`,
-        contentType: "application/pdf",
-      },
-    ],
-  };
-
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Email sent: " + info.response);
-    }
   });
 };
