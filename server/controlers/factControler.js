@@ -342,6 +342,8 @@ export const calcFinalFactGrade = async (req, res) => {
   try {
     jwt.verify(req.body.headers.token, "9809502");
 
+    const training = req.body.training;
+
     var firstDay = new Date();
     firstDay.setDate(firstDay.getDate() - 5);
     firstDay = firstDay.toISOString().slice(0, 10);
@@ -378,7 +380,7 @@ export const calcFinalFactGrade = async (req, res) => {
     const errorWithSending = [];
     const sqlGetSoldier = "SELECT * FROM soldier WHERE soldier_serial_id=$1;";
 
-    db.query(sqlGet, [firstDay, lastDay],  (err, result) => {
+    db.query(sqlGet, [firstDay, lastDay], (err, result) => {
       result.rows.map((fact) => {
         if (!soldierArray.includes(fact.soldier_serial_id)) {
           soldierArray.push(fact.soldier_serial_id);
@@ -387,23 +389,37 @@ export const calcFinalFactGrade = async (req, res) => {
       soldierArray.forEach((soldierSerialId, index) => {
         db.query(sqlGetSoldier, [soldierSerialId], async (err, result) => {
           if (err) console.log(err);
-          const soldier=result.rows[0];
+          const soldier = result.rows[0];
           const succesSendingMail = await generatePdf(soldier); // send the pdf file and if faild add to failed list
           if (!succesSendingMail) errorWithSending.push(soldier);
         });
       });
 
-      const getMP= 'SELECT * FROM soldier WHERE role=$1 AND week_number=$2;';
-      db.query(getMP, [5, 1], async (err, result) => {
-        const commander= result.rows[0];
-        const succesSendingMail = await generateCommanderPdf(commander); // send the pdf file to MP and if faild add to failed list
-        if (!succesSendingMail) errorWithSending.push(commander);
-      })
-      
+      const getMP = "SELECT * FROM soldier WHERE role=$1 AND week_number=$2;";
+      //TODO: add loop for all mp, and also add param from req for the week number.
+      db.query(getMP, [5, training], async (err, result) => {
+        //5 is for mefaked pluga role
+        result.rows.map((plugaComanders) => {
+          const commander = plugaComanders;
+          const sqlGetSldiersFromPluga =
+            "SELECT * FROM soldier WHERE role!=$1 AND week_number=$2";
+          db.query(
+            sqlGetSldiersFromPluga,
+            [5, training],
+            async (err, result2) => {
+              //5 is for mefaked pluga role
+              const succesSendingMail = await generateCommanderPdf(
+                commander,
+                result2.rows
+              ); // send the pdf file to MP and if faild add to failed list
+              if (!succesSendingMail) errorWithSending.push(commander);
+            }
+          );
+        });
+      });
+
       res.send(errorWithSending);
     });
-
-   
   } catch (e) {
     console.log(e);
     console.log("bad token");
