@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from "react";
+import { React, useEffect, useState ,useMemo} from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,7 +7,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { DataGrid } from "@mui/x-data-grid";
-
 function createData(id, one, two, three, four) {
   return { id, one, two, three, four };
 }
@@ -31,6 +30,9 @@ export default function DataTable({ rows, columns }) {
   //   return in_rows;
   // };
   useEffect(() => {
+    console.log("rows", rows);
+    console.log("columns", columns);
+
     // call api or anything
     // console.log("loaded");
     // setRows(parse_data(facts));
@@ -67,8 +69,9 @@ export default function DataTable({ rows, columns }) {
     //     </TableBody>
     //   </Table>
     // </TableContainer>
-    <div style={{ height: 300, width: "100%" }}>
-      <DataGrid layoutDirection={"rtl"} rows={rows} columns={columns} />
+    <div style={{ height: 400, width: "100%" }}>
+       {<DataGrid sx={{ overflowX: 'scroll' }}  layoutDirection={"rtl"} rows={rows} columns={columns} />}
+
     </div>
   );
 }

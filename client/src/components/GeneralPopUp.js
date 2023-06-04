@@ -160,7 +160,7 @@ const GeneralPopUp = ({
                   unmountOnExit
                 >
                   {questions.map((question) => {
-                    console.log(question);
+                   
                     if (
                       category.id === question.parent_id &&
                       openCategories[question.parent_id] &&

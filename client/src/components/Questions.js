@@ -31,6 +31,7 @@ const Questions = ({
 
     setComments(dict2);
     setOpenCategories(dict3);
+    console.log(answers)
   }, [questions]);
 
   const handleFormChange = (event) => {

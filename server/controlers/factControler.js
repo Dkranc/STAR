@@ -1,6 +1,8 @@
 import { db } from "../connectDB.js";
 import jwt from "jsonwebtoken";
 
+import { generatePdf, generateCommanderPdf } from "../pdf/generatePdf.js";
+
 //get specific rows from Question table using a test type id and the soldier sereial id that can be found in the params of the request. then send only those rows to the client
 export const getFact = (req, res) => {
   try {
@@ -92,7 +94,6 @@ export const getFactsByQuestionId = (req, res) => {
         console.log(err);
         return res.status(402).json(err);
       }
-      console.log(result.rows);
       res.send(result.rows);
     });
   } catch {
@@ -187,7 +188,6 @@ export const addFactGenMed = (req, res) => {
   try {
     jwt.verify(req.headers.token, "9809502");
     const soldierAnswers = req.body;
-    console.log("aswers", soldierAnswers);
     var date = new Date();
     date = date.toISOString().slice(0, 10);
     var firstDay = new Date();
@@ -199,13 +199,12 @@ export const addFactGenMed = (req, res) => {
     const parent_external_id = null;
     const selectSoldierQuery =
       "SELECT role,soldier_serial_id from soldier WHERE id=$1;";
-    const selectQuestionJoinTestType = `SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id
+    const selectQuestionJoinTestType = `SELECT * FROM test_type tt  INNER JOIN question q ON q.test_type_id = tt.id
        WHERE q.name='מערים' AND tt.role_id=$1;`;
 
     const sqlSelectFactIfExists =
       "SELECT * FROM fact WHERE soldier_serial_id=$1 AND question_id=$2 AND date BETWEEN $3 AND $4;";
-    const sqlUpdateIfExists =
-      "UPDATE fact SET date=$1, score=$2 WHERE id = $3";
+    const sqlUpdateIfExists = "UPDATE fact SET date=$1, score=$2 WHERE id = $3";
     const sqlInsert =
       "INSERT INTO fact(soldier_serial_id, test_type_id, role, date, question_id, score, parent_external_id) VALUES($1,$2,$3,$4,$5,$6,$7)";
 
@@ -216,7 +215,6 @@ export const addFactGenMed = (req, res) => {
         const soldierSerialId = result.rows[0].soldier_serial_id;
         db.query(selectQuestionJoinTestType, [role], (er, res2) => {
           if (res2.rows.length == 0) {
-            console.log("no question found", role);
           }
 
           if (res2.rows.length != 0) {
@@ -225,7 +223,6 @@ export const addFactGenMed = (req, res) => {
               [soldierSerialId, res2.rows[0].id, firstDay, lastDay],
               (err, resEx) => {
                 if (resEx.rows.length != 0) {
-                  
                   db.query(
                     sqlUpdateIfExists,
                     [date, value === true ? 1 : 0, resEx.rows[0].id],
@@ -297,7 +294,6 @@ export const addFactGen = (req, res) => {
             if (err) console.log(err);
 
             if (result.rowCount === 0) {
-              console.log(keySol, "no prev");
               db.query(
                 sqlInsert,
                 [
@@ -316,7 +312,6 @@ export const addFactGen = (req, res) => {
                 }
               );
             } else {
-              console.log(keySol, "hasprev");
               db.query(
                 sqlUpdate,
                 [
@@ -335,17 +330,19 @@ export const addFactGen = (req, res) => {
         );
       }
     }
+
     res.status(200).send("wrote to table");
-    sendEmails();
   } catch {
     console.log("bad token");
   }
 };
 
 //calculate the final grade for the training
-export const calcFinalFactGrade = (req, res) => {
+export const calcFinalFactGrade = async (req, res) => {
   try {
     jwt.verify(req.body.headers.token, "9809502");
+
+    const training = req.body.training;
 
     var firstDay = new Date();
     firstDay.setDate(firstDay.getDate() - 5);
@@ -380,7 +377,49 @@ export const calcFinalFactGrade = (req, res) => {
       if (err) console.log(err);
     });
 
-    res.sendStatus(200);
+    const errorWithSending = [];
+    const sqlGetSoldier = "SELECT * FROM soldier WHERE soldier_serial_id=$1;";
+
+    db.query(sqlGet, [firstDay, lastDay], (err, result) => {
+      result.rows.map((fact) => {
+        if (!soldierArray.includes(fact.soldier_serial_id)) {
+          soldierArray.push(fact.soldier_serial_id);
+        }
+      });
+      soldierArray.forEach((soldierSerialId, index) => {
+        db.query(sqlGetSoldier, [soldierSerialId], async (err, result) => {
+          if (err) console.log(err);
+          const soldier = result.rows[0];
+          const succesSendingMail = await generatePdf(soldier); // send the pdf file and if faild add to failed list
+          if (!succesSendingMail) errorWithSending.push(soldier);
+        });
+      });
+
+      const getMP = "SELECT * FROM soldier WHERE role=$1 AND week_number=$2;";
+      //TODO: add loop for all mp, and also add param from req for the week number.
+      db.query(getMP, [5, training], async (err, result) => {
+        //5 is for mefaked pluga role
+        result.rows.map((plugaComanders) => {
+          const commander = plugaComanders;
+          const sqlGetSldiersFromPluga =
+            "SELECT * FROM soldier WHERE role!=$1 AND week_number=$2";
+          db.query(
+            sqlGetSldiersFromPluga,
+            [5, training],
+            async (err, result2) => {
+              //5 is for mefaked pluga role
+              const succesSendingMail = await generateCommanderPdf(
+                commander,
+                result2.rows
+              ); // send the pdf file to MP and if faild add to failed list
+              if (!succesSendingMail) errorWithSending.push(commander);
+            }
+          );
+        });
+      });
+
+      res.send(errorWithSending);
+    });
   } catch (e) {
     console.log(e);
     console.log("bad token");
@@ -411,17 +450,19 @@ const calculateAndUpdate = (solId, solFacts, finalGradeObg) => {
 
 const calculate = async (factsArr, ttid, finalGradeObg, solId) => {
   const len = factsArr.length;
+
   factsArr.map(async (fact, ind) => {
     const sqlGet =
-      " SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id  WHERE q.id=$1;";
+      "SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id  WHERE q.id=$1;";
 
     await db.query(sqlGet, [fact.question_id], async (err, result) => {
       var weight = parseFloat(result.rows[0].weight);
       const role = fact.role;
       const teamTestId = 2;
       if (weight != 0) {
+        //the team test is worth a diferent amoubt for each role
         if (teamTestId === result.rows[0].test_type_id && role !== 1) {
-          weight = 1.8181;
+          weight = 1.8181; // need to fix this with new scores and wegihts
         }
         var percent = 0;
         if (result.rows[0].input_type === "open-numeric") {
@@ -432,31 +473,26 @@ const calculate = async (factsArr, ttid, finalGradeObg, solId) => {
           finalGradeObg[solId] += weight * percent;
         }
       }
-      if (ind === len - 1) {
-        //we got to the end of calculating the grade for a specifick test- so we update the score.
-        //at the end each fact will have a final score of the soldier
 
-        var firstDay = new Date();
-        firstDay.setDate(firstDay.getDate() - 5);
-        firstDay = firstDay.toISOString().slice(0, 10);
-        var lastDay = new Date();
-        lastDay.setDate(lastDay.getDate() + 5);
-        lastDay = lastDay.toISOString().slice(0, 10);
+      //now that we have the wegiht and score we can calculate the final grade and update the fact scores.
 
-        const sqlUpdateTrans =
-          "UPDATE Fact SET final_grade=$1 WHERE soldier_serial_id = $2 AND date BETWEEN $3 AND $4";
+      var firstDay = new Date();
+      firstDay.setDate(firstDay.getDate() - 5);
+      firstDay = firstDay.toISOString().slice(0, 10);
+      var lastDay = new Date();
+      lastDay.setDate(lastDay.getDate() + 5);
+      lastDay = lastDay.toISOString().slice(0, 10);
 
-        await db.query(
-          sqlUpdateTrans,
-          [finalGradeObg[solId], solId, firstDay, lastDay],
-          (err, result) => {
-            if (err) console.log(err);
-          }
-        );
-      }
+      const sqlUpdateTrans =
+        "UPDATE Fact SET final_grade=$1 WHERE soldier_serial_id = $2 AND date BETWEEN $3 AND $4";
+
+      await db.query(
+        sqlUpdateTrans,
+        [finalGradeObg[solId], solId, firstDay, lastDay],
+        (err, result) => {
+          if (err) console.log(err);
+        }
+      );
     });
   });
 };
-
-//function to send emails to the trainees at the end of training
-const sendEmails = () => {};

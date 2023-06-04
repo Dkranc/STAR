@@ -8,7 +8,7 @@ export const db = new Pool({
   // host:"database-1.crvljuomzzbe.eu-west-1.rds.amazonaws.com",
   user: "postgres",
   port: 5432,
-  password: "9511",
+  password: "password",
   //password:"Aa123456",
   database: "postgres",
   */

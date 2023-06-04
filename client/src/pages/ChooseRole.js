@@ -30,7 +30,6 @@ const ChooseRole = ({ user, setUser }) => {
   const soldier = location.state.soldier;
 
   useEffect(() => {
-    console.log(location.state);
     if (roleId !== 0) {
       if (soldier !== undefined) {
         if (soldier !== null) {
@@ -76,13 +75,28 @@ const ChooseRole = ({ user, setUser }) => {
   };
 
   const finishTrainingCicked = (e) => {
+    const training = location.state.soldiers[0].week_number;
+
     axios
-      .put(`http://localhost:8080/api/tests/fact/calcFinalGrade`, {
+      .post(`http://localhost:8080/api/tests/fact/calcFinalGrade`, {
+        training: training,
         headers: { token: sessionStorage.getItem("token") },
       })
-      .then((response) => {
-        toast.success("האימון הסתיים! הדוחות נשלחו בהצלחה");
-        navigate("/");
+      .then((response, err) => {
+        if (err) console.log(err);
+
+        console.log(response);
+        const errorWithSending = response.data;
+        if (response.status === 200) {
+          toast.success("האימון הסתיים! הדוחות נשלחו בהצלחה");
+          navigate(`/Home`, {
+            state: {
+              soldiers: location.state.soldiers,
+            },
+          });
+        } else {
+          //show the error that acured
+        }
       });
   };
 

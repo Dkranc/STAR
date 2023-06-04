@@ -55,6 +55,6 @@ router.post("/fact/medicalGeneralInput", addFactGenMed);
 //update facts
 router.post("/fact/update", updateFact);
 //calculate grade for all facts
-router.put("/fact/calcFinalGrade", calcFinalFactGrade);
+router.post("/fact/calcFinalGrade", calcFinalFactGrade);
 
 export default router;

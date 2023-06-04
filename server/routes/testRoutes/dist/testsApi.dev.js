@@ -50,6 +50,6 @@ router.post("/fact/medicalGeneralInput", _factControler.addFactGenMed); //update
 
 router.post("/fact/update", _factControler.updateFact); //calculate grade for all facts
 
-router.put("/fact/calcFinalGrade", _factControler.calcFinalFactGrade);
+router.post("/fact/calcFinalGrade", _factControler.calcFinalFactGrade);
 var _default = router;
 exports["default"] = _default;
