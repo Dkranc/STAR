@@ -1,16 +1,19 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+  value: true,
 });
 exports.db = void 0;
 
 var _pg = _interopRequireDefault(require("pg"));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
 
 var Pool = _pg["default"].Pool;
 var db = new Pool({
+  /*
   host: "localhost",
   // host: "star-new2.cb2q7nqhmmpi.us-east-1.rds.amazonaws.com",
   // host:"database-1.crvljuomzzbe.eu-west-1.rds.amazonaws.com",
@@ -19,5 +22,10 @@ var db = new Pool({
   password: "password",
   //password:"Aa123456",
   database: "postgres"
+  */
+  host: "star.cpheyh2afxfl.eu-west-1.rds.amazonaws.com",
+  user: "star",
+  password: "vIbw>zZ4Fo+4}K=H",
+  port: "5432",
 });
 exports.db = db;
