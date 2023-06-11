@@ -31,11 +31,42 @@ const ChooseRole = ({ user, setUser }) => {
 
   useEffect(() => {
     if (roleId !== 0) {
+      //1 - 1, 2 - 10, 3 - 13, 4 - 6 paramas - testid relation to mashad test
+      let testId = 0;
+      console.log("ismashad", location.state.isMashad);
+
+      if (location.state.isMashad) {
+        switch (roleId) {
+          case "1":
+            testId = "1";
+            break;
+          case "2":
+            testId = "10";
+            break;
+          case "3":
+            testId = "13";
+            break;
+          case "4":
+            testId = "6";
+            break;
+        }
+        return navigate(
+          `/SelectSoldiers/${roleId}/TestType/Questionary/${testId}`,
+          {
+            state: {
+              soldier: location.state.soldier,
+              isMashad: location.state.isMashad,
+              soldiers: location.state.soldiers,
+            },
+          }
+        );
+      }
       if (soldier !== undefined) {
         if (soldier !== null) {
+          console.log("delete:1");
           navigate(`/SelectSoldiers/${roleId}/TestType`, {
             state: {
-              isMashad: true,
+              isMashad: location.state.isMashad,
               mashadTests: mashadTests,
               soldier: location.state.soldier,
               soldiers: location.state.soldiers,
@@ -45,6 +76,7 @@ const ChooseRole = ({ user, setUser }) => {
           //in case of reports page
           navigate(`/Charts/${roleId}/Graphs`, {
             state: {
+              isMashad: location.state.isMashad,
               soldier: location.state.user,
               soldiers: location.state.soldiers,
             },
@@ -53,6 +85,7 @@ const ChooseRole = ({ user, setUser }) => {
       } else {
         navigate(`/GeneralInput/ChooseRole/${roleId}/TestType`, {
           state: {
+            isMashad: location.state.isMashad,
             soldier: undefined,
             mashadTests: mashadTests,
             soldiers: location.state.soldiers,
@@ -63,6 +96,8 @@ const ChooseRole = ({ user, setUser }) => {
   }, [mashadTests]);
 
   const handleRoleChosen = (e) => {
+    setRoleId(e.target.value);
+
     axios
       .get(
         `http://localhost:8080/api/tests/test_types/mashad/${e.target.value}`,

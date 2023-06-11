@@ -13,7 +13,6 @@ function _interopRequireDefault(obj) {
 
 var Pool = _pg["default"].Pool;
 var db = new Pool({
-  /*
   host: "localhost",
   // host: "star-new2.cb2q7nqhmmpi.us-east-1.rds.amazonaws.com",
   // host:"database-1.crvljuomzzbe.eu-west-1.rds.amazonaws.com",
@@ -21,11 +20,6 @@ var db = new Pool({
   port: 5432,
   password: "password",
   //password:"Aa123456",
-  database: "postgres"
-  */
-  host: "star.cpheyh2afxfl.eu-west-1.rds.amazonaws.com",
-  user: "star",
-  password: "vIbw>zZ4Fo+4}K=H",
-  port: "5432",
+  database: "postgres",
 });
 exports.db = db;

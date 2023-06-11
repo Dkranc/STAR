@@ -92,6 +92,7 @@ const Login = ({ setUser, lightState }) => {
               .then((response) => {
                 sessionStorage.setItem("token", response.data);
                 setUser(jwtDecode(jwtDecode(response.data).secret));
+                console.log(jwtDecode(jwtDecode(response.data).secret));
               });
             setInterval(() => {
               logout("timer");
