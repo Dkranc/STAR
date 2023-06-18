@@ -1,12 +1,12 @@
 import { React, useState } from "react";
-import Config from "../Config";
+import Config from "../userClick/Config";
 import { useNavigate } from "react-router-dom";
 import { PublicClientApplication } from "@azure/msal-browser";
 import toast from "react-hot-toast";
 import jwtDecode from "jwt-decode";
 import { themeLogin } from "../theme.js";
+import pubClientApplication from "../userClick/publicClientApp";
 //import axios from "axios";
-import "./Login.css";
 //mui imports
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -36,17 +36,7 @@ const Login = ({ setUser, lightState }) => {
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
-  const PubClientApp = new PublicClientApplication({
-    auth: {
-      clientId: Config.appId,
-      redirectUri: Config.redirectUri,
-      authority: Config.authority,
-    },
-    cache: {
-      cacheLocation: "sessionStorage", //this is where the user info will be. in the applications storage.
-      storeAuthStateInCookie: true,
-    },
-  });
+  const PubClientApp = pubClientApplication;
 
   const logout = (auto) => {
     window.alert("המערכת מתנתקת");

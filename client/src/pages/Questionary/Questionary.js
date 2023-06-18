@@ -6,10 +6,10 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 //import custom components
-import Questions from "../components/Questions";
-import NavBar from "../components/NavBar";
-import SolPopUp from "../components/SolPopUp";
-import GeneralInput from "./GeneralInput";
+import Questions from "../../components/Questions";
+import NavBar from "../../components/NavBar";
+import SolPopUp from "../../components/SolPopUp";
+import GeneralInput from "./../GeneralInput";
 import toast from "react-hot-toast";
 import "./Questionary.css";
 

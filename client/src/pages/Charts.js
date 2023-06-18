@@ -120,6 +120,8 @@ const Charts = ({ user, setUser }) => {
 
       setData(
         testTypes.map((test) => {
+          let numOfTests = getNumOfTests(test.id, []);
+          let testsLeft = rows.length - numOfTests;
           return {
             name: test.name.includes("מאמן")
               ? test.name.slice(17, 30)
@@ -296,8 +298,8 @@ const Charts = ({ user, setUser }) => {
               />
               <Tooltip />
               <Legend />
-              <Bar dataKey="נבחנו" fill="#8884d8" />
-              <Bar dataKey="כולם" fill="#82ca9d" />
+              <Bar dataKey="נבחנו" fill="#82ca9d" />
+              {/* <Bar dataKey="כולם" fill="#ff0040" /> */}
             </BarChart>
           </ResponsiveContainer>
         </Box>

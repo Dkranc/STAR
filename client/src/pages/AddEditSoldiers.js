@@ -1,6 +1,6 @@
 import React from "react";
 import NavBar from "../components/NavBar";
-import SelectSoldiers from "./SelectSoldiers";
+import SelectSoldiers from "./SelectSoldiers/SelectSoldiers";
 import EmojiFlagsIcon from "@mui/icons-material/EmojiFlags";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Fab } from "@mui/material";
@@ -13,7 +13,6 @@ import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 const AddEditSoldiers = ({ user, setUser }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
 
   return (
     <div>
@@ -57,7 +56,7 @@ const AddEditSoldiers = ({ user, setUser }) => {
           </Fab>
 
           <div>
-          {/**            <Button
+            {/**            <Button
               onClick={() => {
                 navigate("/CompanyChoice");
               }}
@@ -72,7 +71,6 @@ const AddEditSoldiers = ({ user, setUser }) => {
             >
               <p>הזנת שיוך פלוגתי</p>
             </Button> */}
-
           </div>
         </Box>
       ) : null}

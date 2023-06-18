@@ -28,11 +28,12 @@ const Home = ({ user, setUser, lightMode, setLightMode }) => {
   ]);
 
   const main = "ראשי - ";
-  const pageName = main.concat(" ", demoRoles[user.roles[0]]); //presented page name
   const navigate = useNavigate();
 
   // const userRole = user.roles[0]; original
   const userRole = "User.Admin"; //change depend on Demo_roles to change layout
+  const pageName = main.concat(" ", demoRoles[userRole]); //presented page name
+
   const onClickBtn = (role) => {
     navigate(`../SelectSoldiers/${role.id}`, {
       state: {

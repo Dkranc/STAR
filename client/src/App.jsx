@@ -4,9 +4,9 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Questionary from "./pages/Questionary";
+import Questionary from "./pages/Questionary/Questionary";
 import TestType from "./pages/TestType";
-import SelectSoldiers from "./pages/SelectSoldiers";
+import SelectSoldiers from "./pages/SelectSoldiers/SelectSoldiers";
 import ChooseRole from "./pages/ChooseRole";
 import AddEditSoldiers from "./pages/AddEditSoldiers";
 import AddEditPage from "./pages/AddEditPage";
@@ -29,7 +29,6 @@ import lightModeLogo from "./image/logoLightMode.png";
 
 //theme
 import { themeLight, themeDark } from "./theme.js";
-
 
 function App() {
   const [user, setUser] = useState(
@@ -122,9 +121,9 @@ function App() {
                 element={<Login setUser={setUser} lightMode={light} />}
               />
               <Route
-              path="/SpecificTestInput/:ttid"
-              element={<Login setUser={setUser} lightMode={light} />}
-            />
+                path="/SpecificTestInput/:ttid"
+                element={<Login setUser={setUser} lightMode={light} />}
+              />
             </Routes>
           ) : (
             <Routes>
@@ -199,9 +198,9 @@ function App() {
                 element={<CompanyChoice user={user} setUser={setUser} />}
               />
               <Route
-              path="/SpecificTestInput/:ttid"
-              element={<TestInputGeneral user={user} setUser={setUser} />}
-            />
+                path="/SpecificTestInput/:ttid"
+                element={<TestInputGeneral user={user} setUser={setUser} />}
+              />
             </Routes>
           )}
         </BrowserRouter>
@@ -215,8 +214,6 @@ function App() {
               overflow: "hidden",
             }}
             display="center"
-            
-            
             Content="center"
             alignItems="center"
           >
