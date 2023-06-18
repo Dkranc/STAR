@@ -3,35 +3,33 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
     <style>
       .container{ width:400px; height: 100%; }
     </style>
     <title>Document</title>
   </head>
   <body dir="rtl">
-    <h1> {{soldierRole}} מאמן כוכב- מבחן סיכום</h1>
+    <h1> מאמן כוכב- מבחן סיכום {{soldierRole}}</h1>
+    {{#each roles as |role|}}
+    <h2>גרף הספק וציונים לתפקיד: {{role.name}}</h2>
+ 
+      {{#each tests as |test|}}
+         <h3>{{test.name}}</h3>
+        
+          <p>0-10: {{scores.[0]}}</p>
+           <p>10-20: {{scores.[1]}}</p>
+            <p>20-30: {{scores.[2]}}</p>
+           <p>30-40: {{scores.[3]}}</p>
+            <p>40-50: {{scores.[4]}}</p>
+           <p>50-60: {{scores.[5]}}</p>
+            <p>60-70: {{scores.[6]}}</p>
+           <p>70-80: {{scores.[7]}}</p>
+            <p>80-90: {{scores.[8]}}</p>
+           <p>90-100: {{scores.[9]}}</p>    
+      {{/each}}
 
-    {{#each testTypes as |test|}}
-      <h2>{{test.name}}</h2>
-
-      <h4>{{soldier.first_name}} {{soldier.last_name}} {{soldier.pluga}}</h4>
-      <div class="container">
-        <table dir="rtl">
-          <tr>
-            <th>שם</th>
-            <th>ציון</th>
-          </tr>
-
-          {{#each facts as |fact|}}
-            <tr>
-              <td>{{fact.name}}</td>
-              <td>{{fact.score}}</td>
-            </tr>
-          {{/each}}
-        </table>
-      </div>
-      <br />
-      <br />
     {{/each}}
+
   </body>
 </html>

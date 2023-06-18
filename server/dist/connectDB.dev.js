@@ -1,13 +1,15 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+  value: true,
 });
 exports.db = void 0;
 
 var _pg = _interopRequireDefault(require("pg"));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
 
 var Pool = _pg["default"].Pool;
 var db = new Pool({
@@ -18,6 +20,6 @@ var db = new Pool({
   port: 5432,
   password: "password",
   //password:"Aa123456",
-  database: "postgres"
+  database: "postgres",
 });
 exports.db = db;

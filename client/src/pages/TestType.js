@@ -1,4 +1,3 @@
-
 //import react
 import { React, useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
@@ -29,7 +28,7 @@ const TestType = ({ user, setUser }) => {
   console.log(location.state.soldiers);
 
   useEffect(() => {
-    if (location.state.isMashad || location.state.soldier === undefined) {
+    if (location.state.isMashad) {
       setTests(location.state.mashadTests);
       setLoaded(true);
     } else {

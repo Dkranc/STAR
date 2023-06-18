@@ -102,7 +102,7 @@ var generatePdf = function generatePdf(soldier) {
                               case 3:
                                 facts = res2.rows;
                                 facts.forEach(function (fact, ind) {
-                                  //need to add here calculation for each test by it self
+                                  //TODO: need to add here calculation for each test by it self
                                   if (fact.input_type === "boolean") {
                                     fact.score = fact.score === 1 ? "V" : "X";
                                   }
@@ -237,8 +237,8 @@ var sendEmails = function sendEmails(soldier) {
 
 exports.sendEmails = sendEmails;
 
-var generateCommanderPdf = function generateCommanderPdf(commander) {
-  var firstDay, lastDay, sqlGetTestTypes, sqlGetFactsByCompany, data, browser, page, content, sent;
+var generateCommanderPdf = function generateCommanderPdf(commander, soldierArray) {
+  var firstDay, lastDay, sqlGetTestTypes, sqlGetFacts, data;
   return regeneratorRuntime.async(function generateCommanderPdf$(_context7) {
     while (1) {
       switch (_context7.prev = _context7.next) {
@@ -251,30 +251,133 @@ var generateCommanderPdf = function generateCommanderPdf(commander) {
           lastDay.setDate(lastDay.getDate() + 5);
           lastDay = lastDay.toISOString().slice(0, 10);
           sqlGetTestTypes = "SELECT * FROM test_type WHERE is_mashad_test=false;";
-          sqlGetFactsByCompany = "SELECT *  FROM fact f JOIN soldier s ON f.soldier_serial_id=s.soldier_serial_id WHERE s.pluga=$1 AND f.date BETWEEN $2 AND $3;";
+          sqlGetFacts = "SELECT * FROM (SELECT *  FROM fact f JOIN soldier s ON f.soldier_serial_id::INTEGER=s.soldier_serial_id WHERE f.test_type_id=$1 AND f.soldier_serial_id=$2 AND s.pluga=$3 AND f.date BETWEEN $4 AND $5) t JOIN question q ON t.question_id=q.id;";
           data = {
-            soldier: soldier,
-            soldierRole: "מפ"
+            soldier: commander,
+            soldierRole: "מפ",
+            roles: [{
+              number: 1,
+              name: "מפקד",
+              tests: []
+            }, {
+              number: 2,
+              name: "תותחן",
+              tests: []
+            }, {
+              number: 3,
+              name: "טען",
+              tests: []
+            }, {
+              number: 4,
+              name: "נהג",
+              tests: []
+            }]
           };
 
           _connectDB.db.query(sqlGetTestTypes, function _callee4(err1, res1) {
+            var testTypes, testTypesLength, soldierLength;
             return regeneratorRuntime.async(function _callee4$(_context6) {
               while (1) {
                 switch (_context6.prev = _context6.next) {
                   case 0:
-                    _connectDB.db.query(sqlGetFactsByCompany, [commander.pluga, firstDay, lastDay], function _callee3(err2, res2) {
-                      return regeneratorRuntime.async(function _callee3$(_context5) {
-                        while (1) {
-                          switch (_context5.prev = _context5.next) {
-                            case 0:
-                            case "end":
-                              return _context5.stop();
-                          }
-                        }
+                    testTypes = res1.rows;
+                    testTypes.forEach(function (testType, ind) {
+                      data.roles[parseInt(testType.role_id) - 1].tests.push({
+                        id: testType.id,
+                        name: testType.name,
+                        scores: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                      });
+                    });
+                    testTypesLength = testTypes.length;
+                    soldierLength = soldierArray.length;
+                    testTypes.forEach(function (testType, ttid) {
+                      soldierArray.map(function (soldier, sid) {
+                        _connectDB.db.query(sqlGetFacts, [testType.id, soldier.soldier_serial_id, commander.pluga, firstDay, lastDay], function _callee3(err2, res2) {
+                          var score, test, browser, page, content, sent;
+                          return regeneratorRuntime.async(function _callee3$(_context5) {
+                            while (1) {
+                              switch (_context5.prev = _context5.next) {
+                                case 0:
+                                  if (!err2) {
+                                    _context5.next = 5;
+                                    break;
+                                  }
+
+                                  console.log("err2:", err2);
+                                  return _context5.abrupt("return", false);
+
+                                case 5:
+                                  //calculate the test score and add it to the appropriate test type score array
+                                  score = calcSPecificTestTypeScore(res2.rows); //score will be between 0 and 10 to know where the score shpuld go in the array.
+
+                                  if (score === 10) score = 9;
+                                  test = data.roles[parseInt(testType.role_id) - 1].tests.find(function (test) {
+                                    return test.id === testType.id;
+                                  });
+
+                                  if (soldier.role === testType.role_id) {
+                                    test.scores[score]++; // only add score if the right role
+                                  }
+
+                                  if (!(ttid === testTypesLength - 1 && sid === soldierLength - 1)) {
+                                    _context5.next = 30;
+                                    break;
+                                  }
+
+                                  _context5.next = 12;
+                                  return regeneratorRuntime.awrap(_puppeteer["default"].launch({
+                                    headless: "new"
+                                  }));
+
+                                case 12:
+                                  browser = _context5.sent;
+                                  _context5.next = 15;
+                                  return regeneratorRuntime.awrap(browser.newPage());
+
+                                case 15:
+                                  page = _context5.sent;
+                                  _context5.next = 18;
+                                  return regeneratorRuntime.awrap(compile("weekSummaryMP", data));
+
+                                case 18:
+                                  content = _context5.sent;
+                                  _context5.next = 21;
+                                  return regeneratorRuntime.awrap(page.setContent(content));
+
+                                case 21:
+                                  _context5.next = 23;
+                                  return regeneratorRuntime.awrap(page.emulateMediaType("screen"));
+
+                                case 23:
+                                  _context5.next = 25;
+                                  return regeneratorRuntime.awrap(page.pdf({
+                                    path: "./pdf/\u05D3\u05D5\u05D7-\u05E1\u05D9\u05DB\u05D5\u05DD-\u05E9\u05D1\u05D5\u05E2".concat(commander.soldier_serial_id, ".pdf"),
+                                    format: "A4",
+                                    printBackground: true,
+                                    width: "1000px",
+                                    height: "3000px"
+                                  }));
+
+                                case 25:
+                                  console.log("pdf generated");
+                                  sent = sendEmails(commander);
+                                  _context5.next = 29;
+                                  return regeneratorRuntime.awrap(browser.close());
+
+                                case 29:
+                                  return _context5.abrupt("return", sent);
+
+                                case 30:
+                                case "end":
+                                  return _context5.stop();
+                              }
+                            }
+                          });
+                        });
                       });
                     });
 
-                  case 1:
+                  case 5:
                   case "end":
                     return _context6.stop();
                 }
@@ -282,62 +385,54 @@ var generateCommanderPdf = function generateCommanderPdf(commander) {
             });
           });
 
-          _context7.next = 13;
-          return regeneratorRuntime.awrap(_puppeteer["default"].launch({
-            headless: "new"
-          }));
+          _context7.next = 17;
+          break;
 
         case 13:
-          browser = _context7.sent;
-          _context7.next = 16;
-          return regeneratorRuntime.awrap(browser.newPage());
-
-        case 16:
-          page = _context7.sent;
-          _context7.next = 19;
-          return regeneratorRuntime.awrap(compile("weekSummaryMP", data));
-
-        case 19:
-          content = _context7.sent;
-          _context7.next = 22;
-          return regeneratorRuntime.awrap(page.setContent(content));
-
-        case 22:
-          _context7.next = 24;
-          return regeneratorRuntime.awrap(page.emulateMediaType("screen"));
-
-        case 24:
-          _context7.next = 26;
-          return regeneratorRuntime.awrap(page.pdf({
-            path: "./pdf/\u05D3\u05D5\u05D7-\u05E1\u05D9\u05DB\u05D5\u05DD-\u05E9\u05D1\u05D5\u05E2".concat(commander.soldier_serial_id, ".pdf"),
-            format: "A4",
-            printBackground: true,
-            width: "1000px",
-            height: "3000px"
-          }));
-
-        case 26:
-          console.log("pdf generated");
-          sent = sendEmails(commander);
-          _context7.next = 30;
-          return regeneratorRuntime.awrap(browser.close());
-
-        case 30:
-          return _context7.abrupt("return", sent);
-
-        case 33:
-          _context7.prev = 33;
+          _context7.prev = 13;
           _context7.t0 = _context7["catch"](0);
           console.log(_context7.t0); //if error acured we retunr false for sending the email
 
           return _context7.abrupt("return", false);
 
-        case 37:
+        case 17:
         case "end":
           return _context7.stop();
       }
     }
-  }, null, null, [[0, 33]]);
+  }, null, null, [[0, 13]]);
 };
 
 exports.generateCommanderPdf = generateCommanderPdf;
+
+var calcSPecificTestTypeScore = function calcSPecificTestTypeScore(testTypeFacts) {
+  if (testTypeFacts.length === 0) return 0;else {
+    var score = 0;
+    var maxScore = 0;
+    testTypeFacts.map(function (fact) {
+      var weight = parseFloat(fact.weight);
+      var role = fact.role;
+      var teamTestId = 2;
+
+      if (weight != 0) {
+        //the team test is worth a diferent amoubt for each role
+        if (teamTestId === fact.test_type_id && role !== 1) {
+          weight = 1.8181; // this  is the score for all the rest of the roles for this test type.
+        }
+
+        var percent = 0;
+
+        if (fact.input_type === "open-numeric") {
+          percent = fact.score / 100;
+          score += weight * percent;
+          maxScore += weight;
+        } else if (fact.input_type === "numeric") {
+          percent = fact.score / 10;
+          score += weight * percent;
+          maxScore += weight;
+        }
+      }
+    });
+    return Math.round(score / maxScore * 100 / 10);
+  }
+};

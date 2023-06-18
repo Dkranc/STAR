@@ -338,14 +338,15 @@ var addFactGen = function addFactGen(req, res) {
 exports.addFactGen = addFactGen;
 
 var calcFinalFactGrade = function calcFinalFactGrade(req, res) {
-  var firstDay, lastDay, sqlGet, soldierArray, errorWithSending, sqlGetSoldier;
-  return regeneratorRuntime.async(function calcFinalFactGrade$(_context3) {
+  var training, firstDay, lastDay, sqlGet, soldierArray, errorWithSending, sqlGetSoldier;
+  return regeneratorRuntime.async(function calcFinalFactGrade$(_context4) {
     while (1) {
-      switch (_context3.prev = _context3.next) {
+      switch (_context4.prev = _context4.next) {
         case 0:
           try {
             _jsonwebtoken["default"].verify(req.body.headers.token, "9809502");
 
+            training = req.body.training;
             firstDay = new Date();
             firstDay.setDate(firstDay.getDate() - 5);
             firstDay = firstDay.toISOString().slice(0, 10);
@@ -415,26 +416,44 @@ var calcFinalFactGrade = function calcFinalFactGrade(req, res) {
                   });
                 });
               });
-              var getMP = 'SELECT * FROM soldier WHERE role=$1 AND week_number=$2;';
+              var getMP = "SELECT * FROM soldier WHERE role=$1 AND week_number=$2;"; //TODO: add loop for all mp, and also add param from req for the week number.
 
-              _connectDB.db.query(getMP, [5, 1], function _callee2(err, result) {
-                var commander, succesSendingMail;
-                return regeneratorRuntime.async(function _callee2$(_context2) {
+              _connectDB.db.query(getMP, [5, training], function _callee3(err, result) {
+                return regeneratorRuntime.async(function _callee3$(_context3) {
                   while (1) {
-                    switch (_context2.prev = _context2.next) {
+                    switch (_context3.prev = _context3.next) {
                       case 0:
-                        commander = result.rows[0];
-                        _context2.next = 3;
-                        return regeneratorRuntime.awrap((0, _generatePdf.generateCommanderPdf)(commander));
+                        //5 is for mefaked pluga role
+                        result.rows.map(function (plugaComanders) {
+                          var commander = plugaComanders;
+                          var sqlGetSldiersFromPluga = "SELECT * FROM soldier WHERE role!=$1 AND week_number=$2";
 
-                      case 3:
-                        succesSendingMail = _context2.sent;
-                        // send the pdf file to MP and if faild add to failed list
-                        if (!succesSendingMail) errorWithSending.push(commander);
+                          _connectDB.db.query(sqlGetSldiersFromPluga, [5, training], function _callee2(err, result2) {
+                            var succesSendingMail;
+                            return regeneratorRuntime.async(function _callee2$(_context2) {
+                              while (1) {
+                                switch (_context2.prev = _context2.next) {
+                                  case 0:
+                                    _context2.next = 2;
+                                    return regeneratorRuntime.awrap((0, _generatePdf.generateCommanderPdf)(commander, result2.rows));
 
-                      case 5:
+                                  case 2:
+                                    succesSendingMail = _context2.sent;
+                                    // send the pdf file to MP and if faild add to failed list
+                                    if (!succesSendingMail) errorWithSending.push(commander);
+
+                                  case 4:
+                                  case "end":
+                                    return _context2.stop();
+                                }
+                              }
+                            });
+                          });
+                        });
+
+                      case 1:
                       case "end":
-                        return _context2.stop();
+                        return _context3.stop();
                     }
                   }
                 });
@@ -449,7 +468,7 @@ var calcFinalFactGrade = function calcFinalFactGrade(req, res) {
 
         case 1:
         case "end":
-          return _context3.stop();
+          return _context4.stop();
       }
     }
   });
@@ -483,24 +502,24 @@ var calculateAndUpdate = function calculateAndUpdate(solId, solFacts, finalGrade
 
 var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
   var len;
-  return regeneratorRuntime.async(function calculate$(_context6) {
+  return regeneratorRuntime.async(function calculate$(_context7) {
     while (1) {
-      switch (_context6.prev = _context6.next) {
+      switch (_context7.prev = _context7.next) {
         case 0:
           len = factsArr.length;
-          factsArr.map(function _callee4(fact, ind) {
+          factsArr.map(function _callee5(fact, ind) {
             var sqlGet;
-            return regeneratorRuntime.async(function _callee4$(_context5) {
+            return regeneratorRuntime.async(function _callee5$(_context6) {
               while (1) {
-                switch (_context5.prev = _context5.next) {
+                switch (_context6.prev = _context6.next) {
                   case 0:
                     sqlGet = "SELECT * FROM question q INNER JOIN test_type tt ON q.test_type_id = tt.id  WHERE q.id=$1;";
-                    _context5.next = 3;
-                    return regeneratorRuntime.awrap(_connectDB.db.query(sqlGet, [fact.question_id], function _callee3(err, result) {
+                    _context6.next = 3;
+                    return regeneratorRuntime.awrap(_connectDB.db.query(sqlGet, [fact.question_id], function _callee4(err, result) {
                       var weight, role, teamTestId, percent, firstDay, lastDay, sqlUpdateTrans;
-                      return regeneratorRuntime.async(function _callee3$(_context4) {
+                      return regeneratorRuntime.async(function _callee4$(_context5) {
                         while (1) {
-                          switch (_context4.prev = _context4.next) {
+                          switch (_context5.prev = _context5.next) {
                             case 0:
                               weight = parseFloat(result.rows[0].weight);
                               role = fact.role;
@@ -531,14 +550,14 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
                               lastDay.setDate(lastDay.getDate() + 5);
                               lastDay = lastDay.toISOString().slice(0, 10);
                               sqlUpdateTrans = "UPDATE Fact SET final_grade=$1 WHERE soldier_serial_id = $2 AND date BETWEEN $3 AND $4";
-                              _context4.next = 13;
+                              _context5.next = 13;
                               return regeneratorRuntime.awrap(_connectDB.db.query(sqlUpdateTrans, [finalGradeObg[solId], solId, firstDay, lastDay], function (err, result) {
                                 if (err) console.log(err);
                               }));
 
                             case 13:
                             case "end":
-                              return _context4.stop();
+                              return _context5.stop();
                           }
                         }
                       });
@@ -546,7 +565,7 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
 
                   case 3:
                   case "end":
-                    return _context5.stop();
+                    return _context6.stop();
                 }
               }
             });
@@ -554,7 +573,7 @@ var calculate = function calculate(factsArr, ttid, finalGradeObg, solId) {
 
         case 2:
         case "end":
-          return _context6.stop();
+          return _context7.stop();
       }
     }
   });
