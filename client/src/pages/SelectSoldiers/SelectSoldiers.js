@@ -7,7 +7,7 @@ import axios from "axios";
 
 //import custom components
 import "./SelectSoldiers.css";
-import NavBar from "../components/NavBar";
+import NavBar from "../../components/NavBar";
 
 //import mui
 import { ListItemButton, Fab } from "@mui/material";
@@ -192,7 +192,7 @@ const SelectSoldiers = ({
           {soldiers
             .filter((sol) => {
               //fiter acording to the role
-              
+
               if (teamTest) {
                 console.log(sol.role, role.id);
                 return sol.role === role.id;
@@ -200,7 +200,6 @@ const SelectSoldiers = ({
               else return true;
             })
             .filter((sol) => {
-              
               //fiter acording to the name of soldier
               return solName === ""
                 ? sol
@@ -208,7 +207,6 @@ const SelectSoldiers = ({
                     sol.soldier_serial_id.toString().includes(solName);
             })
             .filter((sol) => {
-              
               //filter for the team test after choosing soldiers
               if (teamTest) {
                 var chosen = false;

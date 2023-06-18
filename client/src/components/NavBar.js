@@ -148,12 +148,12 @@ export default function NavBar({
                   </ListItemIcon>
                   <Typography variant="inherit">{logoutText}</Typography>
                 </MenuItem>
-                <MenuItem onClick={handleCloseMenu} dir="rtl">
+                {/* <MenuItem onClick={handleCloseMenu} dir="rtl">
                   <ListItemIcon>
                     <LightModeIcon fontSize="small" />
                   </ListItemIcon>
                   <Typography variant="inherit">{lightModeText}</Typography>
-                </MenuItem>
+                </MenuItem>*/}
                 {user.roles[0] === "User.Admin" ? (
                   <div>
                     <MenuItem onClick={reportsClicked} dir="rtl">

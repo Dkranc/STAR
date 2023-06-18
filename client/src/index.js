@@ -6,6 +6,7 @@ import { themeLight, themeDark } from "./theme.js";
 
 //theme
 import { ThemeProvider } from "@emotion/react";
+console.log(process.env); // remove this after you've confirmed it is working
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

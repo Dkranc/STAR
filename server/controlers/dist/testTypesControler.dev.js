@@ -1,23 +1,33 @@
 "use strict";
+import "dotenv/config";
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+  value: true,
 });
-exports.getMashadTestsById = exports.getTestTypes = exports.getTestTypesById = void 0;
+exports.getMashadTestsById =
+  exports.getTestTypes =
+  exports.getTestTypesById =
+    void 0;
 
 var _connectDB = require("../connectDB.js");
 
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
 
 //get   test type by id
 var getTestTypesById = function getTestTypesById(req, res) {
   try {
-    _jsonwebtoken["default"].verify(req.headers.token, "9809502");
+    _jsonwebtoken["default"].verify(
+      req.headers.token,
+      String(process.env.JWT_TOKEN)
+    );
 
     var rrid = req.params.rrid;
-    var sqlGet = "SELECT * FROM test_type WHERE role_id= $1 AND is_mashad_test= false";
+    var sqlGet =
+      "SELECT * FROM test_type WHERE role_id= $1 AND is_mashad_test= false";
 
     _connectDB.db.query(sqlGet, [rrid], function (err, result) {
       if (err) return res.status(402).json(err);
@@ -26,14 +36,16 @@ var getTestTypesById = function getTestTypesById(req, res) {
   } catch (err) {
     console.log(err);
   }
-}; //get  all the test types 
-
+}; //get  all the test types
 
 exports.getTestTypesById = getTestTypesById;
 
 var getTestTypes = function getTestTypes(req, res) {
   try {
-    _jsonwebtoken["default"].verify(req.headers.token, "9809502");
+    _jsonwebtoken["default"].verify(
+      req.headers.token,
+      String(process.env.JWT_TOKEN)
+    );
 
     var sqlGet = "SELECT * FROM test_type;";
 
@@ -50,10 +62,14 @@ exports.getTestTypes = getTestTypes;
 
 var getMashadTestsById = function getMashadTestsById(req, res) {
   try {
-    _jsonwebtoken["default"].verify(req.headers.token, "9809502");
+    _jsonwebtoken["default"].verify(
+      req.headers.token,
+      String(process.env.JWT_TOKEN)
+    );
 
     var rrid = req.params.rrid;
-    var sqlGet = "SELECT * FROM test_type WHERE role_id= $1 AND is_mashad_test= true";
+    var sqlGet =
+      "SELECT * FROM test_type WHERE role_id= $1 AND is_mashad_test= true";
 
     _connectDB.db.query(sqlGet, [rrid], function (err, result) {
       if (err) return res.status(402).json(err);

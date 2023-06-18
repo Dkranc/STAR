@@ -1,7 +1,7 @@
 import { React, useEffect, useState } from "react";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
-import SelectSoldiers from "../pages/SelectSoldiers";
+import SelectSoldiers from "../pages/SelectSoldiers/SelectSoldiers";
 import { Autocomplete, TextField, Collapse, Button } from "@mui/material";
 import { Box } from "@mui/system";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -13,10 +13,10 @@ const SolPopUp = ({
   role,
   chosenSoldiers,
   setChosenSoldiers,
-  soldiers
+  soldiers,
 }) => {
   const [openSelected, setOpenSelected] = useState(false);
-  console.log(role)
+  console.log(role);
 
   return (
     <Box
