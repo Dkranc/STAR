@@ -29,6 +29,7 @@ import lightModeLogo from "./image/logoLightMode.png";
 
 //theme
 import { themeLight, themeDark } from "./theme.js";
+import TrainingEnded from "./pages/TrainingEnded";
 
 
 function App() {
@@ -125,6 +126,10 @@ function App() {
               path="/SpecificTestInput/:ttid"
               element={<Login setUser={setUser} lightMode={light} />}
             />
+            <Route
+            path="/TrainingEnded"
+            element={<Login setUser={setUser} lightMode={light} />}
+          />
             </Routes>
           ) : (
             <Routes>
@@ -202,6 +207,10 @@ function App() {
               path="/SpecificTestInput/:ttid"
               element={<TestInputGeneral user={user} setUser={setUser} />}
             />
+            <Route
+            path="/TrainingEnded"
+            element={<TrainingEnded/>}
+          />
             </Routes>
           )}
         </BrowserRouter>

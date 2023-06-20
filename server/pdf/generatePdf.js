@@ -127,6 +127,8 @@ export const sendEmails = (soldier) => {
     ],
   };
 
+
+  
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);

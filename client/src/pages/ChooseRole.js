@@ -1,6 +1,6 @@
 //import react
 import { React, useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation,redirect } from "react-router-dom";
 
 //import axios
 import axios from "axios";
@@ -85,17 +85,19 @@ const ChooseRole = ({ user, setUser }) => {
       .then((response, err) => {
         if (err) console.log(err);
 
-        console.log(response);
         const errorWithSending = response.data;
         if (response.status === 200) {
           toast.success("האימון הסתיים! הדוחות נשלחו בהצלחה");
+          navigate(`/TrainingEnded`,{state:{soldiers:location.state.soldiers, failedToSend:errorWithSending} });
+
+        } else {
+          
+          toast.alert("אירעה שגיאה, נא לפנות לעזרה");
           navigate(`/Home`, {
             state: {
               soldiers: location.state.soldiers,
             },
           });
-        } else {
-          //show the error that acured
         }
       });
   };
