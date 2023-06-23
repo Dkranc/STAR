@@ -1,0 +1,41 @@
+# Version of Docker-compose
+version: "3.9"
+services:
+  # Add the node-js service
+  node:
+    # network_mode: host
+
+    # Location to the node.js dockerfile
+    build:
+      context:
+        ./server
+        # Name of the dockerfile
+      dockerfile: Dockerfile
+    container_name: node-container
+    ports:
+      # Host port:Container port
+      - "8080:8080"
+    volumes:
+      # Bind-mounts configuration
+      - ./server:/app
+      # Ignoring any changes made in "node_modules" folder
+      # - ./server/node_modules
+    # environment:
+    #   - apiPath="http://host.docker.internal:8080/" # replace backend-container name
+    #   - filePath="http://host.docker.internal:3000/"
+    # stdin_open: true
+
+  react:
+    # network_mode: host
+
+    # Location to the react.js dockerfile
+    build:
+      context:
+        ./client
+        # Name of the dockerfile
+      dockerfile: Dockerfile
+    container_name: react-container
+    ports:
+      # Host port:Container port
+      - "3000:3000"
+    stdin_open: true

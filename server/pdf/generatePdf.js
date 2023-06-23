@@ -87,7 +87,7 @@ export const generatePdf = async (soldier) => {
         height: "3000px",
       });
 
-      console.log("pdf generated");
+      console.log("pdf generated", page);
 
       const sent = sendEmails(soldier);
       await browser.close();
@@ -273,7 +273,7 @@ const calcSPecificTestTypeScore = (testTypeFacts) => {
   else {
     var score = 0;
     var maxScore = 0;
-    
+
     testTypeFacts.map((fact) => {
       var weight = parseFloat(fact.weight);
       const role = fact.role;

@@ -196,7 +196,7 @@ const TestInputGeneral = ({ user, setUser, lightMode }) => {
                 paddingX: "20%",
                 borderRadius: "30px",
                 marginTop: "20px",
-                marginLeft: "25%",
+                marginRight: "25%",
               }}
               onClick={sendClicked}
             >

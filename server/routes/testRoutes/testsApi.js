@@ -17,25 +17,25 @@ import {
   getFactsByTestId,
   getFactsByRolesId,
   calcFinalFactGrade,
-  getFactsByQuestionId
+  getFactsByQuestionId,
 } from "../../controlers/factControler.js";
 
 const router = express.Router();
 
 /** TEST_TYPE */
-//get  test type by id
+//get  test type by role id
 router.get("/test_types/:rrid", getTestTypesById);
 //get all test types
 router.get("/test_types/", getTestTypes);
 
-//get all test types for mashad
+//get all test types for mashad by role
 router.get("/test_types/mashad/:rrid", getMashadTestsById);
 
 /** Question */
 //get all questions with specific test type id
 router.get("/question/:ttid", getQuestionsByTestTypeId);
 //get all questions with specific parent id
-router.get("/question/:ttid", getQuestionsByParentId);
+router.get("/question/byParentID/:pid", getQuestionsByParentId);
 
 /** Fact */
 // get a fact by soldier serial id  and test type id

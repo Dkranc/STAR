@@ -72,7 +72,7 @@ export default function NavBar({
 
   const homeClicked = () => {
     navigate(`/Home`, {
-      state: { soldiers: location.state.soldiers},
+      state: { soldiers: location.state.soldiers },
     });
   };
 
@@ -115,7 +115,10 @@ export default function NavBar({
         position="static"
         style={{ background: "transparent", boxShadow: "none" }}
       >
-        <Toolbar dir="rtl" sx={{ flexGrow: 1, justifyContent: "center" }}>
+        <Toolbar
+          dir="rtl"
+          sx={{ display: "flex", flexGrow: 1, justifyContent: "space-around" }}
+        >
           {pathname !== "/" ? (
             <IconButton
               size="large"
@@ -145,12 +148,12 @@ export default function NavBar({
                   </ListItemIcon>
                   <Typography variant="inherit">{logoutText}</Typography>
                 </MenuItem>
-                <MenuItem onClick={handleCloseMenu} dir="rtl">
+                {/* <MenuItem onClick={handleCloseMenu} dir="rtl">
                   <ListItemIcon>
                     <LightModeIcon fontSize="small" />
                   </ListItemIcon>
                   <Typography variant="inherit">{lightModeText}</Typography>
-                </MenuItem>
+                </MenuItem>*/}
                 {user.roles[0] === "User.Admin" ? (
                   <div>
                     <MenuItem onClick={reportsClicked} dir="rtl">
@@ -192,11 +195,13 @@ export default function NavBar({
           >
             {pageName}
           </Typography>
-          <KeyboardBackspaceIcon
-            style={{ fill: "#000000" }}
-            sx={{ flexGrow: 1 }}
-            onClick={() => navigate(-1)}
-          />
+          <Box>
+            <KeyboardBackspaceIcon
+              style={{ fill: "#000000" }}
+              sx={{ flexGrow: 1 }}
+              onClick={() => navigate(-1)}
+            />
+          </Box>
         </Toolbar>
       </AppBar>
     </Box>

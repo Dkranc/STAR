@@ -3,6 +3,7 @@ import testRoutes from "./routes/testRoutes/testsApi.js";
 import cookieParser from "cookie-parser";
 import express from "express";
 import cors from "cors";
+import "dotenv/config";
 
 //get server from express
 const app = express();
@@ -15,5 +16,5 @@ app.use("/api/tests", testRoutes);
 
 //start sever on port 8080
 app.listen(8080, () => {
-  console.log("server started on port 8080");
+  console.log("server started on port 8080", process.env);
 });

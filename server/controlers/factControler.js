@@ -1,12 +1,13 @@
 import { db } from "../connectDB.js";
 import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 import { generatePdf, generateCommanderPdf } from "../pdf/generatePdf.js";
 
 //get specific rows from Question table using a test type id and the soldier sereial id that can be found in the params of the request. then send only those rows to the client
 export const getFact = (req, res) => {
   try {
-    jwt.verify(req.headers.token, "9809502");
+    jwt.verify(req.headers.token, String(process.env.JWT_TOKEN));
     const { ssid, ttid } = req.params;
     var firstDay = new Date();
     firstDay.setDate(firstDay.getDate() + 5);
@@ -30,7 +31,7 @@ export const getFact = (req, res) => {
 
 export const getFactsByRolesId = (req, res) => {
   try {
-    jwt.verify(req.headers.token, "9809502");
+    jwt.verify(req.headers.token, String(process.env.JWT_TOKEN));
     const { rid } = req.params;
     var firstDay = new Date();
     firstDay.setDate(firstDay.getDate() + 5);
@@ -54,7 +55,7 @@ export const getFactsByRolesId = (req, res) => {
 
 export const getFactsByTestId = (req, res) => {
   try {
-    jwt.verify(req.headers.token, "9809502");
+    jwt.verify(req.headers.token, String(process.env.JWT_TOKEN));
     const { ttid } = req.params;
     var firstDay = new Date();
     firstDay.setDate(firstDay.getDate() + 5);
@@ -78,7 +79,7 @@ export const getFactsByTestId = (req, res) => {
 
 export const getFactsByQuestionId = (req, res) => {
   try {
-    jwt.verify(req.headers.token, "9809502");
+    jwt.verify(req.headers.token, String(process.env.JWT_TOKEN));
     const { qid } = req.params;
     var firstDay = new Date();
     firstDay.setDate(firstDay.getDate() + 5);
@@ -104,7 +105,7 @@ export const getFactsByQuestionId = (req, res) => {
 //add new fact to table.
 export const addFact = (req, res) => {
   try {
-    jwt.verify(req.headers.token, "9809502");
+    jwt.verify(req.headers.token, String(process.env.JWT_TOKEN));
     const soldier_serial_id = req.body[0];
     const test_type_id = req.body[1];
     const role = req.body[2];
@@ -151,7 +152,7 @@ export const addFact = (req, res) => {
 //update a fact by its id
 export const updateFact = (req, res) => {
   try {
-    jwt.verify(req.headers.token, "9809502");
+    jwt.verify(req.headers.token, String(process.env.JWT_TOKEN));
     const facts = req.body[0];
     const comments = req.body[1];
     const date = req.body[2];
@@ -186,7 +187,7 @@ export const updateFact = (req, res) => {
 //add fact info for med test
 export const addFactGenMed = (req, res) => {
   try {
-    jwt.verify(req.headers.token, "9809502");
+    jwt.verify(req.headers.token, String(process.env.JWT_TOKEN));
     const soldierAnswers = req.body;
     var date = new Date();
     date = date.toISOString().slice(0, 10);
@@ -265,7 +266,7 @@ export const addFactGenMed = (req, res) => {
 //add facts to table from general mashad nput.
 export const addFactGen = (req, res) => {
   try {
-    jwt.verify(req.headers.token, "9809502");
+    jwt.verify(req.headers.token, String(process.env.JWT_TOKEN));
     const completedArray = req.body[0];
     const ttid = req.body[1];
     const rid = req.body[2];
@@ -340,7 +341,7 @@ export const addFactGen = (req, res) => {
 //calculate the final grade for the training
 export const calcFinalFactGrade = async (req, res) => {
   try {
-    jwt.verify(req.body.headers.token, "9809502");
+    jwt.verify(req.body.headers.token, String(process.env.JWT_TOKEN));
 
     const training = req.body.training;
 
@@ -373,7 +374,6 @@ export const calcFinalFactGrade = async (req, res) => {
       for (const [solId, solFacts] of Object.entries(soldiersFacts)) {
         calculateAndUpdate(solId, solFacts, finalGradeObg);
       }
-
       if (err) console.log(err);
     });
 

@@ -1,11 +1,12 @@
 import { request } from "express";
 import { db } from "../connectDB.js";
 import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 //get soldiers by week number
 export const getSoldiersByTrainingWeek = (req, res) => {
   try {
-    jwt.verify(req.headers.token, "9809502");
+    jwt.verify(req.headers.token, String(process.env.JWT_TOKEN));
     const tid = req.params.tid;
 
     const sqlGet = "SELECT * FROM soldier WHERE week_number = $1";
@@ -24,7 +25,7 @@ export const getSoldiersByTrainingWeek = (req, res) => {
 //get all soldiers from table
 export const getSoldiers = (req, res) => {
   try {
-    jwt.verify(req.headers.token, "9809502");
+    jwt.verify(req.headers.token, String(process.env.JWT_TOKEN));
 
     const sqlGet = "SELECT * FROM Soldier";
     db.query(sqlGet, (err, result) => {
@@ -38,7 +39,7 @@ export const getSoldiers = (req, res) => {
 //get specific row from Soldier table using a sid that can be found in the params of the request. then send only that row to the client
 export const getSoldiersById = (req, res) => {
   try {
-    jwt.verify(req.headers.token, "9809502");
+    jwt.verify(req.headers.token, String(process.env.JWT_TOKEN));
     const { sid } = req.params;
     const sqlGet = "SELECT * FROM Soldier WHERE id= $1";
     db.query(sqlGet, [sid], (err, result) => {
@@ -53,7 +54,7 @@ export const getSoldiersById = (req, res) => {
 //add new soldier to table.
 export const addSoldier = (req, res) => {
   try {
-    jwt.verify(req.headers.token, "9809502");
+    jwt.verify(req.headers.token, String(process.env.JWT_TOKEN));
     const serial_id = req.body[0];
     const first_name = req.body[1];
     const last_name = req.body[2];
@@ -66,16 +67,7 @@ export const addSoldier = (req, res) => {
       "INSERT INTO Soldier(soldier_serial_id, first_name, pluga, parent_external_id, mail, role, last_name, week_number) VALUES($1,$2,$3,$4,$5,$6,$7,$8)";
     db.query(
       sqlInsert,
-      [
-        serial_id,
-        first_name,
-        pluga,
-        0,
-        mail,
-        role,
-        last_name,
-        week_number,
-      ],
+      [serial_id, first_name, pluga, 0, mail, role, last_name, week_number],
       (err, result) => {
         if (err) console.log(err);
         else {
@@ -91,7 +83,7 @@ export const addSoldier = (req, res) => {
 //update a soldier by its id
 export const updateSoldierById = (req, res) => {
   try {
-    jwt.verify(req.headers.token, "9809502");
+    jwt.verify(req.headers.token, String(process.env.JWT_TOKEN));
     const { sid } = req.params;
     const serial_id = req.body[0];
     const first_name = req.body[1];
@@ -128,7 +120,7 @@ export const updateSoldierById = (req, res) => {
 //update a soldier by its id
 export const updateSoldiersCompanyInfo = (req, res) => {
   try {
-    jwt.verify(req.headers.token, "9809502");
+    jwt.verify(req.headers.token, String(process.env.JWT_TOKEN));
 
     const soldiers = req.body[0];
 
